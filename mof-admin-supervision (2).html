@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedFlow AI — MOF Admin Supervision Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0F2A4A;--navy2:#1A3A5C;--navy3:#243F60;
+  --green:#1B6B4A;--green2:#059669;--gl:#ECFDF5;
+  --amber:#D97706;--amber2:#F59E0B;--al:#FEF3C7;--ad:#92400E;
+  --blue:#1D4ED8;--blue2:#3B82F6;--bl:#EFF6FF;
+  --red:#DC2626;--rl:#FEF2F2;
+  --purple:#7C3AED;--pl:#F5F3FF;
+  --teal:#0D9488;--tl:#F0FDFA;
+  --orange:#EA580C;--ol:#FFF7ED;
+  --surf:#FFFFFF;--bg:#F1F5F9;
+  --bdr:#E5E7EB;--bdr2:#D1D5DB;
+  --tx:#111827;--tx2:#374151;--tx3:#6B7280;
+  --grl:#F9FAFB;
+  --a10:rgba(255,255,255,.10);--a15:rgba(255,255,255,.15);--a20:rgba(255,255,255,.20);
+  --a35:rgba(255,255,255,.35);--a55:rgba(255,255,255,.55);--a70:rgba(255,255,255,.70);
+  --r:10px;--rs:6px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.05);
+  --shm:0 4px 16px rgba(0,0,0,.12);
+}
+html,body{height:100%;font-family:"Outfit",system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;}
+.app{display:grid;grid-template-columns:230px 1fr;grid-template-rows:56px 1fr;height:100vh;overflow:hidden;}
+
+/* ── TOPBAR (dark) ── */
+.topbar{grid-column:1/-1;background:var(--navy);display:flex;align-items:center;padding:0 0 0 0;z-index:100;border-bottom:1px solid rgba(255,255,255,.06);}
+.tb-logo{display:flex;align-items:center;gap:9px;padding:0 20px;border-right:1px solid var(--a10);height:100%;min-width:230px;}
+.tb-mark{width:30px;height:30px;background:linear-gradient(135deg,#4ADE80,#1B6B4A);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.tb-mark svg{width:16px;height:16px;}
+.tb-name{font-size:14px;font-weight:800;color:#fff;letter-spacing:-.2px;}
+.tb-sub{font-size:10px;color:var(--a35);font-weight:500;}
+.tb-nav{display:flex;align-items:center;padding:0 20px;gap:2px;flex:1;}
+.tb-navbtn{padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:500;color:var(--a55);cursor:pointer;border:none;background:transparent;font-family:"Outfit",sans-serif;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.tb-navbtn:hover{color:#fff;background:var(--a10);}
+.tb-navbtn.active{color:#fff;background:var(--a15);font-weight:600;}
+.tb-navbtn .cnt{padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;background:rgba(239,68,68,.3);color:#FCA5A5;margin-left:2px;}
+.tb-navbtn .cntg{background:rgba(74,222,128,.2);color:#86EFAC;}
+.tb-navbtn .cnta{background:rgba(251,191,36,.2);color:#FCD34D;}
+.tb-right{display:flex;align-items:center;gap:8px;padding:0 20px;}
+.tb-chip{padding:4px 11px;border-radius:10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;}
+.tcg{background:rgba(74,222,128,.15);color:#86EFAC;}
+.ldot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--amber2),#B45309);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;cursor:pointer;border:2px solid var(--a15);}
+
+/* ── SIDEBAR (dark) ── */
+.sidebar{background:var(--navy2);border-right:1px solid rgba(255,255,255,.05);overflow-y:auto;display:flex;flex-direction:column;}
+.sb-sec{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--a35);padding:16px 14px 5px;}
+.sb-sec:first-child{padding-top:14px;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 14px;cursor:pointer;transition:all .14s;border-left:2.5px solid transparent;font-size:12.5px;font-weight:500;color:var(--a55);}
+.sb-item:hover{background:var(--a10);color:var(--a70);}
+.sb-item.active{background:rgba(27,107,74,.25);color:#86EFAC;border-left-color:var(--green2);font-weight:600;}
+.sb-icon{width:16px;text-align:center;font-size:13px;flex-shrink:0;}
+.sb-badge{margin-left:auto;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;}
+.sbb-red{background:rgba(239,68,68,.25);color:#FCA5A5;}
+.sbb-amber{background:rgba(251,191,36,.2);color:#FCD34D;}
+.sbb-green{background:rgba(74,222,128,.15);color:#86EFAC;}
+.sb-bottom{margin-top:auto;padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);}
+.sb-admin-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--rs);background:rgba(255,255,255,.04);}
+.sb-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--amber2),#B45309);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;}
+.sb-aname{font-size:12px;font-weight:600;color:#fff;}
+.sb-arole{font-size:10px;color:var(--a35);}
+.sb-dot-on{width:7px;height:7px;border-radius:50%;background:#22C55E;margin-left:auto;}
+
+/* ── MAIN ── */
+.main{overflow:hidden;display:flex;flex-direction:column;background:var(--bg);}
+.page-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.page-head{background:var(--surf);border-bottom:1px solid var(--bdr);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.ph-title{font-size:16px;font-weight:800;color:var(--tx);letter-spacing:-.3px;}
+.ph-sub{font-size:11px;color:var(--tx3);margin-top:2px;}
+.ph-right{display:flex;align-items:center;gap:8px;}
+.page-body{flex:1;overflow-y:auto;padding:20px 24px;}
+
+/* ── PANELS ── */
+.panel{display:none;flex-direction:column;height:100%;overflow:hidden;}
+.panel.active{display:flex;}
+.pscroll{overflow-y:auto;}
+.ppad{padding:20px 24px;}
+
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;}
+.stat{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .15s;}
+.stat:hover{box-shadow:var(--sh);}
+.stat-val{font-size:22px;font-weight:800;letter-spacing:-1px;line-height:1;color:var(--tx);}
+.stat-label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-top:3px;}
+.stat-delta{font-size:10px;font-weight:600;margin-top:2px;}
+.up{color:var(--green2);}
+.dn{color:var(--red);}
+.nu{color:var(--tx3);}
+
+/* ── AGENT TABLE ── */
+.agent-table{width:100%;border-collapse:collapse;}
+.agent-table th{padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--bdr);background:var(--grl);position:sticky;top:0;z-index:5;}
+.agent-table td{padding:11px 12px;border-bottom:1px solid var(--bdr);font-size:12px;color:var(--tx2);vertical-align:middle;}
+.agent-table tr:hover td{background:var(--grl);cursor:pointer;}
+.agent-table tr.row-sel td{background:var(--gl);}
+.agent-table tr.row-crit td{border-left:3px solid var(--red);}
+.agent-table tr.row-warn td{border-left:3px solid var(--amber);}
+.agent-table tr.row-ok td{border-left:3px solid var(--green2);}
+.health-score{display:flex;align-items:center;gap:7px;}
+.hs-ring{position:relative;flex-shrink:0;}
+.hs-val{font-size:13px;font-weight:800;}
+.hs-bar{height:5px;background:var(--bdr);border-radius:3px;overflow:hidden;width:60px;}
+.hb-fill{height:100%;border-radius:3px;}
+.hbg{background:var(--green2);}
+.hba{background:var(--amber2);}
+.hbr{background:var(--red);}
+.agent-status{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;}
+.as-live{background:var(--gl);color:var(--green);}
+.as-warn{background:var(--al);color:var(--amber);}
+.as-crit{background:var(--rl);color:var(--red);}
+.as-off{background:var(--grl);color:var(--tx3);}
+.metric-cell{font-family:"JetBrains Mono",monospace;font-size:11px;}
+.mc-good{color:var(--green2);}
+.mc-warn{color:var(--amber);}
+.mc-crit{color:var(--red);}
+
+/* ── ALERT ENGINE ── */
+.alert-card{background:var(--surf);border:1.5px solid var(--bdr);border-radius:var(--r);margin-bottom:10px;overflow:hidden;cursor:pointer;transition:all .15s;}
+.alert-card:hover{border-color:var(--bdr2);box-shadow:var(--sh);}
+.alert-card.ac-crit{border-left:4px solid var(--red);}
+.alert-card.ac-warn{border-left:4px solid var(--amber);}
+.alert-card.ac-info{border-left:4px solid var(--blue2);}
+.alert-card.ac-heal{border-left:4px solid var(--green2);}
+.ac-head{display:flex;align-items:center;gap:10px;padding:11px 14px;}
+.ac-sev{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.acsc{background:var(--rl);color:var(--red);}
+.acsw{background:var(--al);color:var(--amber);}
+.acsi{background:var(--bl);color:var(--blue);}
+.acsh{background:var(--gl);color:var(--green);}
+.ac-title{font-size:13px;font-weight:600;color:var(--tx);flex:1;}
+.ac-practice{font-size:11px;color:var(--tx3);}
+.ac-time{font-size:10px;font-family:"JetBrains Mono",monospace;color:var(--tx3);flex-shrink:0;}
+.ac-status{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;flex-shrink:0;}
+.acs-new{background:var(--rl);color:var(--red);}
+.acs-heal{background:var(--gl);color:var(--green);}
+.acs-inv{background:var(--al);color:var(--amber);}
+.acs-mon{background:var(--bl);color:var(--blue);}
+.ac-body{padding:0 14px 12px;border-top:1px solid var(--bdr);}
+.ac-desc{font-size:12px;color:var(--tx2);line-height:1.6;margin:8px 0;}
+.ac-heal-btn{padding:5px 12px;border-radius:var(--rs);font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:"Outfit",sans-serif;transition:all .15s;}
+.acb-red{background:var(--red);color:#fff;}
+.acb-green{background:var(--green);color:#fff;}
+.acb-amber{background:var(--amber);color:#fff;}
+.acb-outline{background:var(--surf);border:1.5px solid var(--bdr);color:var(--tx2);}
+
+/* ── METRICS GRID (11 metrics) ── */
+.metrics-11{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.mcard{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:12px 14px;}
+.mcard.mc-ok{border-top:3px solid var(--green2);}
+.mcard.mc-warn{border-top:3px solid var(--amber2);}
+.mcard.mc-crit{border-top:3px solid var(--red);}
+.mcard.mc-off{border-top:3px solid var(--bdr2);}
+.mc-label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.mc-val{font-size:18px;font-weight:800;letter-spacing:-.5px;line-height:1;margin-bottom:3px;}
+.mc-threshold{font-size:10px;color:var(--tx3);margin-bottom:5px;}
+.mc-bar{height:4px;background:var(--bdr);border-radius:2px;overflow:hidden;}
+.mcbg{height:100%;border-radius:2px;background:var(--green2);}
+.mcba{height:100%;border-radius:2px;background:var(--amber2);}
+.mcbr{height:100%;border-radius:2px;background:var(--red);}
+.mc-autoheal{font-size:10px;padding:2px 7px;border-radius:6px;background:var(--bl);color:var(--blue);display:inline-block;margin-top:4px;}
+
+/* ── DRILL-DOWN ── */
+.drilldown-layout{display:grid;grid-template-columns:1fr 340px;height:100%;overflow:hidden;}
+.dd-nav{display:flex;gap:4px;margin-bottom:14px;}
+.dd-tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--bdr);background:var(--surf);color:var(--tx2);font-family:"Outfit",sans-serif;transition:all .15s;}
+.dd-tab:hover{border-color:var(--bdr2);}
+.dd-tab.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.dd-section{display:none;}
+.dd-section.active{display:block;}
+
+/* ── IMPERSONATION ── */
+.imp-bar{background:linear-gradient(135deg,#92400E,#B45309);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.imp-bar-icon{font-size:24px;flex-shrink:0;}
+.imp-bar-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:2px;}
+.imp-bar-sub{font-size:11px;color:rgba(255,255,255,.6);}
+.imp-actions{margin-left:auto;display:flex;gap:6px;}
+.imp-timer{font-size:28px;font-weight:300;font-family:"JetBrains Mono",monospace;color:#FCD34D;letter-spacing:2px;}
+
+/* ── MESSAGING ── */
+.msg-layout{display:grid;grid-template-columns:280px 1fr;height:100%;overflow:hidden;}
+.msg-list{background:var(--surf);border-right:1px solid var(--bdr);overflow-y:auto;}
+.msg-item{padding:12px 16px;border-bottom:1px solid var(--bdr);cursor:pointer;transition:background .12s;}
+.msg-item:hover{background:var(--grl);}
+.msg-item.msg-sel{background:var(--gl);}
+.msg-item.msg-unread .msg-name{font-weight:700;color:var(--tx);}
+.msg-name{font-size:12px;font-weight:500;color:var(--tx2);margin-bottom:2px;}
+.msg-preview{font-size:11px;color:var(--tx3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.msg-time{font-size:10px;color:var(--tx3);float:right;}
+.msg-unread-dot{width:8px;height:8px;border-radius:50%;background:var(--blue2);display:inline-block;margin-left:4px;vertical-align:middle;}
+.msg-thread{display:flex;flex-direction:column;height:100%;overflow:hidden;}
+.msg-thread-head{padding:14px 18px;border-bottom:1px solid var(--bdr);background:var(--surf);flex-shrink:0;}
+.msg-thread-title{font-size:14px;font-weight:700;color:var(--tx);}
+.msg-thread-sub{font-size:11px;color:var(--tx3);margin-top:2px;}
+.msg-messages{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:10px;background:var(--bg);}
+.msg-bubble{max-width:80%;padding:10px 13px;border-radius:12px;font-size:12px;line-height:1.6;}
+.mb-mof{background:var(--navy);color:#fff;align-self:flex-end;border-radius:12px 12px 2px 12px;}
+.mb-practice{background:var(--surf);border:1px solid var(--bdr);color:var(--tx2);align-self:flex-start;border-radius:12px 12px 12px 2px;}
+.mb-meta{font-size:10px;color:var(--tx3);text-align:right;padding:0 3px;margin-top:2px;}
+.mb-meta.left{text-align:left;}
+.msg-compose{padding:12px 18px;border-top:1px solid var(--bdr);background:var(--surf);flex-shrink:0;}
+.msg-input{width:100%;padding:9px 12px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;outline:none;resize:none;margin-bottom:7px;}
+.msg-input:focus{border-color:var(--navy);}
+
+/* ── MISC ── */
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.chead{padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px;}
+.cicon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.cicg{background:var(--gl);}
+.cicb{background:var(--bl);}
+.cica{background:var(--al);}
+.cicn{background:rgba(15,42,74,.07);}
+.ctitle{font-size:13px;font-weight:700;color:var(--tx);}
+.csub{font-size:11px;color:var(--tx3);margin-top:1px;}
+.chr{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.cbody{padding:14px 16px;}
+.notice{display:flex;align-items:flex-start;gap:7px;padding:9px 11px;border-radius:var(--rs);margin-bottom:10px;font-size:11px;line-height:1.5;}
+.ngreen{background:var(--gl);border:1px solid #A7F3D0;color:var(--green);}
+.namber{background:var(--al);border:1px solid #FDE68A;color:var(--ad);}
+.nblue{background:var(--bl);border:1px solid #BFDBFE;color:var(--blue);}
+.nred{background:var(--rl);border:1px solid #FECACA;color:var(--red);}
+.notice svg{width:12px;height:12px;flex-shrink:0;margin-top:1px;}
+.notice strong{font-weight:700;}
+.btn{padding:7px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:5px;}
+.bgreen{background:var(--green);color:#fff;}
+.bgreen:hover{background:#14533A;}
+.bnavy{background:var(--navy);color:#fff;}
+.bnavy:hover{background:var(--navy2);}
+.bamber{background:var(--amber);color:#fff;}
+.bred{background:var(--red);color:#fff;}
+.boutline{background:var(--surf);border:1.5px solid var(--bdr);color:var(--tx2);}
+.boutline:hover{border-color:var(--bdr2);}
+.tag{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;}
+.tagg{background:var(--gl);color:var(--green);}
+.taga{background:var(--al);color:var(--amber);}
+.tagb{background:var(--bl);color:var(--blue);}
+.tagr{background:var(--rl);color:var(--red);}
+.tagn{background:rgba(15,42,74,.08);color:var(--navy);}
+.fgroup{margin-bottom:11px;}
+.flabel{font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:3px;display:block;}
+.finput{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;transition:border .15s;}
+.finput:focus{border-color:var(--navy);}
+.fsel{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;background:var(--surf);}
+.ftextarea{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;resize:vertical;line-height:1.6;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px;}
+.two-col{display:grid;grid-template-columns:1fr 310px;height:100%;overflow:hidden;}
+.sidepanel{background:var(--surf);border-left:1px solid var(--bdr);overflow-y:auto;padding:14px;}
+.sp-sec{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin:12px 0 8px;}
+.sp-sec:first-child{margin-top:0;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-logo">
+    <div class="tb-mark"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5L13 4.5V10.5L7.5 13.5L2 10.5V4.5L7.5 1.5Z" fill="white" opacity=".9"/><circle cx="7.5" cy="7.5" r="2" fill="white"/></svg></div>
+    <div><div class="tb-name">MedFlow AI</div><div class="tb-sub">MOF Admin Console</div></div>
+  </div>
+  <div class="tb-nav">
+    <button class="tb-navbtn active" onclick="switchPanel('overview',this)">📊 Overview <span class="cnt cntg">6</span></button>
+    <button class="tb-navbtn" onclick="switchPanel('alerts',this)">🚨 Alerts <span class="cnt">3</span></button>
+    <button class="tb-navbtn" onclick="switchPanel('drill',this)">🔍 Practice Drill-Down</button>
+    <button class="tb-navbtn" onclick="switchPanel('impersonate',this)">🔑 Impersonation</button>
+    <button class="tb-navbtn" onclick="switchPanel('messages',this)">💬 Messages <span class="cnt cnta">2</span></button>
+    <button class="tb-navbtn" onclick="switchPanel('revenue',this)">💰 Revenue</button>
+  </div>
+  <div class="tb-right">
+    <div class="tb-chip tcg"><div class="ldot"></div>6 Agents Monitored</div>
+    <div class="tb-avatar">JK</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-sec">Navigation</div>
+  <div class="sb-item active" onclick="switchPanel('overview',null);setSB(this)"><div class="sb-icon">📊</div>All Agents Overview<div class="sb-badge sbb-green">6 live</div></div>
+  <div class="sb-item" onclick="switchPanel('alerts',null);setSB(this)"><div class="sb-icon">🚨</div>Alert Engine<div class="sb-badge sbb-red">3 new</div></div>
+  <div class="sb-item" onclick="switchPanel('drill',null);setSB(this)"><div class="sb-icon">🔍</div>Practice Drill-Down</div>
+  <div class="sb-item" onclick="switchPanel('impersonate',null);setSB(this)"><div class="sb-icon">🔑</div>Impersonation Mode<div class="sb-badge sbb-amber">1 active</div></div>
+  <div class="sb-item" onclick="switchPanel('messages',null);setSB(this)"><div class="sb-icon">💬</div>Bidirectional Messaging<div class="sb-badge sbb-amber">2 unread</div></div>
+  <div class="sb-item" onclick="switchPanel('revenue',null);setSB(this)"><div class="sb-icon">💰</div>Revenue & Billing</div>
+
+  <div class="sb-sec">Admin Roles</div>
+  <div class="sb-item" onclick="alert('Admin Roles — manage all 5 MOF admins, their zones, and access levels')"><div class="sb-icon">👥</div>Admin Roles</div>
+  <div class="sb-item" onclick="alert('HIPAA Audit Log — immutable log of all PHI access across all practices')"><div class="sb-icon">🔒</div>HIPAA Audit Log</div>
+  <div class="sb-item" onclick="alert('Platform Settings — webhook configs, AWS Bedrock, Twilio keys, ElevenLabs')"><div class="sb-icon">⚙️</div>Platform Settings</div>
+
+  <div class="sb-bottom">
+    <div class="sb-admin-row">
+      <div class="sb-av">JK</div>
+      <div><div class="sb-aname">James Kim</div><div class="sb-arole">Super Admin</div></div>
+      <div class="sb-dot-on"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ═══ PANEL: OVERVIEW ═══ -->
+  <div class="panel active" id="panel-overview">
+    <div class="page-head">
+      <div><div class="ph-title">All Agents — Live Overview</div><div class="ph-sub">6 practices · 3 critical · Real-time · Checked every 5 min · Apr 18, 2026 10:44 AM EDT</div></div>
+      <div class="ph-right">
+        <button class="btn boutline" style="font-size:11px">🔄 Refresh All</button>
+        <button class="btn bgreen" style="font-size:11px" onclick="switchPanel('alerts',null);setSB(document.querySelectorAll('.sb-item')[1])">View 3 Active Alerts →</button>
+      </div>
+    </div>
+    <div class="pscroll ppad" style="flex:1">
+      <!-- Platform KPIs -->
+      <div class="stats-row">
+        <div class="stat"><div class="stat-val" style="color:var(--green2)">6</div><div class="stat-label">Active Agents</div><div class="stat-delta up">All online</div></div>
+        <div class="stat"><div class="stat-val" style="color:var(--green2)">$634</div><div class="stat-label">MRR</div><div class="stat-delta up">↑ 8% this month</div></div>
+        <div class="stat"><div class="stat-val" style="color:var(--red)">3</div><div class="stat-label">Critical Alerts</div><div class="stat-delta dn">Needs attention</div></div>
+        <div class="stat"><div class="stat-val">86%</div><div class="stat-label">Avg Containment</div><div class="stat-delta up">↑ target</div></div>
+        <div class="stat"><div class="stat-val">1.4s</div><div class="stat-label">Avg Response</div><div class="stat-delta up">Fast</div></div>
+        <div class="stat"><div class="stat-val" style="color:var(--amber)">71</div><div class="stat-label">Platform Health</div><div class="stat-delta dn">2 agents degraded</div></div>
+      </div>
+
+      <!-- Agent Table -->
+      <div class="notice namber" style="margin-bottom:10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        <span><strong>Valley Ridge Family Medicine</strong> and <strong>West Point Urgent Care</strong> have critical issues requiring immediate attention. Valley Ridge has a webhook failure + 54% transfer rate. West Point has response latency of 4.8s.</span>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="agent-table">
+          <thead><tr>
+            <th style="width:220px">Practice</th>
+            <th>Status</th>
+            <th>Health</th>
+            <th>Containment</th>
+            <th>Response</th>
+            <th>Loops/day</th>
+            <th>Sentiment</th>
+            <th>Transfer %</th>
+            <th>Calls Today</th>
+            <th>Assigned Admin</th>
+            <th>Actions</th>
+          </tr></thead>
+          <tbody id="agentTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PANEL: ALERT ENGINE ═══ -->
+  <div class="panel" id="panel-alerts">
+    <div class="page-head">
+      <div><div class="ph-title">🚨 Proactive Alert Engine — 11 Metrics</div><div class="ph-sub">Real-time monitoring across all 6 agents · Auto-healing active · MOF advantage: no competitor has this</div></div>
+      <div class="ph-right"><button class="btn boutline" style="font-size:11px">⬇ Export Incident Log</button></div>
+    </div>
+    <div class="two-col" style="flex:1;overflow:hidden">
+      <div class="pscroll ppad">
+
+        <!-- 11 Metrics Grid -->
+        <div class="sp-sec" style="margin-top:0">Platform-Wide 11 Monitoring Metrics — Checked Every 5 Minutes</div>
+        <div class="metrics-11">
+          <div class="mcard mc-crit"><div class="mc-label">Response Latency</div><div class="mc-val" style="color:var(--red)">2.3s avg</div><div class="mc-threshold">Warn &gt;2s · Crit &gt;5s</div><div class="mc-bar"><div class="mcba" style="width:46%"></div></div><div class="mc-autoheal">Auto: Scale up resources</div></div>
+          <div class="mcard mc-ok"><div class="mc-label">Loop Detection</div><div class="mc-val" style="color:var(--green2)">0.3 / call avg</div><div class="mc-threshold">Warn: same Q 2× · Crit: 3×</div><div class="mc-bar"><div class="mcbg" style="width:15%"></div></div><div class="mc-autoheal">Auto: Change approach</div></div>
+          <div class="mcard mc-crit"><div class="mc-label">Transfer Rate</div><div class="mc-val" style="color:var(--red)">31% avg</div><div class="mc-threshold">Warn &gt;20% · Crit &gt;40%</div><div class="mc-bar"><div class="mcba" style="width:77%"></div></div><div class="mc-autoheal">Auto: Notify admin</div></div>
+          <div class="mcard mc-ok"><div class="mc-label">Sentiment Score</div><div class="mc-val" style="color:var(--green2)">4.2 / 5 avg</div><div class="mc-threshold">Warn &lt;3.0 · Crit &lt;2.0</div><div class="mc-bar"><div class="mcbg" style="width:84%"></div></div><div class="mc-autoheal">Auto: Review calls</div></div>
+          <div class="mcard mc-warn"><div class="mc-label">Knowledge Gaps</div><div class="mc-val" style="color:var(--amber)">3 unanswered Qs</div><div class="mc-threshold">Warn: same Q 3× unanswered</div><div class="mc-bar"><div class="mcba" style="width:60%"></div></div><div class="mc-autoheal">Auto: Suggest KB addition</div></div>
+          <div class="mcard mc-crit"><div class="mc-label">Webhook Status</div><div class="mc-val" style="color:var(--red)">1 failure</div><div class="mc-threshold">Crit: Failed health check</div><div class="mc-bar"><div class="mcbr" style="width:17%"></div></div><div class="mc-autoheal">Auto: Repair + notify</div></div>
+          <div class="mcard mc-ok"><div class="mc-label">Call Success Rate</div><div class="mc-val" style="color:var(--green2)">88% avg</div><div class="mc-threshold">Crit &lt;70%</div><div class="mc-bar"><div class="mcbg" style="width:88%"></div></div><div class="mc-autoheal">Auto: Training review</div></div>
+          <div class="mcard mc-ok"><div class="mc-label">Token Usage / Call</div><div class="mc-val">1,840 avg</div><div class="mc-threshold">Warn &gt;3,000 tokens</div><div class="mc-bar"><div class="mcbg" style="width:61%"></div></div><div class="mc-autoheal">Auto: Optimize prompt</div></div>
+          <div class="mcard mc-ok"><div class="mc-label">SMS Fallback Rate</div><div class="mc-val" style="color:var(--green2)">7.4% avg</div><div class="mc-threshold">Warn &gt;15% · Crit &gt;25%</div><div class="mc-bar"><div class="mcbg" style="width:30%"></div></div><div class="mc-autoheal">Auto: Check STT threshold</div></div>
+          <div class="mcard mc-ok"><div class="mc-label">Graceful Skip Rate</div><div class="mc-val" style="color:var(--green2)">1.6% avg</div><div class="mc-threshold">Warn &gt;5% · Crit &gt;10%</div><div class="mc-bar"><div class="mcbg" style="width:16%"></div></div><div class="mc-autoheal">Auto: Flag training gaps</div></div>
+          <div class="mcard mc-warn"><div class="mc-label">Hang-up During Re-ask</div><div class="mc-val" style="color:var(--amber)">3.1% avg</div><div class="mc-threshold">Warn &gt;2% · Crit &gt;5%</div><div class="mc-bar"><div class="mcba" style="width:62%"></div></div><div class="mc-autoheal">Auto: Adjust rephrase speed</div></div>
+        </div>
+
+        <!-- Active Alerts -->
+        <div class="sp-sec">Active Alerts — Requiring Attention</div>
+
+        <div class="alert-card ac-crit" onclick="toggleAlert(this)">
+          <div class="ac-head"><div class="ac-sev acsc">C</div><div><div class="ac-title">Webhook failure — Voice incoming broken</div><div class="ac-practice">Valley Ridge Family Medicine · Villa Rica, GA · Enterprise</div></div><div class="ac-time">10:38 AM</div><div class="ac-status acs-new">CRITICAL</div></div>
+          <div class="ac-body" style="display:none">
+            <div class="ac-desc">The voice incoming webhook at <code style="font-size:10px;background:var(--grl);padding:1px 4px;border-radius:3px">POST /webhook/voice</code> has been returning 503 errors for 6 minutes. Aria cannot answer calls for this practice. Auto-heal attempted ECS task restart — failed. Immediate manual intervention required.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="ac-heal-btn acb-red" onclick="event.stopPropagation();healWebhook()">⚡ Auto-Repair Webhook Now</button>
+              <button class="ac-heal-btn acb-outline" onclick="event.stopPropagation();switchPanel('impersonate',null);setSB(document.querySelectorAll('.sb-item')[3])">🔑 Start Impersonation</button>
+              <button class="ac-heal-btn acb-outline" onclick="event.stopPropagation();alert('Opening full webhook logs for Valley Ridge...')">📋 View Logs</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-card ac-crit" onclick="toggleAlert(this)">
+          <div class="ac-head"><div class="ac-sev acsc">C</div><div><div class="ac-title">Response latency 4.8s — above 5s critical threshold</div><div class="ac-practice">West Point Urgent Care · West Point, GA · Professional</div></div><div class="ac-time">10:41 AM</div><div class="ac-status acs-new">CRITICAL</div></div>
+          <div class="ac-body" style="display:none">
+            <div class="ac-desc">Aria's average response time has spiked to 4.8 seconds over the last 12 calls — approaching the 5s critical threshold. Likely cause: AWS Bedrock endpoint congestion or elevated token usage. Auto-scaling resources has been initiated. No calls have failed yet but patient experience is degraded.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="ac-heal-btn acb-red" onclick="event.stopPropagation();alert('Failover initiated: switching West Point Urgent Care to backup LLM endpoint (GPT-4o via Azure OpenAI). ETA 45 seconds.')">🔄 Failover to Backup LLM</button>
+              <button class="ac-heal-btn acb-outline" onclick="event.stopPropagation();alert('Token usage for West Point: 2,840 avg/call. Prompt optimization queued.')">📊 Token Analysis</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-card ac-warn" onclick="toggleAlert(this)">
+          <div class="ac-head"><div class="ac-sev acsw">W</div><div><div class="ac-title">Transfer rate 54% — above 40% critical threshold</div><div class="ac-practice">Valley Ridge Family Medicine · Enterprise · 8 providers</div></div><div class="ac-time">09:15 AM</div><div class="ac-status acs-inv">INVESTIGATING</div></div>
+          <div class="ac-body" style="display:none">
+            <div class="ac-desc">Valley Ridge's AI agent is transferring 54% of calls to staff — well above the 40% critical threshold. Root cause analysis: (1) Agent persona prompt is too robotic — low patient trust, (2) Billing KB has only 3 Q&As vs recommended 12+, (3) EHR integration not yet connected so agent can't look up patient records. Knowledge gap auto-suggestion queued for 6 unanswered billing questions.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="ac-heal-btn acb-amber" onclick="event.stopPropagation();alert('Opening prompt refinement tool for Valley Ridge agent... Auto-suggested persona improvement: make agent warmer, more empathetic, add practice-specific context.')">🤖 Fix Agent Prompt</button>
+              <button class="ac-heal-btn acb-outline" onclick="event.stopPropagation();alert('6 KB gaps detected in Billing category. Auto-drafting Q&A entries for admin review...')">📚 Fill KB Gaps</button>
+              <button class="ac-heal-btn acb-outline" onclick="event.stopPropagation();switchPanel('messages',null);setSB(document.querySelectorAll('.sb-item')[4])">💬 Message Practice</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-card ac-info" onclick="toggleAlert(this)">
+          <div class="ac-head"><div class="ac-sev acsi">I</div><div><div class="ac-title">Knowledge gap — "Do you take Medicare Advantage?" unanswered 4×</div><div class="ac-practice">Haralson County Pediatrics · Tallapoosa, GA · Lite</div></div><div class="ac-time">08:42 AM</div><div class="ac-status acs-mon">MONITORING</div></div>
+          <div class="ac-body" style="display:none">
+            <div class="ac-desc">4 callers today asked "Do you accept Medicare Advantage?" and Aria could not find an answer in the knowledge base. Auto-generated KB entry draft queued for practice admin review. If approved, will resolve this gap immediately. This pattern also appeared twice yesterday, suggesting a common patient query not yet in KB.</div>
+            <div style="display:flex;gap:8px">
+              <button class="ac-heal-btn" style="background:var(--bl);color:var(--blue)" onclick="event.stopPropagation();alert('Auto-generated KB entry:
+
+Q: Do you accept Medicare Advantage?
+A: Yes, we accept most Medicare Advantage plans. Please call with your specific plan name so we can verify your coverage with our billing team.
+
+Sent to practice admin for review.')">📝 View AI-Drafted KB Entry</button>
+              <button class="ac-heal-btn acb-outline" onclick="event.stopPropagation();alert('Message sent to Dr. Williams at Haralson County Peds: Please review and approve the new KB entry about Medicare Advantage.')">Send to Practice</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-card ac-heal" onclick="toggleAlert(this)">
+          <div class="ac-head"><div class="ac-sev acsh">✓</div><div><div class="ac-title">Auto-healed — STT confidence improved after rephrase adjustment</div><div class="ac-practice">Buchanan Rural Clinic · Buchanan, GA · Professional</div></div><div class="ac-time">08:10 AM</div><div class="ac-status acs-heal">AUTO-HEALED</div></div>
+          <div class="ac-body" style="display:none">
+            <div class="ac-desc">Hang-up rate during re-ask was 4.1% (warn threshold &gt;2%) at 7:45 AM. MOF monitoring detected the spike. Auto-healing adjusted the rephrase timing from 0.8s to 1.2s pause before retry, and slowed speaking pace for retry from 1.0× to 0.9×. By 8:10 AM, hang-up rate dropped to 0.9%. No human intervention needed.</div>
+          </div>
+        </div>
+
+        <!-- Auto-healing log -->
+        <div class="sp-sec">Auto-Heal Action Log — Today</div>
+        <div class="card">
+          <div class="cbody" style="padding:0">
+            <div style="display:flex;flex-direction:column">
+              <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--bdr);font-size:11px">
+                <span style="font-family:'JetBrains Mono',monospace;color:var(--tx3);width:55px">10:38</span>
+                <span style="width:100px;flex-shrink:0"><span class="tag tagr">Failed</span></span>
+                <span style="flex:1;color:var(--tx2)">Webhook repair attempted — ECS restart failed for Valley Ridge</span>
+                <button class="btn boutline" style="font-size:10px;padding:3px 8px">Retry</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--bdr);font-size:11px">
+                <span style="font-family:'JetBrains Mono',monospace;color:var(--tx3);width:55px">10:41</span>
+                <span style="width:100px;flex-shrink:0"><span class="tag taga">Running</span></span>
+                <span style="flex:1;color:var(--tx2)">Capacity scaling — adding compute for West Point response latency</span>
+                <span style="font-size:10px;color:var(--tx3)">ETA 2 min</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--bdr);font-size:11px">
+                <span style="font-family:'JetBrains Mono',monospace;color:var(--tx3);width:55px">09:15</span>
+                <span style="width:100px;flex-shrink:0"><span class="tag taga">Queued</span></span>
+                <span style="flex:1;color:var(--tx2)">KB gap-fill — 6 billing Q&A drafts queued for Valley Ridge admin review</span>
+                <button class="btn boutline" style="font-size:10px;padding:3px 8px">View Drafts</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--bdr);font-size:11px">
+                <span style="font-family:'JetBrains Mono',monospace;color:var(--tx3);width:55px">08:10</span>
+                <span style="width:100px;flex-shrink:0"><span class="tag tagg">✓ Healed</span></span>
+                <span style="flex:1;color:var(--tx2)">Rephrase timing adjusted — Buchanan hang-up rate 4.1% → 0.9%</span>
+                <span style="font-size:10px;color:var(--green2)">✓ Auto-resolved</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;font-size:11px">
+                <span style="font-family:'JetBrains Mono',monospace;color:var(--tx3);width:55px">07:30</span>
+                <span style="width:100px;flex-shrink:0"><span class="tag tagg">✓ Healed</span></span>
+                <span style="flex:1;color:var(--tx2)">Token optimization — Athens Sleep prompt trimmed 340 tokens (2,180→1,840)</span>
+                <span style="font-size:10px;color:var(--green2)">✓ Auto-resolved</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: per-practice alert summary -->
+      <div class="sidepanel">
+        <div class="sp-sec">Alert Summary by Practice</div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px;font-size:11px">
+          <div style="padding:8px 10px;background:var(--rl);border-radius:var(--rs);border:1px solid #FECACA">
+            <div style="font-weight:700;color:var(--red);margin-bottom:2px">🔴 Valley Ridge FM</div>
+            <div style="color:var(--tx3)">Webhook down · Transfer 54% · EHR missing</div>
+            <div style="margin-top:5px"><button class="btn" style="background:var(--red);color:#fff;font-size:10px;padding:3px 8px" onclick="switchPanel('drill',null);setSB(document.querySelectorAll('.sb-item')[2]);loadDrilldown('vr')">Drill Down →</button></div>
+          </div>
+          <div style="padding:8px 10px;background:var(--rl);border-radius:var(--rs);border:1px solid #FECACA">
+            <div style="font-weight:700;color:var(--red);margin-bottom:2px">🔴 West Point Urgent</div>
+            <div style="color:var(--tx3)">Response latency 4.8s · Near-critical</div>
+            <div style="margin-top:5px"><button class="btn" style="background:var(--red);color:#fff;font-size:10px;padding:3px 8px" onclick="switchPanel('drill',null);setSB(document.querySelectorAll('.sb-item')[2]);loadDrilldown('wp')">Drill Down →</button></div>
+          </div>
+          <div style="padding:8px 10px;background:var(--al);border-radius:var(--rs);border:1px solid #FDE68A">
+            <div style="font-weight:700;color:var(--amber);margin-bottom:2px">🟡 Haralson County Peds</div>
+            <div style="color:var(--tx3)">KB gap · Medicare Advantage 4× unanswered</div>
+          </div>
+          <div style="padding:8px 10px;background:var(--gl);border-radius:var(--rs);border:1px solid #A7F3D0">
+            <div style="font-weight:700;color:var(--green);margin-bottom:2px">🟢 Athens Sleep</div>
+            <div style="color:var(--tx3)">All metrics healthy · 87.3% containment</div>
+          </div>
+          <div style="padding:8px 10px;background:var(--gl);border-radius:var(--rs);border:1px solid #A7F3D0">
+            <div style="font-weight:700;color:var(--green);margin-bottom:2px">🟢 Buchanan Rural</div>
+            <div style="color:var(--tx3)">Auto-healed this morning · All OK</div>
+          </div>
+          <div style="padding:8px 10px;background:var(--gl);border-radius:var(--rs);border:1px solid #A7F3D0">
+            <div style="font-weight:700;color:var(--green);margin-bottom:2px">🟢 Coweta Family Med</div>
+            <div style="color:var(--tx3)">Healthy · 91% containment</div>
+          </div>
+        </div>
+        <div class="sp-sec">Monitoring Schedule</div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+          <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Health checks</span><span style="font-weight:600">Every 5 min</span></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Alert escalation</span><span style="font-weight:600">60 sec</span></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Auto-heal timeout</span><span style="font-weight:600">90 sec</span></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Last full scan</span><span style="font-weight:600;color:var(--green2)">2 min ago</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PANEL: DRILL-DOWN ═══ -->
+  <div class="panel" id="panel-drill">
+    <div class="page-head">
+      <div><div class="ph-title">🔍 Practice Drill-Down — Valley Ridge Family Medicine</div><div class="ph-sub">Villa Rica, GA · Enterprise $149/mo · 8 providers · acc_vr001 · Assigned: James Kim</div></div>
+      <div class="ph-right">
+        <select id="drillPractice" onchange="loadDrilldown(this.value)" class="fsel" style="width:220px;font-size:11px">
+          <option value="vr">Valley Ridge Family Medicine</option>
+          <option value="athens">Athens Sleep & Wellness ✓ Healthy</option>
+          <option value="buchanan">Buchanan Rural Clinic ✓ Healthy</option>
+          <option value="haralson">Haralson County Pediatrics ⚠ Warn</option>
+          <option value="wp">West Point Urgent Care 🔴 Critical</option>
+          <option value="coweta">Coweta Family Med ✓ Healthy</option>
+        </select>
+        <button class="btn bnavy" onclick="switchPanel('impersonate',null);setSB(document.querySelectorAll('.sb-item')[3])">🔑 Start Impersonation →</button>
+      </div>
+    </div>
+    <div class="drilldown-layout" style="flex:1;overflow:hidden">
+      <div class="pscroll ppad">
+        <div class="dd-nav">
+          <button class="dd-tab active" onclick="showDD(this,'overview')">Overview</button>
+          <button class="dd-tab" onclick="showDD(this,'health')">11 Metrics</button>
+          <button class="dd-tab" onclick="showDD(this,'calls')">Recent Calls</button>
+          <button class="dd-tab" onclick="showDD(this,'kb')">KB Gaps</button>
+          <button class="dd-tab" onclick="showDD(this,'config')">Config Checklist</button>
+        </div>
+
+        <div class="dd-section active" id="dd-overview">
+          <div class="notice nred">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            <span><strong>2 critical issues.</strong> Voice webhook down 6+ minutes — Aria cannot answer calls. Transfer rate 54% — significantly above 40% critical threshold. Immediate intervention needed.</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+            <div style="padding:12px;background:var(--surf);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;margin-bottom:4px">Health Score</div><div style="font-size:28px;font-weight:800;color:var(--red)">38</div><div style="font-size:10px;color:var(--red)">Critical</div></div>
+            <div style="padding:12px;background:var(--surf);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;margin-bottom:4px">Containment</div><div style="font-size:28px;font-weight:800;color:var(--red)">46%</div><div style="font-size:10px;color:var(--red)">Target 85%</div></div>
+            <div style="padding:12px;background:var(--surf);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;margin-bottom:4px">Transfer Rate</div><div style="font-size:28px;font-weight:800;color:var(--red)">54%</div><div style="font-size:10px;color:var(--red)">Critical &gt;40%</div></div>
+            <div style="padding:12px;background:var(--surf);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;margin-bottom:4px">Calls Today</div><div style="font-size:28px;font-weight:800;color:var(--amber)">14</div><div style="font-size:10px;color:var(--amber)">7 transferred</div></div>
+          </div>
+          <div class="card">
+            <div class="chead"><div class="cicon cicn">📋</div><div><div class="ctitle">Practice Info</div><div class="csub">Valley Ridge Family Medicine · Enterprise Plan · Since Mar 28, 2026</div></div></div>
+            <div class="cbody">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px">
+                <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">Location</span><span style="font-weight:600">Villa Rica, GA 30180</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">Specialty</span><span style="font-weight:600">Family Medicine</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">Providers</span><span style="font-weight:600">8 physicians</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">Plan</span><span style="font-weight:600;color:var(--purple)">Enterprise $149/mo</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">AI Number</span><span style="font-weight:600;font-family:'JetBrains Mono',monospace">(770) 555-0210</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">EHR</span><span style="font-weight:600;color:var(--red)">Not connected ⚠</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">Onboarding</span><span style="font-weight:600;color:var(--amber)">40% — stalled</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">Days since sign-up</span><span style="font-weight:600">21 days</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dd-section" id="dd-health">
+          <div class="metrics-11">
+            <div class="mcard mc-crit"><div class="mc-label">Response Latency</div><div class="mc-val" style="color:var(--amber)">1.9s</div><div class="mc-threshold">Warn &gt;2s · OK</div><div class="mc-bar"><div class="mcbg" style="width:38%"></div></div></div>
+            <div class="mcard mc-crit"><div class="mc-label">Loop Detection</div><div class="mc-val" style="color:var(--amber)">0.8 / call</div><div class="mc-threshold">Warn: same Q 2×</div><div class="mc-bar"><div class="mcba" style="width:40%"></div></div></div>
+            <div class="mcard mc-crit"><div class="mc-label">Transfer Rate</div><div class="mc-val" style="color:var(--red)">54%</div><div class="mc-threshold">Critical &gt;40%</div><div class="mc-bar"><div class="mcbr" style="width:100%"></div></div></div>
+            <div class="mcard mc-warn"><div class="mc-label">Sentiment Score</div><div class="mc-val" style="color:var(--amber)">3.2 / 5</div><div class="mc-threshold">Warn &lt;3.0</div><div class="mc-bar"><div class="mcba" style="width:64%"></div></div></div>
+            <div class="mcard mc-crit"><div class="mc-label">Knowledge Gaps</div><div class="mc-val" style="color:var(--red)">6 unanswered Qs</div><div class="mc-threshold">Warn: same Q 3×</div><div class="mc-bar"><div class="mcbr" style="width:80%"></div></div></div>
+            <div class="mcard mc-crit"><div class="mc-label">Webhook Status</div><div class="mc-val" style="color:var(--red)">DOWN</div><div class="mc-threshold">Critical: failed</div><div class="mc-bar"><div class="mcbr" style="width:100%"></div></div></div>
+            <div class="mcard mc-crit"><div class="mc-label">Call Success Rate</div><div class="mc-val" style="color:var(--red)">46%</div><div class="mc-threshold">Critical &lt;70%</div><div class="mc-bar"><div class="mcbr" style="width:46%"></div></div></div>
+            <div class="mcard mc-ok"><div class="mc-label">Token Usage</div><div class="mc-val">1,840</div><div class="mc-threshold">Warn &gt;3,000</div><div class="mc-bar"><div class="mcbg" style="width:55%"></div></div></div>
+            <div class="mcard mc-ok"><div class="mc-label">SMS Fallback Rate</div><div class="mc-val" style="color:var(--green2)">8.1%</div><div class="mc-threshold">Warn &gt;15%</div><div class="mc-bar"><div class="mcbg" style="width:32%"></div></div></div>
+            <div class="mcard mc-ok"><div class="mc-label">Graceful Skip Rate</div><div class="mc-val" style="color:var(--green2)">2.2%</div><div class="mc-threshold">Warn &gt;5%</div><div class="mc-bar"><div class="mcbg" style="width:22%"></div></div></div>
+            <div class="mcard mc-warn"><div class="mc-label">Hang-up Re-ask</div><div class="mc-val" style="color:var(--amber)">3.8%</div><div class="mc-threshold">Warn &gt;2%</div><div class="mc-bar"><div class="mcba" style="width:76%"></div></div></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn bnavy" onclick="healWebhook()">⚡ Repair Webhook Now</button>
+            <button class="btn bamber" onclick="alert('Opening prompt editor for Valley Ridge — suggestions: add warmth, add billing context, add EHR instructions')">🤖 Fix Agent Prompt</button>
+            <button class="btn boutline" onclick="alert('KB gap fill queued — 6 entries sent for admin review')">📚 Fill KB Gaps</button>
+          </div>
+        </div>
+
+        <div class="dd-section" id="dd-calls">
+          <div style="font-size:12px;color:var(--tx3);margin-bottom:10px">Last 8 calls — Valley Ridge Family Medicine</div>
+          <table class="agent-table">
+            <thead><tr><th>Time</th><th>Intent</th><th>Outcome</th><th>Duration</th><th>Sentiment</th><th>Issue</th></tr></thead>
+            <tbody>
+              <tr class="row-crit"><td style="font-size:11px;font-family:'JetBrains Mono',monospace">10:38</td><td><span class="tag tagb">Scheduling</span></td><td><span class="tag tagr">Failed — webhook down</span></td><td>—</td><td>—</td><td style="font-size:10px;color:var(--red)">Webhook broken</td></tr>
+              <tr class="row-warn"><td style="font-size:11px;font-family:'JetBrains Mono',monospace">10:22</td><td><span class="tag tagb">Billing</span></td><td><span class="tag taga">Transfer</span></td><td>2:14</td><td>😐</td><td style="font-size:10px;color:var(--amber)">KB gap — copay</td></tr>
+              <tr class="row-warn"><td style="font-size:11px;font-family:'JetBrains Mono',monospace">10:08</td><td><span class="tag tagb">FAQ</span></td><td><span class="tag taga">Transfer</span></td><td>1:42</td><td>😐</td><td style="font-size:10px;color:var(--amber)">Caller requested human</td></tr>
+              <tr class="row-ok"><td style="font-size:11px;font-family:'JetBrains Mono',monospace">09:51</td><td><span class="tag tagb">Scheduling</span></td><td><span class="tag tagg">Contained</span></td><td>3:18</td><td>😊</td><td style="font-size:10px;color:var(--green2)">OK</td></tr>
+              <tr class="row-warn"><td style="font-size:11px;font-family:'JetBrains Mono',monospace">09:34</td><td><span class="tag" style="background:var(--pl);color:var(--purple)">Billing</span></td><td><span class="tag taga">Transfer</span></td><td>1:58</td><td>😞</td><td style="font-size:10px;color:var(--amber)">KB gap — insurance</td></tr>
+              <tr class="row-ok"><td style="font-size:11px;font-family:'JetBrains Mono',monospace">09:17</td><td><span class="tag tagb">Scheduling</span></td><td><span class="tag tagg">Contained</span></td><td>4:02</td><td>😊</td><td style="font-size:10px;color:var(--green2)">OK</td></tr>
+              <tr class="row-ok"><td style="font-size:11px;font-family:'JetBrains Mono',monospace">09:02</td><td><span class="tag tagb">FAQ</span></td><td><span class="tag tagg">Contained</span></td><td>0:58</td><td>😊</td><td style="font-size:10px;color:var(--green2)">OK</td></tr>
+              <tr class="row-warn"><td style="font-size:11px;font-family:'JetBrains Mono',monospace">08:48</td><td><span class="tag" style="background:var(--pl);color:var(--purple)">Rx Refill</span></td><td><span class="tag taga">Transfer</span></td><td>2:31</td><td>😐</td><td style="font-size:10px;color:var(--amber)">KB gap — refill policy</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="dd-section" id="dd-kb">
+          <div class="notice namber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg><span><strong>6 KB gaps detected.</strong> AI has auto-drafted all 6 entries. Awaiting practice admin approval. MOF can push these directly as Super Admin.</span></div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="padding:10px 12px;background:var(--surf);border-radius:var(--rs);border:1.5px solid var(--amber)"><div style="font-size:12px;font-weight:600;margin-bottom:3px">Q: What is my copay for a sick visit?</div><div style="font-size:11px;color:var(--tx3);margin-bottom:6px">Asked 5× today · AI drafted answer awaiting review</div><div style="font-size:11px;font-style:italic;color:var(--tx2);padding:6px 8px;background:var(--grl);border-radius:4px;margin-bottom:6px">"Copay amounts depend on your insurance plan. For most plans we accept, a sick visit copay ranges from $20-$40. Please check your insurance card or call your insurer for your exact amount."</div><div style="display:flex;gap:5px"><button class="btn bgreen" style="font-size:10px;padding:4px 9px" onclick="approveKB(this)">Approve & Push</button><button class="btn boutline" style="font-size:10px;padding:4px 9px">Edit</button></div></div>
+            <div style="padding:10px 12px;background:var(--surf);border-radius:var(--rs);border:1.5px solid var(--amber)"><div style="font-size:12px;font-weight:600;margin-bottom:3px">Q: Do you accept Medicare Advantage?</div><div style="font-size:11px;color:var(--tx3);margin-bottom:6px">Asked 4× today · AI drafted answer awaiting review</div><div style="font-size:11px;font-style:italic;color:var(--tx2);padding:6px 8px;background:var(--grl);border-radius:4px;margin-bottom:6px">"Yes, Valley Ridge Family Medicine accepts most Medicare Advantage plans. Please provide your plan name when scheduling so we can verify your specific coverage."</div><div style="display:flex;gap:5px"><button class="btn bgreen" style="font-size:10px;padding:4px 9px" onclick="approveKB(this)">Approve & Push</button><button class="btn boutline" style="font-size:10px;padding:4px 9px">Edit</button></div></div>
+            <div style="padding:10px 12px;background:var(--surf);border-radius:var(--rs);border:1.5px solid var(--amber)"><div style="font-size:12px;font-weight:600;margin-bottom:3px">Q: How do I request a prescription refill?</div><div style="font-size:11px;color:var(--tx3);margin-bottom:6px">Asked 3× today · AI drafted answer awaiting review</div><div style="font-size:11px;font-style:italic;color:var(--tx2);padding:6px 8px;background:var(--grl);border-radius:4px;margin-bottom:6px">"Prescription refill requests can be made through your patient portal or by calling our office. Please allow 2-3 business days. Controlled substance refills require an in-person visit."</div><div style="display:flex;gap:5px"><button class="btn bgreen" style="font-size:10px;padding:4px 9px" onclick="approveKB(this)">Approve & Push</button><button class="btn boutline" style="font-size:10px;padding:4px 9px">Edit</button></div></div>
+          </div>
+        </div>
+
+        <div class="dd-section" id="dd-config">
+          <div class="slabel" style="font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin-bottom:10px">Onboarding Checklist — 40% Complete</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--gl);border-radius:var(--rs);border:1px solid #A7F3D0"><span style="color:var(--green)">✓</span><span style="flex:1;font-size:12px">Practice profile created & NPI verified</span><span class="tag tagg">Done</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--gl);border-radius:var(--rs);border:1px solid #A7F3D0"><span style="color:var(--green)">✓</span><span style="flex:1;font-size:12px">Phone number provisioned (770) 555-0210</span><span class="tag tagg">Done</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--gl);border-radius:var(--rs);border:1px solid #A7F3D0"><span style="color:var(--green)">✓</span><span style="flex:1;font-size:12px">Stripe payment connected · Enterprise $149/mo</span><span class="tag tagg">Done</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--al);border-radius:var(--rs);border:1px solid #FDE68A"><span style="color:var(--amber)">⚠</span><span style="flex:1;font-size:12px">Knowledge base — only 4 of 20+ Q&As added</span><span class="tag taga">In Progress</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--rl);border-radius:var(--rs);border:1px solid #FECACA"><span style="color:var(--red)">✗</span><span style="flex:1;font-size:12px">EHR integration (Epic) — not connected</span><span class="tag tagr">Blocked</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--rl);border-radius:var(--rs);border:1px solid #FECACA"><span style="color:var(--red)">✗</span><span style="flex:1;font-size:12px">Call forwarding rules — not configured</span><span class="tag tagr">Not started</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--rl);border-radius:var(--rs);border:1px solid #FECACA"><span style="color:var(--red)">✗</span><span style="flex:1;font-size:12px">BAA countersigned by MOF</span><span class="tag tagr">Pending</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)"><span style="color:var(--tx3)">○</span><span style="flex:1;font-size:12px">First successful AI booking ("Aha Moment")</span><span class="tag" style="background:var(--grl);color:var(--tx3)">Not yet</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drill-Down Sidebar -->
+      <div class="sidepanel">
+        <div class="sp-sec">Quick Actions — Valley Ridge FM</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
+          <button class="btn bnavy" style="width:100%;justify-content:flex-start;gap:8px" onclick="switchPanel('impersonate',null);setSB(document.querySelectorAll('.sb-item')[3])">🔑 Start Impersonation Session</button>
+          <button class="btn bamber" style="width:100%;justify-content:flex-start;gap:8px" onclick="healWebhook()">⚡ Repair Webhook Now</button>
+          <button class="btn bgreen" style="width:100%;justify-content:flex-start;gap:8px" onclick="switchPanel('messages',null);setSB(document.querySelectorAll('.sb-item')[4])">💬 Message Practice Admin</button>
+          <button class="btn boutline" style="width:100%;justify-content:flex-start;gap:8px" onclick="alert('Scheduling outreach call with Valley Ridge PM Sarah Lee for today at 2 PM ET.')">📞 Schedule Outreach Call</button>
+          <button class="btn boutline" style="width:100%;justify-content:flex-start;gap:8px" onclick="alert('Resending BAA for Valley Ridge FM — Dr. Williams will receive email with countersign link.')">📋 Resend BAA</button>
+        </div>
+        <div class="sp-sec">Assigned Admin Team</div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Account lead</span><span style="font-weight:700">James Kim</span></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Technical</span><span style="font-weight:700">Mike Torres</span></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Financial</span><span style="font-weight:700">Amy Chen</span></div>
+        </div>
+        <div class="sp-sec">Revenue</div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+          <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>MRR</span><span style="font-weight:700;color:var(--purple)">$149/mo</span></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Since</span><span style="font-weight:700">Mar 28, 2026</span></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>LTV projection</span><span style="font-weight:700">$5,364/yr</span></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--al);border-radius:5px;border:1px solid #FDE68A"><span style="color:var(--amber)">Churn risk</span><span style="font-weight:700;color:var(--amber)">HIGH ⚠</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PANEL: IMPERSONATION ═══ -->
+  <div class="panel" id="panel-impersonate">
+    <div class="page-head">
+      <div><div class="ph-title">🔑 Impersonation Mode</div><div class="ph-sub">Access practice accounts securely without their credentials · Every action immutably logged · Practice notified automatically</div></div>
+    </div>
+    <div class="two-col" style="flex:1;overflow:hidden">
+      <div class="pscroll ppad">
+        <!-- Active session banner -->
+        <div class="imp-bar">
+          <div class="imp-bar-icon">🔑</div>
+          <div style="flex:1">
+            <div class="imp-bar-title">Active Session: Valley Ridge Family Medicine</div>
+            <div class="imp-bar-sub">Session ID: ses_vr_0418_1038 · Started 10:38 AM · Reason: Webhook failure investigation · Mike Torres</div>
+          </div>
+          <div class="imp-timer" id="impTimer">28:47</div>
+          <div class="imp-actions">
+            <button class="btn" style="background:rgba(255,255,255,.15);color:#fff;font-size:11px" onclick="alert('Opening resolution tools inside Valley Ridge session...')">🔧 Resolution Tools</button>
+            <button class="btn" style="background:var(--red);color:#fff;font-size:11px" onclick="endImpersonation()">✕ End Session</button>
+          </div>
+        </div>
+
+        <!-- Inside impersonation view -->
+        <div class="notice nblue" style="margin-bottom:14px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>You are viewing Valley Ridge Family Medicine as Practice Admin. All changes you make are logged in the immutable audit trail. The practice admin received an automated notification at 10:38 AM.</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+          <div class="card">
+            <div class="chead"><div class="cicon cicn">⚡</div><div><div class="ctitle">Webhook Repair Tool</div><div class="csub">Fix broken Twilio → Aria connection</div></div></div>
+            <div class="cbody">
+              <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:10px">
+                <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--rl);border-radius:5px;border:1px solid #FECACA"><span>POST /webhook/voice</span><span style="color:var(--red);font-weight:700">❌ 503</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>POST /webhook/sms-reply</span><span style="color:var(--green);font-weight:700">✓ OK</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>POST /webhook/voice-status</span><span style="color:var(--green);font-weight:700">✓ OK</span></div>
+              </div>
+              <button class="btn bamber" style="width:100%;justify-content:center" onclick="healWebhook()">⚡ Attempt Auto-Repair</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="chead"><div class="cicon cica">🤖</div><div><div class="ctitle">Prompt Refinement</div><div class="csub">Edit agent persona and script</div></div></div>
+            <div class="cbody">
+              <div class="fgroup"><label class="flabel">Agent Name</label><input type="text" class="finput" value="Valerie (Valley Ridge)"></div>
+              <div class="fgroup"><label class="flabel">Tone</label><select class="fsel"><option>Warm and empathetic</option><option>Professional</option><option>Casual and friendly</option></select></div>
+              <button class="btn bgreen" style="width:100%;justify-content:center" onclick="alert('Prompt updated! Valley Ridge agent Valerie is now warmer and more empathetic. Changes logged in audit trail.')">Save Prompt Changes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Start new session -->
+        <div class="card">
+          <div class="chead"><div class="cicon cicn">🔑</div><div><div class="ctitle">Start New Impersonation Session</div><div class="csub">Access any practice account — all actions logged</div></div></div>
+          <div class="cbody">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+              <div class="fgroup"><label class="flabel">Practice</label><select class="fsel"><option>Valley Ridge Family Medicine</option><option>Athens Sleep & Wellness</option><option>Buchanan Rural Clinic</option><option>Haralson County Pediatrics</option><option>West Point Urgent Care</option></select></div>
+              <div class="fgroup"><label class="flabel">Admin performing session</label><select class="fsel"><option>James Kim (Super Admin)</option><option>Mike Torres (Technical)</option><option>Sarah Lee (Regional)</option></select></div>
+            </div>
+            <div class="fgroup"><label class="flabel">Reason (HIPAA required)</label><select class="fsel"><option>Webhook failure repair</option><option>Prompt / persona refinement</option><option>KB upload and training</option><option>EHR integration setup</option><option>Call routing configuration</option><option>Patient complaint investigation</option></select></div>
+            <div class="fgroup"><label class="flabel">Notes</label><input type="text" class="finput" placeholder="Additional context for audit log..."></div>
+            <div class="notice namber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+              <span><strong>Compliance:</strong> Practice admin receives automated email. Session limited to 30 minutes. All actions immutably logged. Cannot be deleted or modified.</span>
+            </div>
+            <button class="btn bnavy" onclick="startImpersonation()">🔓 Start Impersonation Session</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audit sidebar -->
+      <div class="sidepanel">
+        <div class="sp-sec">Impersonation Audit Log — Today</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px">
+          <div style="padding:7px 10px;background:var(--al);border-radius:5px;border:1px solid #FDE68A">
+            <div style="font-weight:700;color:var(--amber);margin-bottom:2px">🟡 Active Now</div>
+            <div style="font-weight:600">Mike Torres → Valley Ridge FM</div>
+            <div style="color:var(--tx3)">Webhook repair · Started 10:38 AM</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tx3);margin-top:2px">ses_vr_0418_1038</div>
+          </div>
+          <div style="padding:7px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)">
+            <div style="font-weight:600;color:var(--tx2)">James Kim → Athens Sleep</div>
+            <div style="color:var(--tx3)">Prompt refinement · 09:15 AM · 14 min</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tx3)">ses_as_0418_0915</div>
+          </div>
+          <div style="padding:7px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)">
+            <div style="font-weight:600;color:var(--tx2)">Sarah Lee → Buchanan Rural</div>
+            <div style="color:var(--tx3)">KB upload · Yesterday 3:22 PM · 22 min</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tx3)">ses_bc_0417_1522</div>
+          </div>
+        </div>
+        <div class="sp-sec" style="margin-top:12px">Session Rules</div>
+        <div style="font-size:11px;color:var(--tx2);line-height:1.7">
+          ⏱ Max 30 minutes per session<br>
+          📧 Practice notified automatically<br>
+          📋 All actions immutably logged<br>
+          🚫 Cannot delete audit entries<br>
+          👁 James Kim can review all sessions<br>
+          ⚠ Used for support only — not testing
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PANEL: MESSAGES ═══ -->
+  <div class="panel" id="panel-messages">
+    <div class="page-head">
+      <div><div class="ph-title">💬 Bidirectional Messaging</div><div class="ph-sub">Direct communication between MOF admins and practice administrators · 2 unread messages</div></div>
+      <div class="ph-right"><button class="btn bnavy" onclick="composeMsg()">+ Compose Message</button></div>
+    </div>
+    <div class="msg-layout" style="flex:1;overflow:hidden">
+      <!-- Message list -->
+      <div class="msg-list">
+        <div style="padding:10px 14px;border-bottom:1px solid var(--bdr);display:flex;gap:6px">
+          <input type="text" style="flex:1;padding:5px 10px;border:1.5px solid var(--bdr);border-radius:20px;font-size:11px;font-family:'Outfit',sans-serif;outline:none" placeholder="Search messages...">
+        </div>
+        <div class="msg-item msg-sel msg-unread" onclick="selThread(this,'vr')">
+          <div class="msg-time">10:41 AM</div>
+          <div class="msg-name">Valley Ridge Family Medicine <span class="msg-unread-dot"></span></div>
+          <div class="msg-preview">Re: Webhook Issue - We noticed Aria stopped answering calls...</div>
+        </div>
+        <div class="msg-item msg-unread" onclick="selThread(this,'wp')">
+          <div class="msg-time">09:58 AM</div>
+          <div class="msg-name">West Point Urgent Care <span class="msg-unread-dot"></span></div>
+          <div class="msg-preview">Patients are complaining about slow response times from the AI...</div>
+        </div>
+        <div class="msg-item" onclick="selThread(this,'athens')">
+          <div class="msg-time">Yesterday</div>
+          <div class="msg-name">Athens Sleep & Wellness</div>
+          <div class="msg-preview">Thank you! The Spanish KB entries are now approved and Aria is working great.</div>
+        </div>
+        <div class="msg-item" onclick="selThread(this,'buchanan')">
+          <div class="msg-time">Apr 16</div>
+          <div class="msg-name">Buchanan Rural Clinic</div>
+          <div class="msg-preview">Dr. Patel wanted me to thank Mike for fixing the webhook so quickly...</div>
+        </div>
+        <div class="msg-item" onclick="selThread(this,'haralson')">
+          <div class="msg-time">Apr 15</div>
+          <div class="msg-name">Haralson County Pediatrics</div>
+          <div class="msg-preview">Can you help us add more KB entries for pediatric scheduling?</div>
+        </div>
+      </div>
+
+      <!-- Active thread -->
+      <div class="msg-thread">
+        <div class="msg-thread-head">
+          <div class="msg-thread-title" id="msgThreadTitle">Valley Ridge Family Medicine</div>
+          <div class="msg-thread-sub" id="msgThreadSub">Dr. Williams · Practice Admin · Villa Rica, GA · Enterprise Plan</div>
+        </div>
+        <div class="msg-messages" id="msgMessages">
+          <div class="msg-bubble mb-practice">
+            <div style="font-size:10px;font-weight:700;color:rgba(0,0,0,.4);margin-bottom:4px">Dr. Williams · Valley Ridge FM</div>
+            Hi James — our front desk is getting calls saying the AI isn&apos;t picking up. Patients are frustrated. Is something wrong with the system?
+          </div>
+          <div class="mb-meta left">Today 10:41 AM</div>
+
+          <div class="msg-bubble mb-mof">
+            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:4px">James Kim · MOF Super Admin</div>
+            Hi Dr. Williams! We caught this at 10:38 AM — our monitoring system detected the voice webhook failure before any patients reported it. Mike Torres is in an impersonation session right now working on the repair. ETA: 15 minutes. I&apos;ll message you as soon as it&apos;s back up.
+          </div>
+          <div class="mb-meta">James Kim · 10:43 AM · Delivered ✓</div>
+
+          <div class="msg-bubble mb-practice">
+            <div style="font-size:10px;font-weight:700;color:rgba(0,0,0,.4);margin-bottom:4px">Dr. Williams · Valley Ridge FM</div>
+            Thank you — that&apos;s reassuring. Also, we&apos;ve been meaning to ask: our agent is transferring a LOT of calls to our front desk. Is there something we can do to improve the AI containment?
+          </div>
+          <div class="mb-meta left">Today 10:44 AM</div>
+
+          <div id="msgDraft" style="display:none">
+            <div class="msg-bubble mb-mof">
+              <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:4px">James Kim · MOF Super Admin</div>
+              Yes, great question! Your current containment rate is 46% — our target is 85%+. The main issues are: (1) Your KB only has 4 Q&A entries — we recommend 15+, especially for billing and insurance, (2) The EHR isn&apos;t connected yet so Aria can&apos;t look up patient records, (3) Your agent prompt needs to be warmer. Mike will fix items 1 and 3 during his session. For item 2, can we schedule 30 min this week to connect Epic?
+            </div>
+            <div class="mb-meta">Just now · Sending...</div>
+          </div>
+        </div>
+        <div class="msg-compose">
+          <textarea class="msg-input" rows="2" id="msgInput" placeholder="Type a message to Valley Ridge Family Medicine...">Yes, great question! Your current containment rate is 46% — our target is 85%+. The main issues are: (1) Your KB only has 4 Q&A entries — we recommend 15+, especially for billing. (2) The EHR isn't connected yet. (3) Your agent prompt needs warmth. Mike is fixing 1 and 3 now. Can we connect Epic this week?</textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;gap:5px">
+              <button class="btn boutline" style="font-size:11px;padding:5px 10px" onclick="insertTemplate()">📋 Templates</button>
+              <button class="btn boutline" style="font-size:11px;padding:5px 10px" onclick="alert('Attaching KB gap report for Valley Ridge...')">📎 Attach</button>
+            </div>
+            <button class="btn bnavy" onclick="sendMsg()">Send Message →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PANEL: REVENUE ═══ -->
+  <div class="panel" id="panel-revenue">
+    <div class="page-head">
+      <div><div class="ph-title">💰 Revenue & Billing Dashboard</div><div class="ph-sub">All 6 practices · MRR tracking · Stripe integration · April 2026</div></div>
+      <div class="ph-right"><button class="btn boutline" style="font-size:11px">⬇ Export P&L</button><button class="btn bgreen" style="font-size:11px">📊 Full Report</button></div>
+    </div>
+    <div class="pscroll ppad" style="flex:1">
+      <div class="stats-row" style="grid-template-columns:repeat(5,1fr)">
+        <div class="stat"><div class="stat-val" style="color:var(--green2)">$634</div><div class="stat-label">Monthly MRR</div><div class="stat-delta up">↑ 8% vs Mar</div></div>
+        <div class="stat"><div class="stat-val">$7,608</div><div class="stat-label">ARR</div><div class="stat-delta up">↑ growing</div></div>
+        <div class="stat"><div class="stat-val" style="color:var(--green2)">6</div><div class="stat-label">Paying Practices</div><div class="stat-delta up">All current</div></div>
+        <div class="stat"><div class="stat-val">$0</div><div class="stat-label">Overdue</div><div class="stat-delta up">Clean ARR</div></div>
+        <div class="stat"><div class="stat-val">97%</div><div class="stat-label">Collection Rate</div><div class="stat-delta up">Excellent</div></div>
+      </div>
+      <div class="card">
+        <div class="chead"><div class="cicon cicg">💰</div><div><div class="ctitle">Revenue by Practice — April 2026</div><div class="csub">Subscription + usage · Auto-invoiced via Stripe</div></div></div>
+        <div class="cbody" style="padding:0">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead><tr style="background:var(--grl)"><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Practice</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Plan</th><th style="padding:8px 14px;text-align:right;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Subscription</th><th style="padding:8px 14px;text-align:right;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Usage</th><th style="padding:8px 14px;text-align:right;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Total</th><th style="padding:8px 14px;text-align:center;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Status</th></tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:10px 14px;font-weight:600">Athens Sleep & Wellness</td><td style="padding:10px 14px"><span class="tag tagb">Professional</span></td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace">$79.00</td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--tx3)">$0.00</td><td style="padding:10px 14px;text-align:right;font-weight:700;font-family:'JetBrains Mono',monospace">$79.00</td><td style="padding:10px 14px;text-align:center"><span class="tag tagg">Paid ✓</span></td></tr>
+              <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:10px 14px;font-weight:600">Valley Ridge Family Medicine</td><td style="padding:10px 14px"><span class="tag tagp" style="background:var(--pl);color:var(--purple)">Enterprise</span></td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace">$149.00</td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--tx3)">$0.00</td><td style="padding:10px 14px;text-align:right;font-weight:700;font-family:'JetBrains Mono',monospace">$149.00</td><td style="padding:10px 14px;text-align:center"><span class="tag tagg">Paid ✓</span></td></tr>
+              <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:10px 14px;font-weight:600">Buchanan Rural Clinic</td><td style="padding:10px 14px"><span class="tag tagb">Professional</span></td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace">$79.00</td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--tx3)">$0.00</td><td style="padding:10px 14px;text-align:right;font-weight:700;font-family:'JetBrains Mono',monospace">$79.00</td><td style="padding:10px 14px;text-align:center"><span class="tag tagg">Paid ✓</span></td></tr>
+              <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:10px 14px;font-weight:600">Haralson County Pediatrics</td><td style="padding:10px 14px"><span class="tag" style="background:var(--grl);color:var(--tx3)">Lite</span></td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace">$30.00</td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--tx3)">$0.00</td><td style="padding:10px 14px;text-align:right;font-weight:700;font-family:'JetBrains Mono',monospace">$30.00</td><td style="padding:10px 14px;text-align:center"><span class="tag tagg">Paid ✓</span></td></tr>
+              <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:10px 14px;font-weight:600">West Point Urgent Care</td><td style="padding:10px 14px"><span class="tag tagb">Professional</span></td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace">$79.00</td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--tx3)">$0.00</td><td style="padding:10px 14px;text-align:right;font-weight:700;font-family:'JetBrains Mono',monospace">$79.00</td><td style="padding:10px 14px;text-align:center"><span class="tag tagg">Paid ✓</span></td></tr>
+              <tr><td style="padding:10px 14px;font-weight:600">Coweta Family Medicine</td><td style="padding:10px 14px"><span class="tag tagb">Professional</span></td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace">$79.00</td><td style="padding:10px 14px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--tx3)">$139.50</td><td style="padding:10px 14px;text-align:right;font-weight:700;font-family:'JetBrains Mono',monospace">$218.50</td><td style="padding:10px 14px;text-align:center"><span class="tag tagg">Paid ✓</span></td></tr>
+              <tr style="background:var(--grl)"><td style="padding:10px 14px;font-weight:800">TOTAL</td><td></td><td style="padding:10px 14px;text-align:right;font-weight:800;font-family:'JetBrains Mono',monospace">$495.00</td><td style="padding:10px 14px;text-align:right;font-weight:800;font-family:'JetBrains Mono',monospace">$139.50</td><td style="padding:10px 14px;text-align:right;font-weight:800;font-size:14px;font-family:'JetBrains Mono',monospace;color:var(--green2)">$634.50</td><td style="padding:10px 14px;text-align:center"><span class="tag tagg">All collected</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- main -->
+</div><!-- app -->
+
+<script>
+// ══ AGENT DATA ══
+const AGENTS=[
+  {name:"Athens Sleep & Wellness",loc:"Athens, GA",plan:"Professional",score:92,scoreC:"good",status:"Live",containment:87,response:"1.3s",rC:"good",loops:0,lC:"good",sentiment:"4.4",sC:"good",transfer:"13%",tC:"good",calls:53,admin:"Priya Nair",alerts:0},
+  {name:"Buchanan Rural Clinic",loc:"Buchanan, GA",plan:"Professional",score:88,scoreC:"good",status:"Live",containment:84,response:"1.6s",rC:"good",loops:0,lC:"good",sentiment:"4.1",sC:"good",transfer:"16%",tC:"good",calls:31,admin:"Sarah Lee",alerts:0},
+  {name:"Coweta Family Medicine",loc:"Newnan, GA",plan:"Professional",score:91,scoreC:"good",status:"Live",containment:91,response:"1.2s",rC:"good",loops:0,lC:"good",sentiment:"4.6",sC:"good",transfer:"9%",tC:"good",calls:44,admin:"Priya Nair",alerts:0},
+  {name:"Haralson County Pediatrics",loc:"Tallapoosa, GA",plan:"Lite",score:74,scoreC:"warn",status:"Warning",containment:78,response:"1.8s",rC:"good",loops:1,lC:"warn",sentiment:"3.8",sC:"warn",transfer:"22%",tC:"warn",calls:19,admin:"Priya Nair",alerts:1},
+  {name:"West Point Urgent Care",loc:"West Point, GA",plan:"Professional",score:58,scoreC:"warn",status:"Warning",containment:71,response:"4.8s",rC:"crit",loops:2,lC:"warn",sentiment:"3.1",sC:"warn",transfer:"29%",tC:"warn",calls:27,admin:"Mike Torres",alerts:2},
+  {name:"Valley Ridge Family Medicine",loc:"Villa Rica, GA",plan:"Enterprise",score:38,scoreC:"crit",status:"Critical",containment:46,response:"—",rC:"crit",loops:3,lC:"crit",sentiment:"3.2",sC:"warn",transfer:"54%",tC:"crit",calls:14,admin:"James Kim",alerts:3},
+];
+
+function scoreColor(s){return s>=80?"mc-good":s>=60?"mc-warn":"mc-crit";}
+function scoreBarClass(s){return s>=80?"hbg":s>=60?"hba":"hbr";}
+function rowClass(s){return s==="Critical"?"row-crit":s==="Warning"?"row-warn":"row-ok";}
+
+function renderAgentTable(){
+  const tbody=document.getElementById("agentTableBody");
+  tbody.innerHTML=AGENTS.map((a,i)=>`
+    <tr class="${rowClass(a.status)}" onclick="drillAgent(${i})">
+      <td>
+        <div style="font-weight:600;font-size:12px">${a.name}</div>
+        <div style="font-size:10px;color:var(--tx3)">${a.loc} · ${a.plan}</div>
+      </td>
+      <td><span class="agent-status ${a.status==="Live"?"as-live":a.status==="Warning"?"as-warn":a.status==="Critical"?"as-crit":"as-off"}">${a.status}</span>${a.alerts>0?'<span class="tag tagr" style="margin-left:4px;font-size:9px">'+a.alerts+" alert"+(a.alerts>1?"s":"")+"</span>":""}</td>
+      <td>
+        <div class="health-score">
+          <div class="hs-val ${scoreColor(a.score)}">${a.score}</div>
+          <div>
+            <div class="hs-bar"><div class="hb-fill ${scoreBarClass(a.score)}" style="width:${a.score}%"></div></div>
+          </div>
+        </div>
+      </td>
+      <td class="metric-cell ${a.containment>=80?"mc-good":a.containment>=70?"mc-warn":"mc-crit"}">${a.containment}%</td>
+      <td class="metric-cell ${a.rC==="good"?"mc-good":a.rC==="warn"?"mc-warn":"mc-crit"}">${a.response}</td>
+      <td class="metric-cell ${a.lC==="good"?"mc-good":a.lC==="warn"?"mc-warn":"mc-crit"}">${a.loops}</td>
+      <td class="metric-cell ${a.sC==="good"?"mc-good":a.sC==="warn"?"mc-warn":"mc-crit"}">${a.sentiment}/5</td>
+      <td class="metric-cell ${a.tC==="good"?"mc-good":a.tC==="warn"?"mc-warn":"mc-crit"}">${a.transfer}</td>
+      <td class="metric-cell">${a.calls}</td>
+      <td style="font-size:11px">${a.admin}</td>
+      <td>
+        <div style="display:flex;gap:3px">
+          <button class="btn boutline" style="font-size:10px;padding:3px 7px" onclick="event.stopPropagation();drillAgent(${i})">View</button>
+          ${a.status!=="Live"?'<button class="btn bamber" style="font-size:10px;padding:3px 7px" onclick="event.stopPropagation();healAgent('+i+')">Fix</button>':""}
+        </div>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function drillAgent(i){
+  const a=AGENTS[i];
+  const dd=document.getElementById("drillPractice");
+  if(dd) dd.selectedIndex=i;
+  switchPanel("drill",null);
+  setSB(document.querySelectorAll(".sb-item")[2]);
+  loadDrilldown(["athens","buchanan","coweta","haralson","wp","vr"][i]);
+}
+
+function healAgent(i){alert("Auto-healing initiated for "+AGENTS[i].name+"...
+
+Checking: webhooks, latency, KB gaps, prompt optimization.
+ETA: 90 seconds.");}
+
+// ══ PANEL SWITCHING ══
+function switchPanel(id,btn){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  document.getElementById("panel-"+id).classList.add("active");
+  document.querySelectorAll(".tb-navbtn").forEach(b=>b.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+}
+
+function setSB(el){
+  document.querySelectorAll(".sb-item").forEach(i=>i.classList.remove("active"));
+  if(el) el.classList.add("active");
+}
+
+// ══ ALERT TOGGLE ══
+function toggleAlert(card){
+  const body=card.querySelector(".ac-body");
+  if(body) body.style.display=body.style.display==="none"?"block":"none";
+}
+
+// ══ DRILL-DOWN TABS ══
+function showDD(btn,section){
+  document.querySelectorAll(".dd-tab").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".dd-section").forEach(s=>s.classList.remove("active"));
+  btn.classList.add("active");
+  const el=document.getElementById("dd-"+section);
+  if(el) el.classList.add("active");
+}
+
+function loadDrilldown(key){
+  const names={vr:"Valley Ridge Family Medicine",athens:"Athens Sleep & Wellness",buchanan:"Buchanan Rural Clinic",haralson:"Haralson County Pediatrics",wp:"West Point Urgent Care",coweta:"Coweta Family Medicine"};
+  const head=document.querySelector("#panel-drill .page-head .ph-title");
+  if(head) head.textContent="🔍 Practice Drill-Down — "+(names[key]||key);
+}
+
+// ══ IMPERSONATION ══
+let impSeconds=1727;
+setInterval(()=>{
+  impSeconds=Math.max(0,impSeconds-1);
+  const m=Math.floor(impSeconds/60);const s=impSeconds%60;
+  const el=document.getElementById("impTimer");
+  if(el) el.textContent=m+":"+(s<10?"0":"")+s;
+},1000);
+
+function startImpersonation(){alert("✅ Impersonation session started!
+
+Session ID: ses_"+Math.random().toString(36).substr(2,8)+"
+Practice admin notified via email.
+Audit logging active.
+Timer: 30:00 minutes.
+
+You now have full access to the selected practice account.");}
+function endImpersonation(){if(confirm("End impersonation session now?
+
+All changes have been logged. Practice admin will be notified that the session has ended."))alert("Session ended. Audit log entry created. Practice admin notified.");}
+function healWebhook(){alert("⚡ Webhook repair initiated!
+
+Action: Restarting ECS task for voice webhook endpoint
+Expected resolution: ~90 seconds
+
+If auto-repair fails, Mike Torres will be paged.
+Audit log: whr_"+Math.random().toString(36).substr(2,8));}
+
+// ══ MESSAGING ══
+const THREADS={
+  vr:{title:"Valley Ridge Family Medicine",sub:"Dr. Williams · Practice Admin · Villa Rica, GA · Enterprise Plan"},
+  wp:{title:"West Point Urgent Care",sub:"Dr. Anderson · Practice Admin · West Point, GA · Professional Plan"},
+  athens:{title:"Athens Sleep & Wellness",sub:"Dr. Agrawal · Practice Admin · Athens, GA · Professional Plan"},
+  buchanan:{title:"Buchanan Rural Clinic",sub:"Dr. Patel · Practice Admin · Buchanan, GA · Professional Plan"},
+  haralson:{title:"Haralson County Pediatrics",sub:"Dr. Williams · Practice Admin · Tallapoosa, GA · Lite Plan"}
+};
+
+function selThread(el,key){
+  document.querySelectorAll(".msg-item").forEach(m=>m.classList.remove("msg-sel","msg-unread"));
+  el.classList.add("msg-sel");
+  const t=THREADS[key]||{title:key,sub:""};
+  document.getElementById("msgThreadTitle").textContent=t.title;
+  document.getElementById("msgThreadSub").textContent=t.sub;
+}
+
+function sendMsg(){
+  const draft=document.getElementById("msgDraft");
+  if(draft) draft.style.display="block";
+  document.getElementById("msgInput").value="";
+  setTimeout(()=>{if(draft) draft.querySelector(".mb-meta").textContent="Just now · Delivered ✓";},1200);
+}
+
+function composeMsg(){alert("New message composer opens — select recipient practice, type message, choose from templates (Welcome, Stalled Onboarding, KB Gap Detected, Urgent Alert, Go-Live Celebration)");}
+function insertTemplate(){alert("Templates:
+1. Welcome new practice
+2. Stalled onboarding — action needed
+3. KB gap detected — please add entries
+4. Urgent: agent issue detected
+5. 🎉 First AI booking — congratulations!");}
+
+// ══ KB APPROVE ══
+function approveKB(btn){
+  const item=btn.closest("div[style*='border:1.5px solid']");
+  if(item){
+    item.style.borderColor="#A7F3D0";
+    item.style.background="var(--gl)";
+    btn.textContent="✓ Approved";
+    btn.className="btn bgreen";
+    btn.disabled=true;
+  }
+}
+
+// ══ DD SECTION ══
+function showDD(btn,section){
+  document.querySelectorAll(".dd-tab").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".dd-section").forEach(s=>s.classList.remove("active"));
+  btn.classList.add("active");
+  const el=document.getElementById("dd-"+section);
+  if(el) el.classList.add("active");
+}
+
+// ══ INIT ══
+renderAgentTable();
+document.querySelectorAll(".alert-card").forEach(c=>{
+  const body=c.querySelector(".ac-body");
+  if(body) body.style.display="none";
+});
+</script>
+</body>
+</html>
