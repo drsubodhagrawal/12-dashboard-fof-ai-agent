@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOF Admin Structure — Phase 1 Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0F2A4A;--navy2:#1A3A5C;--navy3:#243F60;
+  --amber:#D97706;--amber2:#F59E0B;--amber-light:#FEF3C7;--amber-dark:#92400E;
+  --green:#1B6B4A;--green-light:#E8F5EE;
+  --blue:#1D4ED8;--blue-light:#EFF6FF;
+  --red:#DC2626;--red-light:#FEF2F2;
+  --purple:#7C3AED;--purple-light:#F5F3FF;
+  --teal:#0D9488;--teal-light:#F0FDFA;
+  --gray:#6B7280;--gray-light:#F9FAFB;--border:#E5E7EB;
+  --text:#111827;--text2:#374151;--text3:#6B7280;
+  --radius:10px;--radius-sm:6px;--radius-lg:14px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.06);
+  --shadow-md:0 4px 16px rgba(0,0,0,.1);
+}
+html,body{height:100%;font-family:'Outfit',system-ui,sans-serif;background:#F1F5F9;color:var(--text);font-size:14px;}
+
+/* ── TOP SWITCHER BAR ── */
+.mode-bar{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  background:var(--navy);height:50px;
+  display:flex;align-items:center;padding:0 20px;gap:0;
+}
+.mode-logo{display:flex;align-items:center;gap:9px;margin-right:28px;}
+.mode-logo-icon{width:30px;height:30px;background:linear-gradient(135deg,#60A5FA,#1D4ED8);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.mode-logo-icon svg{width:17px;height:17px;}
+.mode-logo-text{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.3px;}
+.mode-logo-v{font-size:10px;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace;margin-left:1px;}
+.mode-spacer{flex:1;}
+.mode-tabs{display:flex;gap:3px;background:rgba(255,255,255,.08);border-radius:8px;padding:3px;}
+.mode-tab{padding:5px 18px;border-radius:6px;border:none;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;color:rgba(255,255,255,.55);background:transparent;}
+.mode-tab.active{background:rgba(255,255,255,.15);color:#fff;}
+.mode-tab:hover:not(.active){color:rgba(255,255,255,.85);}
+.live-chip{display:flex;align-items:center;gap:5px;margin-left:14px;font-size:11px;color:rgba(255,255,255,.45);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.mode-bar-right{display:flex;align-items:center;gap:10px;margin-left:16px;}
+.url-pill{padding:3px 10px;border-radius:12px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:500;}
+.url-green{background:rgba(34,197,94,.15);color:#86EFAC;}
+.url-amber{background:rgba(251,191,36,.15);color:#FCD34D;}
+
+/* ── MAIN LAYOUT ── */
+.shell{margin-top:50px;height:calc(100vh - 50px);display:flex;overflow:hidden;}
+
+/* ── VIEW PANELS ── */
+.view{display:none;width:100%;height:100%;overflow:hidden;}
+.view.active{display:flex;}
+
+/* ════════════════════════════════════
+   VIEW A — DUAL LOGIN PORTALS
+   ════════════════════════════════════ */
+.login-scene{width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr;background:#F1F5F9;}
+.login-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;position:relative;}
+.login-panel.practice-side{background:linear-gradient(160deg,#F0FDF4 0%,#ECFDF5 100%);}
+.login-panel.admin-side{background:linear-gradient(160deg,#0F2A4A 0%,#1A3A5C 100%);}
+.divider-line{position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,#CBD5E1,transparent);}
+
+.login-card{width:100%;max-width:360px;}
+.login-logo{display:flex;align-items:center;gap:9px;margin-bottom:24px;}
+.login-logo-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.login-logo-icon.green{background:var(--green);}
+.login-logo-icon.navy{background:linear-gradient(135deg,#60A5FA,#1D4ED8);}
+.login-logo-icon svg{width:20px;height:20px;}
+.login-logo-name{font-size:17px;font-weight:700;letter-spacing:-.3px;}
+.login-logo-name.dark{color:var(--text);}
+.login-logo-name.light{color:#fff;}
+.login-url{font-size:10px;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:10px;margin-bottom:20px;display:inline-block;}
+.login-url.practice{background:var(--green-light);color:var(--green);}
+.login-url.admin{background:rgba(251,191,36,.15);color:#FCD34D;}
+
+.login-title{font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:4px;}
+.login-title.dark{color:var(--text);}
+.login-title.light{color:#fff;}
+.login-sub{font-size:13px;margin-bottom:20px;}
+.login-sub.dark{color:var(--text3);}
+.login-sub.light{color:rgba(255,255,255,.55);}
+
+.demo-accounts{margin-bottom:16px;}
+.demo-label{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px;}
+.demo-label.dark{color:var(--text3);}
+.demo-label.light{color:rgba(255,255,255,.4);}
+.demo-row{display:flex;gap:6px;flex-wrap:wrap;}
+.demo-chip{padding:4px 10px;border-radius:14px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid;}
+.demo-chip.practice-chip{background:var(--green-light);color:var(--green);border-color:#A7F3D0;}
+.demo-chip.practice-chip:hover,.demo-chip.practice-chip.sel{background:var(--green);color:#fff;border-color:var(--green);}
+.demo-chip.admin-chip{background:rgba(255,255,255,.08);color:rgba(255,255,255,.65);border-color:rgba(255,255,255,.15);}
+.demo-chip.admin-chip:hover,.demo-chip.admin-chip.sel{background:rgba(251,191,36,.2);color:#FCD34D;border-color:#F59E0B;}
+
+.lform{display:flex;flex-direction:column;gap:10px;}
+.lfield{display:flex;flex-direction:column;gap:4px;}
+.lfield label{font-size:11px;font-weight:600;}
+.lfield label.dark{color:var(--text2);}
+.lfield label.light{color:rgba(255,255,255,.6);}
+.linput{padding:9px 12px;border-radius:var(--radius-sm);font-size:13px;font-family:'Outfit',sans-serif;outline:none;width:100%;transition:border .15s;}
+.linput.dark{border:1.5px solid var(--border);background:#fff;color:var(--text);}
+.linput.dark:focus{border-color:var(--green);}
+.linput.light{border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:#fff;}
+.linput.light:focus{border-color:rgba(251,191,36,.6);}
+.linput.light::placeholder{color:rgba(255,255,255,.3);}
+.l2fa{display:flex;gap:6px;}
+.l2fa-box{flex:1;padding:9px 6px;text-align:center;border-radius:var(--radius-sm);font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.l2fa-box.dark{border:1.5px solid var(--border);background:#fff;color:var(--text);}
+.l2fa-box.light{border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:#fff;}
+.lbtn{padding:10px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;border:none;width:100%;transition:all .18s;}
+.lbtn.practice-btn{background:var(--green);color:#fff;}
+.lbtn.practice-btn:hover{background:#14533A;}
+.lbtn.admin-btn{background:linear-gradient(135deg,var(--amber2),var(--amber));color:#fff;}
+.lbtn.admin-btn:hover{filter:brightness(1.08);}
+.lremember{display:flex;align-items:center;gap:6px;font-size:11px;}
+.lremember.dark{color:var(--text3);}
+.lremember.light{color:rgba(255,255,255,.4);}
+.lforgot{font-size:11px;text-decoration:none;font-weight:500;}
+.lforgot.dark{color:var(--green);}
+.lforgot.light{color:#FCD34D;}
+.l-divider{display:flex;align-items:center;gap:8px;margin:4px 0;}
+.l-divider-line{flex:1;height:1px;}
+.l-divider-line.dark{background:var(--border);}
+.l-divider-line.light{background:rgba(255,255,255,.1);}
+.l-divider-text{font-size:10px;}
+.l-divider-text.dark{color:var(--text3);}
+.l-divider-text.light{color:rgba(255,255,255,.3);}
+.role-badge-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
+.role-badge{padding:3px 9px;border-radius:10px;font-size:10px;font-weight:700;}
+.rb-super{background:rgba(251,191,36,.2);color:#FCD34D;}
+.rb-regional{background:rgba(96,165,250,.2);color:#93C5FD;}
+.rb-tech{background:rgba(167,139,250,.2);color:#C4B5FD;}
+.rb-fin{background:rgba(52,211,153,.2);color:#6EE7B7;}
+.rb-cs{background:rgba(251,146,60,.2);color:#FDBA74;}
+.login-note{margin-top:10px;padding:8px 10px;border-radius:6px;font-size:11px;line-height:1.5;}
+.login-note.dark{background:var(--blue-light);color:var(--blue);border:1px solid #BFDBFE;}
+.login-note.light{background:rgba(251,191,36,.1);color:#FCD34D;border:1px solid rgba(251,191,36,.2);}
+
+/* ════════════════════════════════════
+   VIEW B — ADMIN DASHBOARD (Dark sidebar)
+   ════════════════════════════════════ */
+.admin-layout{width:100%;height:100%;display:grid;grid-template-columns:252px 1fr;overflow:hidden;}
+.sidebar{background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;}
+.sb-head{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sb-logo{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.sb-logo-icon{width:30px;height:30px;background:linear-gradient(135deg,#60A5FA,#1D4ED8);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.sb-logo-icon svg{width:16px;height:16px;}
+.sb-logo-text{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.2px;}
+.sb-logo-badge{font-size:10px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,.35);}
+.sb-session{margin-top:10px;padding:8px 10px;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.2);border-radius:7px;}
+.sb-session-label{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#FCD34D;margin-bottom:3px;}
+.sb-session-name{font-size:13px;font-weight:600;color:#fff;}
+.sb-session-role{font-size:10px;color:rgba(255,255,255,.4);}
+.sb-nav{padding:12px 10px;flex:1;}
+.sb-section{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.28);padding:12px 8px 5px;}
+.sb-btn{
+  display:flex;align-items:center;gap:8px;width:100%;padding:8px 8px;
+  border:none;background:transparent;color:rgba(255,255,255,.55);
+  font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:500;
+  border-radius:7px;cursor:pointer;transition:all .15s;text-align:left;margin-bottom:1px;
+  border-left:2.5px solid transparent;
+}
+.sb-btn:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85);}
+.sb-btn.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:var(--amber2);}
+.sb-btn-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+.sb-badge{margin-left:auto;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;}
+.sb-badge-red{background:rgba(239,68,68,.8);color:#fff;}
+.sb-badge-amber{background:rgba(217,119,6,.85);color:#fff;}
+.sb-badge-green{background:rgba(34,197,94,.25);color:#86EFAC;}
+.sb-footer{padding:12px;border-top:1px solid rgba(255,255,255,.08);}
+.sb-user{display:flex;align-items:center;gap:9px;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--amber2),var(--amber));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.sb-user-name{font-size:12px;font-weight:600;color:#fff;}
+.sb-user-role{font-size:10px;color:rgba(255,255,255,.35);}
+.sb-status{width:7px;height:7px;border-radius:50%;background:#22C55E;margin-left:auto;}
+
+/* Admin main content */
+.admin-main{background:#F1F5F9;overflow-y:auto;display:flex;flex-direction:column;}
+.admin-topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;gap:12px;flex-shrink:0;position:sticky;top:0;z-index:40;}
+.topbar-bc{font-size:12px;color:var(--text3);}
+.topbar-bc span{color:var(--text);font-weight:600;}
+.topbar-spacer{flex:1;}
+.topbar-actions{display:flex;align-items:center;gap:8px;}
+.tbtn{padding:6px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.tbtn-primary{background:var(--amber);color:#fff;border:none;}
+.tbtn-primary:hover{background:var(--amber-dark);}
+.tbtn-outline{background:#fff;border:1.5px solid var(--border);color:var(--text2);}
+.tbtn-outline:hover{border-color:#9CA3AF;}
+.tbtn svg{width:13px;height:13px;}
+
+.admin-content{padding:20px 24px;flex:1;}
+.admin-page{display:none;}
+.admin-page.active{display:block;}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
+.kpi-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.kpi-value{font-size:24px;font-weight:800;color:var(--text);letter-spacing:-1px;}
+.kpi-change{font-size:11px;margin-top:3px;}
+.kpi-up{color:var(--green);}
+.kpi-down{color:var(--red);}
+.kpi-neutral{color:var(--text3);}
+
+/* ── ADMIN TABLE ── */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.section-title{font-size:14px;font-weight:700;color:var(--text);}
+.section-sub{font-size:12px;color:var(--text3);margin-top:1px;}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;}
+.table{width:100%;border-collapse:collapse;}
+.table th{padding:9px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:#FAFAFA;}
+.table td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);vertical-align:middle;}
+.table tr:last-child td{border-bottom:none;}
+.table tr:hover td{background:#FAFAFA;}
+.avatar-sm{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.user-cell{display:flex;align-items:center;gap:9px;}
+.user-name{font-size:13px;font-weight:600;color:var(--text);}
+.user-email{font-size:11px;color:var(--text3);}
+.role-pill{padding:3px 9px;border-radius:12px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;}
+.rp-super{background:linear-gradient(135deg,#FEF3C7,#FDE68A);color:var(--amber-dark);border:1px solid #FCD34D;}
+.rp-regional{background:var(--blue-light);color:var(--blue);border:1px solid #BFDBFE;}
+.rp-tech{background:var(--purple-light);color:var(--purple);border:1px solid #DDD6FE;}
+.rp-fin{background:var(--teal-light);color:var(--teal);border:1px solid #99F6E4;}
+.rp-cs{background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA;}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;}
+.dot-green{background:#22C55E;}
+.dot-gray{background:#D1D5DB;}
+.dot-amber{background:var(--amber);}
+.access-badge{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;}
+.ab-full{background:var(--green-light);color:var(--green);}
+.ab-partial{background:var(--amber-light);color:var(--amber);}
+.ab-limited{background:var(--gray-light);color:var(--text3);}
+.action-btn{padding:4px 10px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;border:1.5px solid;transition:all .15s;}
+.ab-edit{background:#fff;border-color:var(--border);color:var(--text2);}
+.ab-edit:hover{border-color:var(--amber);color:var(--amber);}
+.ab-reset{background:#fff;border-color:var(--border);color:var(--text2);}
+.ab-reset:hover{border-color:var(--blue);color:var(--blue);}
+.ab-deact{background:#fff;border-color:var(--border);color:var(--text2);}
+.ab-deact:hover{border-color:var(--red);color:var(--red);}
+.actions-cell{display:flex;gap:5px;}
+
+/* Practice assignment badges */
+.practice-chips{display:flex;gap:4px;flex-wrap:wrap;}
+.pchip{padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600;background:var(--gray-light);color:var(--text3);border:1px solid var(--border);}
+.pchip.highlight{background:var(--green-light);color:var(--green);border-color:#A7F3D0;}
+
+/* ── ORG CHART VIEW ── */
+.org-scene{padding:24px;}
+.org-title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.3px;margin-bottom:4px;}
+.org-sub{font-size:13px;color:var(--text3);margin-bottom:24px;}
+.org-tree{display:flex;flex-direction:column;align-items:center;gap:0;}
+.org-level{display:flex;justify-content:center;gap:16px;position:relative;width:100%;}
+.org-node{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;min-width:160px;max-width:200px;position:relative;transition:box-shadow .15s;cursor:default;}
+.org-node:hover{box-shadow:var(--shadow-md);}
+.org-node.super-node{border-color:var(--amber2);box-shadow:0 0 0 2px rgba(245,158,11,.2);}
+.org-node.regional-node{border-color:#93C5FD;}
+.org-node.tech-node{border-color:#C4B5FD;}
+.org-node.fin-node{border-color:#6EE7B7;}
+.org-node.cs-node{border-color:#FDBA74;}
+.org-node.practice-node{border-color:var(--green);background:var(--green-light);}
+.org-node-icon{font-size:20px;margin-bottom:6px;}
+.org-node-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.org-node-role{font-size:11px;font-weight:600;margin-bottom:4px;}
+.org-node-detail{font-size:10px;color:var(--text3);line-height:1.4;}
+.org-connector{width:2px;height:24px;background:var(--border);margin:0 auto;}
+.org-h-connector{height:2px;background:var(--border);position:absolute;top:0;left:50%;transform:translateY(-12px);}
+.org-level-connector{position:relative;width:100%;display:flex;justify-content:center;height:24px;}
+.org-v-line{width:2px;height:24px;background:var(--border);margin:0 auto;}
+.org-h-group{position:relative;display:flex;justify-content:center;gap:16px;width:100%;}
+.org-h-group::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--border);
+  margin:0 auto;
+}
+.access-matrix{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.matrix-table{width:100%;border-collapse:collapse;}
+.matrix-table th{padding:8px 12px;text-align:center;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:#FAFAFA;}
+.matrix-table th:first-child{text-align:left;}
+.matrix-table td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);text-align:center;vertical-align:middle;}
+.matrix-table td:first-child{text-align:left;font-weight:500;}
+.matrix-table tr:last-child td{border-bottom:none;}
+.matrix-table tr:nth-child(even) td{background:#FAFAFA;}
+.mx-yes{color:var(--green);font-size:14px;}
+.mx-no{color:#D1D5DB;font-size:14px;}
+.mx-partial{color:var(--amber);font-size:12px;font-weight:700;}
+
+/* ════════════════════════════════════
+   VIEW C — ADD ADMIN WIZARD
+   ════════════════════════════════════ */
+.wizard-scene{width:100%;height:100%;display:grid;grid-template-columns:260px 1fr;background:#F1F5F9;overflow:hidden;}
+.wiz-sidebar{background:var(--navy);padding:24px 16px;overflow-y:auto;height:100%;}
+.wiz-sb-title{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:16px;}
+.wiz-step-item{display:flex;align-items:flex-start;gap:10px;padding:10px 10px;border-radius:8px;margin-bottom:4px;cursor:pointer;transition:background .15s;}
+.wiz-step-item:hover{background:rgba(255,255,255,.05);}
+.wiz-step-item.wiz-active{background:rgba(255,255,255,.1);}
+.wiz-step-circle{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.4);flex-shrink:0;transition:all .2s;}
+.wiz-step-item.wiz-active .wiz-step-circle{background:var(--amber2);border-color:var(--amber2);color:#fff;}
+.wiz-step-item.wiz-done .wiz-step-circle{background:rgba(34,197,94,.2);border-color:#22C55E;color:#22C55E;}
+.wiz-step-info{flex:1;}
+.wiz-step-name{font-size:12.5px;font-weight:600;color:rgba(255,255,255,.4);}
+.wiz-step-item.wiz-active .wiz-step-name,.wiz-step-item.wiz-done .wiz-step-name{color:rgba(255,255,255,.85);}
+.wiz-step-desc{font-size:10px;color:rgba(255,255,255,.25);margin-top:2px;}
+
+.wiz-preview{margin-top:20px;padding:14px;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.08);}
+.wiz-preview-label{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:10px;}
+.wiz-preview-row{display:flex;justify-content:space-between;margin-bottom:6px;}
+.wiz-preview-key{font-size:11px;color:rgba(255,255,255,.35);}
+.wiz-preview-val{font-size:11px;font-weight:600;color:rgba(255,255,255,.7);text-align:right;}
+
+.wiz-main{overflow-y:auto;padding:24px;}
+.wiz-page{display:none;}
+.wiz-page.active{display:block;}
+.wiz-page-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:14px;background:rgba(217,119,6,.12);color:var(--amber);font-size:11px;font-weight:700;margin-bottom:10px;border:1px solid rgba(217,119,6,.25);}
+.wiz-page-title{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.4px;margin-bottom:4px;}
+.wiz-page-sub{font-size:13px;color:var(--text3);margin-bottom:20px;line-height:1.5;}
+.wiz-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;}
+.wiz-card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.wiz-card-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.wiz-card-icon svg{width:15px;height:15px;}
+.wiz-card-icon.amber{background:var(--amber-light);color:var(--amber);}
+.wiz-card-icon.blue{background:var(--blue-light);color:var(--blue);}
+.wiz-card-icon.purple{background:var(--purple-light);color:var(--purple);}
+.wiz-card-icon.green{background:var(--green-light);color:var(--green);}
+.wiz-card-title{font-size:13px;font-weight:700;color:var(--text);}
+.wiz-card-sub{font-size:11px;color:var(--text3);}
+.wiz-card-body{padding:18px;}
+.form-grid{display:grid;gap:12px;}
+.form-grid-2{grid-template-columns:1fr 1fr;}
+.form-grid-3{grid-template-columns:1fr 1fr 1fr;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-label{font-size:11px;font-weight:600;color:var(--text2);}
+.req{color:var(--red);}
+.form-input{padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border .15s;}
+.form-input:focus{border-color:var(--amber);}
+.form-input.filled{border-color:var(--amber);background:#FFFBF0;}
+.form-hint{font-size:10px;color:var(--text3);line-height:1.4;}
+
+/* Role selector cards */
+.role-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.role-card{border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px 8px;text-align:center;cursor:pointer;transition:all .18s;}
+.role-card:hover{border-color:#9CA3AF;}
+.role-card.selected{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber);}
+.role-card-icon{font-size:22px;margin-bottom:5px;}
+.role-card-name{font-size:11px;font-weight:700;color:var(--text2);}
+.role-card-desc{font-size:9px;color:var(--text3);margin-top:2px;line-height:1.3;}
+
+/* ZIP zone chips */
+.zip-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.zip-chip{padding:5px 11px;border-radius:14px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.zip-chip.unsel{border-color:var(--border);color:var(--text3);background:#fff;}
+.zip-chip.sel{border-color:var(--amber);color:var(--amber);background:var(--amber-light);}
+
+/* Practice assignment */
+.practice-list{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;}
+.practice-assign-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;}
+.practice-assign-item:hover{border-color:#9CA3AF;}
+.practice-assign-item.assigned{border-color:var(--green);background:var(--green-light);}
+.pai-info{display:flex;align-items:center;gap:8px;}
+.pai-icon{width:26px;height:26px;border-radius:6px;background:var(--gray-light);display:flex;align-items:center;justify-content:center;font-size:12px;}
+.pai-name{font-size:12px;font-weight:600;color:var(--text);}
+.pai-plan{font-size:10px;color:var(--text3);}
+.pai-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;}
+.practice-assign-item.assigned .pai-check{background:var(--green);border-color:var(--green);}
+.practice-assign-item.assigned .pai-check svg{display:block;}
+.pai-check svg{display:none;width:9px;height:9px;}
+
+/* Permission matrix in wizard */
+.perm-table{width:100%;border-collapse:collapse;font-size:12px;}
+.perm-table th{padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
+.perm-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;}
+.perm-table tr:last-child td{border-bottom:none;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;}
+.mini-toggle{width:32px;height:17px;border-radius:9px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.mini-toggle.on{background:var(--green);}
+.mini-toggle.off{background:#D1D5DB;}
+.mini-knob{width:13px;height:13px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+.mini-toggle.on .mini-knob{left:17px;}
+.mini-toggle.off .mini-knob{left:2px;}
+
+/* Wizard bottom nav */
+.wiz-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:#fff;border-top:1px solid var(--border);flex-shrink:0;}
+.wiz-back{padding:8px 18px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#fff;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
+.wiz-back:hover{background:var(--gray-light);}
+.wiz-next{padding:8px 22px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--amber2),var(--amber));color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.wiz-next:hover{filter:brightness(1.08);}
+.wiz-next svg{width:13px;height:13px;}
+.wiz-step-pills{display:flex;gap:5px;}
+.wiz-step-pill{width:24px;height:4px;border-radius:2px;background:var(--border);transition:background .2s;}
+.wiz-step-pill.done{background:var(--amber2);}
+.wiz-success{text-align:center;padding:30px 20px;}
+.wiz-success-icon{width:60px;height:60px;border-radius:50%;background:var(--amber-light);border:3px solid var(--amber2);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.wiz-success-icon svg{width:28px;height:28px;color:var(--amber);}
+.wiz-success-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px;}
+.wiz-success-sub{font-size:13px;color:var(--text3);line-height:1.6;}
+.email-preview{background:var(--navy);border-radius:var(--radius);padding:16px;margin-top:14px;text-align:left;}
+.ep-label{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:10px;}
+.ep-row{display:flex;gap:8px;margin-bottom:5px;font-size:12px;}
+.ep-key{color:rgba(255,255,255,.35);width:50px;flex-shrink:0;}
+.ep-val{color:rgba(255,255,255,.75);font-weight:500;}
+.ep-body{margin-top:10px;padding:10px;background:rgba(255,255,255,.05);border-radius:7px;font-size:11px;color:rgba(255,255,255,.6);line-height:1.6;}
+
+/* Credential management card */
+.cred-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.cred-card-head{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:#FAFAFA;}
+.cred-card-name{font-size:13px;font-weight:700;color:var(--text);}
+.cred-card-role-label{font-size:11px;color:var(--text3);}
+.cred-actions{display:flex;gap:6px;}
+.ca-btn{padding:5px 12px;border-radius:var(--radius-sm);font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;border:1.5px solid;transition:all .15s;}
+.ca-reset{background:#fff;border-color:var(--border);color:var(--blue);}
+.ca-reset:hover{border-color:var(--blue);background:var(--blue-light);}
+.ca-2fa{background:#fff;border-color:var(--border);color:var(--purple);}
+.ca-2fa:hover{border-color:var(--purple);background:var(--purple-light);}
+.ca-deact{background:#fff;border-color:var(--border);color:var(--red);}
+.ca-deact:hover{border-color:var(--red);background:var(--red-light);}
+.cred-card-body{padding:12px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.cred-stat{font-size:10px;color:var(--text3);}
+.cred-stat-val{font-size:12px;font-weight:600;color:var(--text2);margin-top:1px;}
+
+/* Alerts section */
+.alert-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid;margin-bottom:8px;}
+.alert-item.alert-red{background:var(--red-light);border-color:#FECACA;}
+.alert-item.alert-amber{background:var(--amber-light);border-color:#FDE68A;}
+.alert-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.alert-text{font-size:12px;color:var(--text2);line-height:1.5;}
+.alert-text strong{font-weight:600;color:var(--text);}
+.alert-time{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* Misc */
+.notice{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:12px;}
+.notice.amber{background:var(--amber-light);border:1px solid #FDE68A;}
+.notice.blue{background:var(--blue-light);border:1px solid #BFDBFE;}
+.notice.green{background:var(--green-light);border:1px solid #A7F3D0;}
+.notice svg{width:13px;height:13px;flex-shrink:0;margin-top:1px;}
+.notice.amber svg{color:var(--amber);}
+.notice.blue svg{color:var(--blue);}
+.notice.green svg{color:var(--green);}
+.notice-text{font-size:11px;line-height:1.5;color:var(--text2);}
+.notice-text strong{font-weight:600;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#D1D5DB;border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- TOP MODE BAR -->
+<div class="mode-bar">
+  <div class="mode-logo">
+    <div class="mode-logo-icon">
+      <svg viewBox="0 0 17 17" fill="none"><path d="M8.5 1.5L15 5.5V11.5L8.5 15.5L2 11.5V5.5L8.5 1.5Z" fill="white" opacity=".9"/><circle cx="8.5" cy="8.5" r="2.5" fill="white"/></svg>
+    </div>
+    <span class="mode-logo-text">MedFlow AI</span>
+    <span class="mode-logo-v">v2.0</span>
+  </div>
+  <div class="mode-spacer"></div>
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="switchView('login')">Dual Login Portals</button>
+    <button class="mode-tab" onclick="switchView('dashboard')">MOF Admin Dashboard</button>
+    <button class="mode-tab" onclick="switchView('wizard')">Add Admin Wizard</button>
+  </div>
+  <div class="mode-bar-right">
+    <span class="url-pill url-green">/login</span>
+    <span class="url-pill url-amber">/admin/login</span>
+  </div>
+  <div class="live-chip"><div class="live-dot"></div>Live Mockup</div>
+</div>
+
+<div class="shell">
+
+<!-- ════════════════════════════════════
+     VIEW A: DUAL LOGIN PORTALS
+     ════════════════════════════════════ -->
+<div class="view active" id="view-login">
+<div class="login-scene">
+
+  <!-- PRACTICE PORTAL (left) -->
+  <div class="login-panel practice-side">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="login-logo-icon green">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L16 6V14L10 18L4 14V6L10 2Z" fill="white" opacity=".9"/><circle cx="10" cy="10" r="2.5" fill="white"/></svg>
+        </div>
+        <span class="login-logo-name dark">MedFlow AI</span>
+      </div>
+      <div class="login-url practice">app.medicalofficeforce.com/login</div>
+      <div class="login-title dark">Practice Sign In</div>
+      <div class="login-sub dark">Your AI receptionist dashboard</div>
+
+      <div class="demo-accounts">
+        <div class="demo-label dark">Quick demo login</div>
+        <div class="demo-row">
+          <div class="demo-chip practice-chip sel" onclick="fillPractice(this,'subodh@athenssleepcenter.com','Athens Sleep')">Dr. Agrawal</div>
+          <div class="demo-chip practice-chip" onclick="fillPractice(this,'admin@cardioatlanta.com','CardioAtlanta')">CardioAtlanta</div>
+          <div class="demo-chip practice-chip" onclick="fillPractice(this,'admin@pedsfirst.com','PedsFirst')">PedsFirst</div>
+        </div>
+      </div>
+
+      <div class="lform">
+        <div class="lfield">
+          <label class="dark">Email Address</label>
+          <input type="email" class="linput dark" id="practiceEmail" value="subodh@athenssleepcenter.com">
+        </div>
+        <div class="lfield">
+          <label class="dark">Password</label>
+          <input type="password" class="linput dark" value="••••••••••">
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <label class="lremember dark"><input type="checkbox" checked style="accent-color:var(--green);"> Remember me</label>
+          <a href="#" class="lforgot dark">Forgot password?</a>
+        </div>
+        <button class="lbtn practice-btn" onclick="this.textContent='Signing in…';setTimeout(()=>{this.textContent='✓ Redirecting to dashboard…';this.style.background='#14533A'},900)">Sign In to Dashboard</button>
+        <div class="l-divider"><div class="l-divider-line dark"></div><span class="l-divider-text dark">or</span><div class="l-divider-line dark"></div></div>
+        <button class="lbtn" style="background:#fff;border:1.5px solid var(--border);color:var(--text2);" onclick="switchView('wizard')">New practice? Start free trial →</button>
+      </div>
+      <div class="login-note dark">
+        <strong>Practice Admin</strong> and <strong>Practice Staff</strong> log in here. After login, you're routed to your practice's dashboard based on your role.
+      </div>
+    </div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider-line"></div>
+
+  <!-- MOF ADMIN PORTAL (right) -->
+  <div class="login-panel admin-side">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="login-logo-icon navy">
+          <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="white" stroke-width="1.5"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <span class="login-logo-name light">MOF Admin</span>
+      </div>
+      <div class="login-url admin">app.medicalofficeforce.com/admin/login</div>
+      <div class="login-title light">Admin Console</div>
+      <div class="login-sub light">Medical Office Force internal access only</div>
+
+      <div class="role-badge-row">
+        <span class="role-badge rb-super">Super Admin</span>
+        <span class="role-badge rb-regional">Regional</span>
+        <span class="role-badge rb-tech">Technical</span>
+        <span class="role-badge rb-fin">Financial</span>
+        <span class="role-badge rb-cs">CS Admin</span>
+      </div>
+
+      <div class="demo-accounts">
+        <div class="demo-label light">Quick demo — select role</div>
+        <div class="demo-row">
+          <div class="demo-chip admin-chip sel" onclick="fillAdmin(this,'james.kim@mof.ai','Super Admin','JK')">James Kim · Super</div>
+          <div class="demo-chip admin-chip" onclick="fillAdmin(this,'sarah.lee@mof.ai','Regional Admin (SE)','SL')">Sarah · Regional</div>
+          <div class="demo-chip admin-chip" onclick="fillAdmin(this,'mike.torres@mof.ai','Technical Admin','MT')">Mike · Tech</div>
+          <div class="demo-chip admin-chip" onclick="fillAdmin(this,'amy.chen@mof.ai','Financial Admin','AC')">Amy · Finance</div>
+          <div class="demo-chip admin-chip" onclick="fillAdmin(this,'priya.n@mof.ai','CS Admin (ATL)','PN')">Priya · CS</div>
+        </div>
+      </div>
+
+      <div class="lform">
+        <div class="lfield">
+          <label class="light">Admin Email</label>
+          <input type="email" class="linput light" id="adminEmail" value="james.kim@mof.ai">
+        </div>
+        <div class="lfield">
+          <label class="light">Password</label>
+          <input type="password" class="linput light" value="••••••••••">
+        </div>
+        <div class="lfield">
+          <label class="light">2FA Code (TOTP required)</label>
+          <div class="l2fa">
+            <input class="l2fa-box light" maxlength="1" value="4">
+            <input class="l2fa-box light" maxlength="1" value="8">
+            <input class="l2fa-box light" maxlength="1" value="3">
+            <input class="l2fa-box light" maxlength="1" value="7">
+            <input class="l2fa-box light" maxlength="1" value="2">
+            <input class="l2fa-box light" maxlength="1" value="1">
+          </div>
+        </div>
+        <button class="lbtn admin-btn" onclick="adminLogin(this)">Access Admin Console</button>
+      </div>
+      <div class="login-note light">
+        <strong style="color:#FCD34D;">⚠ Restricted:</strong> Unauthorized access is a HIPAA violation and federal crime. All sessions are logged, time-stamped, and reviewed. 2FA is mandatory for all admin roles.
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ════════════════════════════════════
+     VIEW B: MOF ADMIN DASHBOARD
+     ════════════════════════════════════ -->
+<div class="view" id="view-dashboard">
+<div class="admin-layout">
+
+  <!-- DARK SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo">
+        <div class="sb-logo-icon">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3" stroke="white" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <span class="sb-logo-text">MOF Admin</span>
+      </div>
+      <div class="sb-logo-badge">/admin · Super Admin session</div>
+      <div class="sb-session">
+        <div class="sb-session-label">Signed in as</div>
+        <div class="sb-session-name">James Kim</div>
+        <div class="sb-session-role">Super Admin · All access</div>
+      </div>
+    </div>
+
+    <div class="sb-nav">
+      <div class="sb-section">Overview</div>
+      <button class="sb-btn active" onclick="switchAdminPage('overview',this)"><span class="sb-btn-icon">📊</span>Dashboard <span class="sb-badge sb-badge-red">3</span></button>
+      <button class="sb-btn" onclick="switchAdminPage('admins',this)"><span class="sb-btn-icon">👥</span>Admin Roles <span class="sb-badge sb-badge-amber">8</span></button>
+      <button class="sb-btn" onclick="switchAdminPage('org',this)"><span class="sb-btn-icon">🏗️</span>Org Structure</button>
+      <button class="sb-btn" onclick="switchAdminPage('matrix',this)"><span class="sb-btn-icon">🔐</span>Access Matrix</button>
+
+      <div class="sb-section">Monitoring</div>
+      <button class="sb-btn" onclick="switchAdminPage('health',this)"><span class="sb-btn-icon">🤖</span>Agent Health <span class="sb-badge sb-badge-red">2</span></button>
+      <button class="sb-btn" onclick="switchAdminPage('livecalls',this)"><span class="sb-btn-icon">🔴</span>Live Calls</button>
+      <button class="sb-btn" onclick="switchAdminPage('alerts',this)"><span class="sb-btn-icon">🔔</span>Proactive Alerts <span class="sb-badge sb-badge-amber">5</span></button>
+
+      <div class="sb-section">Practices</div>
+      <button class="sb-btn" onclick="switchAdminPage('practices',this)"><span class="sb-btn-icon">🏥</span>All Practices <span class="sb-badge sb-badge-green">6</span></button>
+      <button class="sb-btn" onclick="switchAdminPage('signups',this)"><span class="sb-btn-icon">🆕</span>New Signups <span class="sb-badge sb-badge-amber">1</span></button>
+      <button class="sb-btn" onclick="switchAdminPage('impersonation',this)"><span class="sb-btn-icon">🔑</span>Impersonation</button>
+
+      <div class="sb-section">Finance</div>
+      <button class="sb-btn" onclick="switchAdminPage('revenue',this)"><span class="sb-btn-icon">💰</span>Revenue Dashboard</button>
+      <button class="sb-btn" onclick="switchAdminPage('invoices',this)"><span class="sb-btn-icon">📄</span>Invoices & Billing</button>
+
+      <div class="sb-section">Compliance</div>
+      <button class="sb-btn" onclick="switchAdminPage('baa',this)"><span class="sb-btn-icon">🛡️</span>BAA Vault</button>
+      <button class="sb-btn" onclick="switchAdminPage('audit',this)"><span class="sb-btn-icon">📋</span>Audit Trail</button>
+    </div>
+
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar">JK</div>
+        <div><div class="sb-user-name">James Kim</div><div class="sb-user-role">Super Admin</div></div>
+        <div class="sb-status"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-bc">MOF Admin <span style="margin:0 4px;opacity:.4;">›</span> <span id="adminPageBc">Dashboard</span></div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <button class="tbtn tbtn-outline" onclick="switchView('wizard')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add Admin
+        </button>
+        <button class="tbtn tbtn-primary">Export Report</button>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:var(--amber-light);border-radius:var(--radius-sm);font-size:11px;font-weight:600;color:var(--amber);">
+          <div class="live-dot" style="background:var(--amber);width:6px;height:6px;"></div>3 Active Alerts
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- OVERVIEW PAGE -->
+      <div class="admin-page active" id="page-overview">
+        <!-- KPIs -->
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-label">Total Practices</div>
+            <div class="kpi-value">6</div>
+            <div class="kpi-change kpi-up">+1 this month</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Active Admins</div>
+            <div class="kpi-value">8</div>
+            <div class="kpi-change kpi-neutral">5 roles covered</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Platform MRR</div>
+            <div class="kpi-value" style="font-size:20px;">$634</div>
+            <div class="kpi-change kpi-up">$79 added</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Avg Health Score</div>
+            <div class="kpi-value" style="color:var(--amber);">71</div>
+            <div class="kpi-change kpi-down">↓4 from last week</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Open Alerts</div>
+            <div class="kpi-value" style="color:var(--red);">3</div>
+            <div class="kpi-change kpi-down">2 critical</div>
+          </div>
+        </div>
+
+        <!-- Active Alerts -->
+        <div class="section-head"><div><div class="section-title">Active Alerts — Require Attention</div><div class="section-sub">MOF Technical & CS Admins auto-notified</div></div></div>
+        <div class="alert-item alert-red">
+          <div class="alert-icon">🚨</div>
+          <div><div class="alert-text"><strong>Athens Sleep & Wellness</strong> — Twilio webhook returned 503 three times. Agent unable to answer calls. Auto-heal attempted and failed.</div><div class="alert-time">2 min ago · Assigned to Mike Torres (Technical Admin)</div></div>
+        </div>
+        <div class="alert-item alert-amber">
+          <div class="alert-icon">⚠️</div>
+          <div><div class="alert-text"><strong>CardioAtlanta</strong> — Transfer rate 67% (threshold: 50%). Agent escalating too many calls. Prompt optimization needed.</div><div class="alert-time">18 min ago · Assigned to Mike Torres (Technical Admin)</div></div>
+        </div>
+        <div class="alert-item alert-amber">
+          <div class="alert-icon">💳</div>
+          <div><div class="alert-text"><strong>PedsFirst</strong> — Payment failed (card declined). Visa •••• 4412. Grace period: 5 days remaining before agent suspension.</div><div class="alert-time">1 hr ago · Assigned to Amy Chen (Financial Admin)</div></div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="section-head" style="margin-top:16px;"><div><div class="section-title">Recent Admin Activity</div></div></div>
+        <div class="card">
+          <div style="padding:14px 16px;font-size:12px;border-bottom:1px solid var(--border);display:flex;gap:10px;"><span style="color:var(--text3);width:80px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:11px;">10:42 AM</span><span style="color:var(--text2);"><strong>Priya N.</strong> (CS Admin) sent welcome email to Athens Sleep & Wellness. Practice now at Step 9 — Live.</span></div>
+          <div style="padding:14px 16px;font-size:12px;border-bottom:1px solid var(--border);display:flex;gap:10px;"><span style="color:var(--text3);width:80px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:11px;">09:15 AM</span><span style="color:var(--text2);"><strong>Mike T.</strong> (Technical Admin) ran sandbox test on Athens Sleep agent. Pass rate 92% ✓ Cleared for go-live.</span></div>
+          <div style="padding:14px 16px;font-size:12px;border-bottom:1px solid var(--border);display:flex;gap:10px;"><span style="color:var(--text3);width:80px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:11px;">08:30 AM</span><span style="color:var(--text2);"><strong>Amy C.</strong> (Financial Admin) generated statement STMT-2026-04 for all 6 practices. Total collected: $634.</span></div>
+          <div style="padding:14px 16px;font-size:12px;display:flex;gap:10px;"><span style="color:var(--text3);width:80px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:11px;">Yesterday</span><span style="color:var(--text2);"><strong>James K.</strong> (Super Admin) created new admin account for Sarah Lee — Regional Admin, SE Zone (30XXX–31XXX).</span></div>
+        </div>
+      </div>
+
+      <!-- ADMIN ROLES PAGE -->
+      <div class="admin-page" id="page-admins">
+        <div class="section-head">
+          <div><div class="section-title">MOF Admin Team</div><div class="section-sub">8 admins across 5 roles · Only Super Admin can create/deactivate</div></div>
+          <button class="tbtn tbtn-primary" onclick="switchView('wizard')">+ Add New Admin</button>
+        </div>
+
+        <div class="card">
+          <table class="table">
+            <thead><tr>
+              <th>Admin</th><th>Role</th><th>Zone / Scope</th><th>Practices</th><th>Access</th><th>Status</th><th>Actions</th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="user-cell"><div class="avatar-sm" style="background:linear-gradient(135deg,#FEF3C7,#FCD34D);color:var(--amber-dark);">JK</div><div><div class="user-name">James Kim</div><div class="user-email">james.kim@mof.ai</div></div></div></td>
+                <td><span class="role-pill rp-super">★ Super Admin</span></td>
+                <td style="font-size:12px;color:var(--text3);">All zones · No restriction</td>
+                <td><div class="practice-chips"><span class="pchip highlight">All 6</span></div></td>
+                <td><span class="access-badge ab-full">Full Platform</span></td>
+                <td><span class="status-dot dot-green"></span>Online</td>
+                <td><div class="actions-cell"><button class="action-btn ab-edit">Edit</button><button class="action-btn ab-reset">Reset PW</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="avatar-sm" style="background:var(--blue-light);color:var(--blue);">SL</div><div><div class="user-name">Sarah Lee</div><div class="user-email">sarah.lee@mof.ai</div></div></div></td>
+                <td><span class="role-pill rp-regional">Regional Admin</span></td>
+                <td style="font-size:12px;color:var(--text3);">SE Zone · 30XXX–31XXX</td>
+                <td><div class="practice-chips"><span class="pchip highlight">Athens Sleep</span><span class="pchip highlight">PedsFirst</span><span class="pchip">+1</span></div></td>
+                <td><span class="access-badge ab-partial">Tech + Finance</span></td>
+                <td><span class="status-dot dot-green"></span>Online</td>
+                <td><div class="actions-cell"><button class="action-btn ab-edit">Edit</button><button class="action-btn ab-reset">Reset PW</button><button class="action-btn ab-deact">Deactivate</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="avatar-sm" style="background:var(--purple-light);color:var(--purple);">MT</div><div><div class="user-name">Mike Torres</div><div class="user-email">mike.torres@mof.ai</div></div></div></td>
+                <td><span class="role-pill rp-tech">Technical Admin</span></td>
+                <td style="font-size:12px;color:var(--text3);">All zones · Agent config only</td>
+                <td><div class="practice-chips"><span class="pchip highlight">Athens Sleep</span><span class="pchip highlight">CardioATL</span><span class="pchip">+4</span></div></td>
+                <td><span class="access-badge ab-partial">Agents Only</span></td>
+                <td><span class="status-dot dot-amber"></span>In session</td>
+                <td><div class="actions-cell"><button class="action-btn ab-edit">Edit</button><button class="action-btn ab-reset">Reset PW</button><button class="action-btn ab-deact">Deactivate</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="avatar-sm" style="background:var(--teal-light);color:var(--teal);">AC</div><div><div class="user-name">Amy Chen</div><div class="user-email">amy.chen@mof.ai</div></div></div></td>
+                <td><span class="role-pill rp-fin">Financial Admin</span></td>
+                <td style="font-size:12px;color:var(--text3);">All zones · Billing only</td>
+                <td><div class="practice-chips"><span class="pchip highlight">All 6</span></div></td>
+                <td><span class="access-badge ab-partial">Finance Only</span></td>
+                <td><span class="status-dot dot-green"></span>Online</td>
+                <td><div class="actions-cell"><button class="action-btn ab-edit">Edit</button><button class="action-btn ab-reset">Reset PW</button><button class="action-btn ab-deact">Deactivate</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="avatar-sm" style="background:#FFF7ED;color:#C2410C;">PN</div><div><div class="user-name">Priya Nair</div><div class="user-email">priya.n@mof.ai</div></div></div></td>
+                <td><span class="role-pill rp-cs">CS Admin</span></td>
+                <td style="font-size:12px;color:var(--text3);">ATL Metro · 303XX–304XX</td>
+                <td><div class="practice-chips"><span class="pchip highlight">Athens Sleep</span><span class="pchip">+2</span></div></td>
+                <td><span class="access-badge ab-limited">CS Tools Only</span></td>
+                <td><span class="status-dot dot-green"></span>Online</td>
+                <td><div class="actions-cell"><button class="action-btn ab-edit">Edit</button><button class="action-btn ab-reset">Reset PW</button><button class="action-btn ab-deact">Deactivate</button></div></td>
+              </tr>
+              <tr style="opacity:.55;">
+                <td><div class="user-cell"><div class="avatar-sm" style="background:var(--gray-light);color:var(--gray);">RB</div><div><div class="user-name">Robert Blake</div><div class="user-email">r.blake@mof.ai</div></div></div></td>
+                <td><span class="role-pill rp-tech">Technical Admin</span></td>
+                <td style="font-size:12px;color:var(--text3);">NE Zone · 06XXX–02XXX</td>
+                <td><div class="practice-chips"><span class="pchip">None yet</span></div></td>
+                <td><span class="access-badge ab-limited">Agents Only</span></td>
+                <td><span class="status-dot dot-gray"></span>Inactive</td>
+                <td><div class="actions-cell"><button class="action-btn ab-edit">Edit</button><button class="action-btn ab-reset" style="color:var(--green);">Reactivate</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Credential Management -->
+        <div class="section-head"><div><div class="section-title">Credential Management</div><div class="section-sub">Password reset, 2FA reset, session management</div></div></div>
+        <div class="cred-card">
+          <div class="cred-card-head">
+            <div><div class="cred-card-name">James Kim — Super Admin</div><div class="cred-card-role-label">james.kim@mof.ai · Last login: Today 8:14 AM · IP: 74.12.xxx.xxx</div></div>
+            <div class="cred-actions"><button class="ca-btn ca-reset">Reset Password</button><button class="ca-btn ca-2fa">Reset 2FA</button></div>
+          </div>
+          <div class="cred-card-body">
+            <div class="cred-stat"><div class="cred-stat">Sessions (30d)</div><div class="cred-stat-val">47</div></div>
+            <div class="cred-stat"><div class="cred-stat">2FA Method</div><div class="cred-stat-val">Google Auth</div></div>
+            <div class="cred-stat"><div class="cred-stat">PW Last Changed</div><div class="cred-stat-val">12 days ago</div></div>
+            <div class="cred-stat"><div class="cred-stat">Audit Events</div><div class="cred-stat-val">284</div></div>
+          </div>
+        </div>
+        <div class="cred-card">
+          <div class="cred-card-head">
+            <div><div class="cred-card-name">Mike Torres — Technical Admin</div><div class="cred-card-role-label">mike.torres@mof.ai · Active session now · IP: 98.44.xxx.xxx</div></div>
+            <div class="cred-actions"><button class="ca-btn ca-reset">Reset Password</button><button class="ca-btn ca-2fa">Reset 2FA</button><button class="ca-btn ca-deact">End Session</button></div>
+          </div>
+          <div class="cred-card-body">
+            <div class="cred-stat"><div class="cred-stat">Sessions (30d)</div><div class="cred-stat-val">23</div></div>
+            <div class="cred-stat"><div class="cred-stat">2FA Method</div><div class="cred-stat-val">SMS</div></div>
+            <div class="cred-stat"><div class="cred-stat">PW Last Changed</div><div class="cred-stat-val">45 days ago</div></div>
+            <div class="cred-stat"><div class="cred-stat" style="color:var(--amber);font-weight:600;">⚠ Change recommended</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORG STRUCTURE PAGE -->
+      <div class="admin-page" id="page-org">
+        <div class="org-title">MOF Admin Org Structure</div>
+        <div class="org-sub">Role hierarchy · Access inheritance · Practice assignment logic</div>
+
+        <!-- Super Admin -->
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div class="org-node super-node" style="text-align:center;min-width:220px;">
+            <div class="org-node-icon">👑</div>
+            <div class="org-node-name">James Kim</div>
+            <div class="org-node-role" style="color:var(--amber);">Super Admin</div>
+            <div class="org-node-detail">Full platform access · Creates all admins · No ZIP restriction · HIPAA officer</div>
+          </div>
+          <div class="org-connector"></div>
+          <!-- H-spread line -->
+          <div style="width:80%;height:2px;background:var(--border);position:relative;">
+            <div style="position:absolute;left:10%;top:-5px;width:2px;height:12px;background:var(--border);"></div>
+            <div style="position:absolute;left:32%;top:-5px;width:2px;height:12px;background:var(--border);"></div>
+            <div style="position:absolute;left:54%;top:-5px;width:2px;height:12px;background:var(--border);"></div>
+            <div style="position:absolute;left:76%;top:-5px;width:2px;height:12px;background:var(--border);"></div>
+          </div>
+          <div style="width:80%;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-top:0;">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+              <div style="height:12px;"></div>
+              <div class="org-node regional-node" style="text-align:center;width:100%;">
+                <div class="org-node-icon">🗺️</div>
+                <div class="org-node-name">Sarah Lee</div>
+                <div class="org-node-role" style="color:var(--blue);">Regional Admin</div>
+                <div class="org-node-detail">SE Zone · 30XXX–31XXX · Tech + Finance access · 3 practices</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+              <div style="height:12px;"></div>
+              <div class="org-node tech-node" style="text-align:center;width:100%;">
+                <div class="org-node-icon">🔧</div>
+                <div class="org-node-name">Mike Torres</div>
+                <div class="org-node-role" style="color:var(--purple);">Technical Admin</div>
+                <div class="org-node-detail">All zones · Agent config, prompts, webhooks · 6 practices</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+              <div style="height:12px;"></div>
+              <div class="org-node fin-node" style="text-align:center;width:100%;">
+                <div class="org-node-icon">💰</div>
+                <div class="org-node-name">Amy Chen</div>
+                <div class="org-node-role" style="color:var(--teal);">Financial Admin</div>
+                <div class="org-node-detail">All zones · Billing, invoices, revenue · No agent access</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+              <div style="height:12px;"></div>
+              <div class="org-node cs-node" style="text-align:center;width:100%;">
+                <div class="org-node-icon">🤝</div>
+                <div class="org-node-name">Priya Nair</div>
+                <div class="org-node-role" style="color:#C2410C;">CS Admin</div>
+                <div class="org-node-detail">ATL metro · Onboarding, messaging, outreach · 3 practices</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Practice level -->
+          <div style="width:100%;height:2px;background:transparent;margin:20px 0 0;"></div>
+          <div style="width:2px;height:20px;background:var(--border);"></div>
+          <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;">Practice Accounts</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;">
+            <div class="org-node practice-node" style="text-align:center;">
+              <div class="org-node-icon">🏥</div>
+              <div class="org-node-name" style="font-size:11px;">Athens Sleep & Wellness</div>
+              <div class="org-node-role" style="color:var(--green);font-size:10px;">Dr. Subodh Agrawal</div>
+              <div class="org-node-detail">Athens GA · Professional $79 · LIVE</div>
+            </div>
+            <div class="org-node practice-node" style="text-align:center;">
+              <div class="org-node-icon">❤️</div>
+              <div class="org-node-name" style="font-size:11px;">CardioAtlanta</div>
+              <div class="org-node-role" style="color:var(--green);font-size:10px;">Dr. Maria Santos</div>
+              <div class="org-node-detail">Atlanta GA · Enterprise $149 · LIVE</div>
+            </div>
+            <div class="org-node practice-node" style="text-align:center;">
+              <div class="org-node-icon">👶</div>
+              <div class="org-node-name" style="font-size:11px;">PedsFirst</div>
+              <div class="org-node-role" style="color:var(--amber);font-size:10px;">Dr. James Park</div>
+              <div class="org-node-detail">Marietta GA · Lite $30 · Payment issue</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCESS MATRIX PAGE -->
+      <div class="admin-page" id="page-matrix">
+        <div class="section-head"><div><div class="section-title">Role Access Control Matrix</div><div class="section-sub">What each role can see and do — enforced at API level</div></div></div>
+        <div class="access-matrix">
+          <table class="matrix-table">
+            <thead><tr>
+              <th>Permission</th>
+              <th style="color:var(--amber);">Super Admin</th>
+              <th style="color:var(--blue);">Regional</th>
+              <th style="color:var(--purple);">Technical</th>
+              <th style="color:var(--teal);">Financial</th>
+              <th style="color:#C2410C;">CS Admin</th>
+              <th style="color:var(--green);">Practice Admin</th>
+              <th>Practice Staff</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>View all practices</td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td></tr>
+              <tr><td>View assigned practices</td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-partial">own</span></td><td><span class="mx-partial">own</span></td></tr>
+              <tr><td>Configure AI agents</td><td><span class="mx-yes">✓</span></td><td><span class="mx-partial">*</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td></tr>
+              <tr><td>Train AI / fix webhooks</td><td><span class="mx-yes">✓</span></td><td><span class="mx-partial">*</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td></tr>
+              <tr><td>View call transcripts</td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td></tr>
+              <tr><td>View billing & invoices</td><td><span class="mx-yes">✓</span></td><td><span class="mx-partial">*</span></td><td><span class="mx-no">—</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td></tr>
+              <tr><td>Manage statements / MRR</td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td></tr>
+              <tr><td>Impersonate practice</td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td></tr>
+              <tr><td>Create / edit admins</td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td></tr>
+              <tr><td>Create practice staff</td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td></tr>
+              <tr><td>Reset passwords</td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-partial">staff</span></td><td><span class="mx-no">—</span></td></tr>
+              <tr><td>View HIPAA audit log</td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-partial">own</span></td><td><span class="mx-no">—</span></td></tr>
+              <tr><td>BAA vault access</td><td><span class="mx-yes">✓</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-no">—</span></td><td><span class="mx-partial">own</span></td><td><span class="mx-no">—</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text3);">* Regional Admin gets Technical and/or Financial access based on their role config. ✓ = Full. — = None. <span style="color:var(--amber);font-weight:600;">partial</span> = limited scope.</div>
+      </div>
+
+      <!-- ══ AGENT HEALTH ══ -->
+      <div class="admin-page" id="page-health">
+        <div class="section-head"><div><div class="section-title">Agent Health Monitor</div><div class="section-sub">Real-time containment, latency, and error rates across all 6 practices · Auto-alerts at threshold breach</div></div><button class="tbtn tbtn-outline">⬇ Export Report</button></div>
+        <div class="card" style="margin-bottom:14px">
+          <table class="table">
+            <thead><tr><th>Practice</th><th>Agent</th><th>Containment</th><th>Latency</th><th>Transfers</th><th>Errors (24h)</th><th>Health</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Athens Sleep &amp; Wellness</strong></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">aria-aswc-v2.1</td><td><span style="color:var(--green);font-weight:700">87.3%</span></td><td>1.4s</td><td>12.7%</td><td><span style="color:var(--red);font-weight:700">🚨 503 webhook</span></td><td><div style="width:60px;height:7px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:87%;height:100%;background:var(--green);border-radius:3px"></div></div></td><td><span class="status-dot dot-red"></span><span style="color:var(--red);font-size:11px;font-weight:600">Critical</span></td></tr>
+              <tr><td><strong>Valley Ridge FM</strong></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">aria-vr-v1.2</td><td><span style="color:var(--amber);font-weight:700">83.1%</span></td><td>4.8s</td><td>16.9%</td><td>0</td><td><div style="width:60px;height:7px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:83%;height:100%;background:var(--amber);border-radius:3px"></div></div></td><td><span class="status-dot dot-amber"></span><span style="color:var(--amber);font-size:11px;font-weight:600">Warning</span></td></tr>
+              <tr><td><strong>Buchanan Rural Clinic</strong></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">aria-bc-v1.3</td><td><span style="color:var(--green);font-weight:700">88.5%</span></td><td>1.2s</td><td>11.5%</td><td>0</td><td><div style="width:60px;height:7px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:88%;height:100%;background:var(--green);border-radius:3px"></div></div></td><td><span class="status-dot dot-green"></span><span style="color:var(--green);font-size:11px;font-weight:600">Healthy</span></td></tr>
+              <tr><td><strong>Haralson County Peds</strong></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">aria-hc-v1.1</td><td><span style="color:var(--green);font-weight:700">91.2%</span></td><td>1.1s</td><td>8.8%</td><td>0</td><td><div style="width:60px;height:7px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:91%;height:100%;background:var(--green);border-radius:3px"></div></div></td><td><span class="status-dot dot-green"></span><span style="color:var(--green);font-size:11px;font-weight:600">Healthy</span></td></tr>
+              <tr><td><strong>West Point Urgent Care</strong></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">aria-wp-v1.4</td><td><span style="color:var(--amber);font-weight:700">79.8%</span></td><td>4.9s</td><td>21.2%</td><td>0</td><td><div style="width:60px;height:7px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:79%;height:100%;background:var(--amber);border-radius:3px"></div></div></td><td><span class="status-dot dot-amber"></span><span style="color:var(--amber);font-size:11px;font-weight:600">Warning</span></td></tr>
+              <tr><td><strong>Coweta Family Medicine</strong></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">aria-cf-v1.3</td><td><span style="color:var(--green);font-weight:700">85.4%</span></td><td>1.6s</td><td>14.6%</td><td>0</td><td><div style="width:60px;height:7px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:85%;height:100%;background:var(--green);border-radius:3px"></div></div></td><td><span class="status-dot dot-green"></span><span style="color:var(--green);font-size:11px;font-weight:600">Healthy</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="card"><div style="padding:12px 15px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700">Thresholds</div><div style="padding:12px 15px;font-size:12px;display:flex;flex-direction:column;gap:7px"><div style="display:flex;justify-content:space-between"><span>Containment warning</span><span style="font-weight:600;color:var(--amber)">&lt; 85%</span></div><div style="display:flex;justify-content:space-between"><span>Containment critical</span><span style="font-weight:600;color:var(--red)">&lt; 75%</span></div><div style="display:flex;justify-content:space-between"><span>Latency warning</span><span style="font-weight:600;color:var(--amber)">&gt; 3.0s</span></div><div style="display:flex;justify-content:space-between"><span>Transfer rate alert</span><span style="font-weight:600;color:var(--amber)">&gt; 20%</span></div><div style="display:flex;justify-content:space-between"><span>Webhook errors</span><span style="font-weight:600;color:var(--red)">Any 503</span></div></div></div>
+          <div class="card"><div style="padding:12px 15px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700">Auto-Actions</div><div style="padding:12px 15px;font-size:12px;display:flex;flex-direction:column;gap:7px"><div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--green)">✓</span><span>Alert assigned Technical Admin within 60s of threshold breach</span></div><div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--green)">✓</span><span>Auto-retry webhook 3× before flagging critical</span></div><div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--green)">✓</span><span>Daily health digest sent to Super Admin at 8 AM ET</span></div><div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--green)">✓</span><span>Practice notified if agent is down &gt; 5 min</span></div></div></div>
+        </div>
+      </div>
+
+      <!-- ══ LIVE CALLS ══ -->
+      <div class="admin-page" id="page-livecalls">
+        <div class="section-head"><div><div class="section-title">Live Call Monitor</div><div class="section-sub">Real-time view of all active AI calls across all practices · Updated every 5s</div></div><div style="display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text3)"><div class="live-dot"></div>Live · Refreshes every 5s</div></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+          <div class="kpi-card"><div class="kpi-label">Active Calls Now</div><div class="kpi-value" style="color:var(--green)">3</div><div class="kpi-change kpi-up">↑ 1 from 5 min ago</div></div>
+          <div class="kpi-card"><div class="kpi-label">Avg Duration</div><div class="kpi-value">2:18</div><div class="kpi-change kpi-neutral">Normal range</div></div>
+          <div class="kpi-card"><div class="kpi-label">Calls Today</div><div class="kpi-value">142</div><div class="kpi-change kpi-up">↑ 12% vs yesterday</div></div>
+        </div>
+        <div class="section-head"><div><div class="section-title">Active Calls</div></div></div>
+        <div class="card" style="margin-bottom:12px">
+          <div style="padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.2s infinite;flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:700">Athens Sleep &amp; Wellness · Call in progress</div><div style="font-size:11px;color:var(--text3);margin-top:1px">Caller: (706) 555-1234 · Duration: 1:42 · Intent: Appointment scheduling</div></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><div style="font-size:11px;font-weight:700;color:var(--green)">aria-aswc-v2.1</div><div style="font-size:10px;color:var(--text3)">NLU confidence: 94%</div></div>
+            <button class="action-btn" style="background:var(--blue-light);color:var(--blue);border:1px solid #BFDBFE" onclick="alert('Live monitor: Viewing call transcript in real time...\n\nARIA: Thank you for calling Athens Sleep and Wellness...\nPATIENT: I need to schedule a sleep study...\nARIA: I can help with that...')">👁 Monitor</button>
+          </div>
+          <div style="padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:700">Coweta Family Medicine · Call in progress</div><div style="font-size:11px;color:var(--text3);margin-top:1px">Caller: (770) 555-0981 · Duration: 0:47 · Intent: Prescription refill</div></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><div style="font-size:11px;font-weight:700;color:var(--green)">aria-cf-v1.3</div><div style="font-size:10px;color:var(--text3)">NLU confidence: 88%</div></div>
+            <button class="action-btn" style="background:var(--blue-light);color:var(--blue);border:1px solid #BFDBFE" onclick="alert('Live monitor: Coweta Family Medicine call...')">👁 Monitor</button>
+          </div>
+          <div style="padding:13px 16px;display:flex;align-items:center;gap:12px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);animation:blink 1.8s infinite;flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:700">Valley Ridge FM · Near-handoff warning</div><div style="font-size:11px;color:var(--text3);margin-top:1px">Caller: (770) 555-0221 · Duration: 3:12 · Latency warning: 4.8s avg</div></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><div style="font-size:11px;font-weight:700;color:var(--amber)">aria-vr-v1.2 ⚠</div><div style="font-size:10px;color:var(--text3)">NLU confidence: 71%</div></div>
+            <button class="action-btn" style="background:var(--amber-light);color:var(--amber);border:1px solid #FDE68A" onclick="alert('Intervening in Valley Ridge call — pushing to human transfer...')">⚡ Intervene</button>
+          </div>
+        </div>
+        <div class="section-head"><div><div class="section-title">Call Volume — Today (Apr 18)</div></div></div>
+        <div class="card"><div style="padding:14px 16px;display:flex;align-items:flex-end;gap:6px;height:120px">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px"><div style="width:100%;background:var(--green);border-radius:3px 3px 0 0;height:30%"></div><div style="font-size:9px;color:var(--text3)">8AM</div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px"><div style="width:100%;background:var(--green);border-radius:3px 3px 0 0;height:55%"></div><div style="font-size:9px;color:var(--text3)">9AM</div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px"><div style="width:100%;background:var(--green);border-radius:3px 3px 0 0;height:80%"></div><div style="font-size:9px;color:var(--text3)">10AM</div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px"><div style="width:100%;background:linear-gradient(to top,var(--green),#4ADE80);border-radius:3px 3px 0 0;height:95%"></div><div style="font-size:9px;color:var(--text3);font-weight:700">Now</div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px"><div style="width:100%;background:var(--border);border-radius:3px 3px 0 0;height:60%;border:1px dashed var(--text3)"></div><div style="font-size:9px;color:var(--text3)">12PM</div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px"><div style="width:100%;background:var(--border);border-radius:3px 3px 0 0;height:50%;border:1px dashed var(--text3)"></div><div style="font-size:9px;color:var(--text3)">2PM</div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px"><div style="width:100%;background:var(--border);border-radius:3px 3px 0 0;height:45%;border:1px dashed var(--text3)"></div><div style="font-size:9px;color:var(--text3)">4PM</div></div>
+        </div></div>
+      </div>
+
+      <!-- ══ PROACTIVE ALERTS ══ -->
+      <div class="admin-page" id="page-alerts">
+        <div class="section-head"><div><div class="section-title">Proactive Alert Engine</div><div class="section-sub">5 active alerts · Auto-assigned to responsible admin · Escalation rules enforced</div></div><button class="tbtn tbtn-outline">⬇ Export</button></div>
+        <div class="alert-item alert-red"><div class="alert-icon">🚨</div><div style="flex:1"><div class="alert-text"><strong>Athens Sleep &amp; Wellness — CRITICAL:</strong> Twilio webhook returning 503. Agent unable to answer calls since 10:23 AM. Auto-heal failed 3 times.</div><div class="alert-time">2 min ago</div></div><div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--red-light);color:var(--red)">CRITICAL</span><span style="font-size:10px;color:var(--text3)">→ Mike Torres</span><button class="action-btn ab-edit" style="font-size:10px" onclick="alert('Resolving webhook for Athens Sleep...')">Resolve</button></div></div>
+        <div class="alert-item alert-amber"><div class="alert-icon">⚠️</div><div style="flex:1"><div class="alert-text"><strong>Valley Ridge FM — Latency:</strong> Avg response latency 4.8s (threshold: 3.0s). Prompt may be too long (~2,650 tokens). Simplification recommended.</div><div class="alert-time">18 min ago</div></div><div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--amber-light);color:var(--amber)">WARNING</span><span style="font-size:10px;color:var(--text3)">→ Mike Torres</span><button class="action-btn ab-edit" style="font-size:10px" onclick="alert('Opening prompt editor for Valley Ridge...')">Fix Prompt</button></div></div>
+        <div class="alert-item alert-amber"><div class="alert-icon">💳</div><div style="flex:1"><div class="alert-text"><strong>PedsFirst Pediatrics — Payment Failed:</strong> Visa ••••4412 declined. $30.00 outstanding. Grace period expires in 5 days — agent will suspend on May 23.</div><div class="alert-time">1 hr ago</div></div><div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--amber-light);color:var(--amber)">BILLING</span><span style="font-size:10px;color:var(--text3)">→ Amy Chen</span><button class="action-btn ab-edit" style="font-size:10px" onclick="alert('Sending payment reminder to PedsFirst...')">Send Reminder</button></div></div>
+        <div class="alert-item" style="border-left:3px solid var(--blue);background:var(--blue-light)"><div class="alert-icon">📊</div><div style="flex:1"><div class="alert-text"><strong>West Point Urgent Care — Containment Drop:</strong> Containment fell from 84% → 79.8% over 7 days. No-show rate rising. Prompt review suggested.</div><div class="alert-time">3 hrs ago</div></div><div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--blue-light);color:var(--blue)">MONITOR</span><span style="font-size:10px;color:var(--text3)">→ Sarah Lee</span><button class="action-btn ab-edit" style="font-size:10px" onclick="alert('Scheduling prompt review for West Point...')">Schedule Review</button></div></div>
+        <div class="alert-item" style="border-left:3px solid var(--purple);background:var(--purple-light)"><div class="alert-icon">📅</div><div style="flex:1"><div class="alert-text"><strong>Coweta Family Medicine — Onboarding Stalled:</strong> Step 4 (EHR integration) has been pending 6 days. athenahealth credentials not yet provided by practice.</div><div class="alert-time">Yesterday</div></div><div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--purple-light);color:var(--purple)">ONBOARDING</span><span style="font-size:10px;color:var(--text3)">→ Priya Nair</span><button class="action-btn ab-edit" style="font-size:10px" onclick="alert('Sending nudge to Coweta re: EHR credentials...')">Send Nudge</button></div></div>
+      </div>
+
+      <!-- ══ ALL PRACTICES ══ -->
+      <div class="admin-page" id="page-practices">
+        <div class="section-head"><div><div class="section-title">All Practices — 6 Active</div><div class="section-sub">Full roster · Health scores · Plan details · Quick actions</div></div><div style="display:flex;gap:6px"><button class="tbtn tbtn-outline">⬇ Export</button><button class="tbtn tbtn-primary" onclick="switchView('wizard')">+ Onboard New</button></div></div>
+        <div class="card">
+          <table class="table">
+            <thead><tr><th>Practice</th><th>Plan</th><th>Agent</th><th>Containment</th><th>MRR</th><th>EHR</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><div class="user-cell"><div class="avatar-sm" style="background:#ECFDF5;color:var(--green)">🌙</div><div><div class="user-name">Athens Sleep &amp; Wellness</div><div class="user-email">Athens, GA · Dr. Agrawal · NPI 1689977761</div></div></div></td><td><span class="role-pill" style="background:var(--blue-light);color:var(--blue)">Professional</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px">aria-aswc-v2.1</td><td><span style="color:var(--green);font-weight:700">87.3%</span></td><td style="font-weight:700">$79</td><td>athenahealth</td><td><span class="status-dot dot-red"></span><span style="color:var(--red);font-size:11px">Webhook err</span></td><td><div class="actions-cell"><button class="action-btn ab-edit" onclick="switchAdminPage('impersonation',null)">Impersonate</button><button class="action-btn ab-reset">Message</button></div></td></tr>
+              <tr><td><div class="user-cell"><div class="avatar-sm" style="background:#EFF6FF;color:var(--blue)">🏥</div><div><div class="user-name">Valley Ridge FM</div><div class="user-email">Villa Rica, GA · Dr. Williams · 8 providers</div></div></div></td><td><span class="role-pill" style="background:var(--purple-light);color:var(--purple)">Enterprise</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px">aria-vr-v1.2</td><td><span style="color:var(--amber);font-weight:700">83.1%</span></td><td style="font-weight:700">$149</td><td>eClinicalWorks</td><td><span class="status-dot dot-amber"></span><span style="color:var(--amber);font-size:11px">High latency</span></td><td><div class="actions-cell"><button class="action-btn ab-edit" onclick="switchAdminPage('impersonation',null)">Impersonate</button><button class="action-btn ab-reset">Message</button></div></td></tr>
+              <tr><td><div class="user-cell"><div class="avatar-sm" style="background:#ECFDF5;color:var(--green)">🌿</div><div><div class="user-name">Buchanan Rural Clinic</div><div class="user-email">Buchanan, GA · Dr. Patel · 1 provider</div></div></div></td><td><span class="role-pill" style="background:var(--blue-light);color:var(--blue)">Professional</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px">aria-bc-v1.3</td><td><span style="color:var(--green);font-weight:700">88.5%</span></td><td style="font-weight:700">$79</td><td>athenahealth</td><td><span class="status-dot dot-green"></span><span style="color:var(--green);font-size:11px">Healthy</span></td><td><div class="actions-cell"><button class="action-btn ab-edit" onclick="switchAdminPage('impersonation',null)">Impersonate</button><button class="action-btn ab-reset">Message</button></div></td></tr>
+              <tr><td><div class="user-cell"><div class="avatar-sm" style="background:#ECFDF5;color:var(--green)">👶</div><div><div class="user-name">Haralson County Peds</div><div class="user-email">Tallapoosa, GA · Dr. Lee · 1 provider</div></div></div></td><td><span class="role-pill" style="background:var(--gray-light);color:var(--text3)">Lite</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px">aria-hc-v1.1</td><td><span style="color:var(--green);font-weight:700">91.2%</span></td><td style="font-weight:700">$30</td><td>Practice Fusion</td><td><span class="status-dot dot-green"></span><span style="color:var(--green);font-size:11px">Healthy</span></td><td><div class="actions-cell"><button class="action-btn ab-edit" onclick="switchAdminPage('impersonation',null)">Impersonate</button><button class="action-btn ab-reset">Message</button></div></td></tr>
+              <tr><td><div class="user-cell"><div class="avatar-sm" style="background:var(--amber-light);color:var(--amber)">🚨</div><div><div class="user-name">West Point Urgent Care</div><div class="user-email">West Point, GA · Dr. Anderson · 3 providers</div></div></div></td><td><span class="role-pill" style="background:var(--blue-light);color:var(--blue)">Professional</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px">aria-wp-v1.4</td><td><span style="color:var(--amber);font-weight:700">79.8%</span></td><td style="font-weight:700">$79</td><td>ModMed</td><td><span class="status-dot dot-amber"></span><span style="color:var(--amber);font-size:11px">Containment ↓</span></td><td><div class="actions-cell"><button class="action-btn ab-edit" onclick="switchAdminPage('impersonation',null)">Impersonate</button><button class="action-btn ab-reset">Message</button></div></td></tr>
+              <tr><td><div class="user-cell"><div class="avatar-sm" style="background:var(--amber-light);color:var(--amber)">⚠️</div><div><div class="user-name">Coweta Family Medicine</div><div class="user-email">Newnan, GA · Dr. Torres · 4 providers</div></div></div></td><td><span class="role-pill" style="background:var(--amber-light);color:var(--amber)">Pro+Overage</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px">aria-cf-v1.3</td><td><span style="color:var(--green);font-weight:700">85.4%</span></td><td style="font-weight:700">$218.50</td><td>athenahealth</td><td><span class="status-dot dot-amber"></span><span style="color:var(--amber);font-size:11px">Overage</span></td><td><div class="actions-cell"><button class="action-btn ab-edit" onclick="switchAdminPage('impersonation',null)">Impersonate</button><button class="action-btn ab-reset">Message</button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ NEW SIGNUPS ══ -->
+      <div class="admin-page" id="page-signups">
+        <div class="section-head"><div><div class="section-title">New Signups — Awaiting Activation</div><div class="section-sub">1 new signup pending CS Admin onboarding · Auto-assigned by ZIP zone</div></div></div>
+        <div class="alert-item" style="border-left:4px solid var(--amber);background:#FFFBEB;margin-bottom:16px"><div class="alert-icon">🆕</div><div style="flex:1"><div class="alert-text"><strong>Piedmont Orthopedics — New signup 2 hours ago</strong><br>Dr. Rachel Kim · 850 Collier Rd NW, Atlanta GA 30318 · NPI 1478523690 · orthopedics@piedmontortho.com</div><div class="alert-time">Self-signup · Professional Plan $79 · athenahealth EHR · Zone: 303XX → Auto-assigned to Priya Nair (CS Admin)</div></div><div style="display:flex;gap:5px"><button class="action-btn ab-edit" onclick="alert('Starting onboarding for Piedmont Orthopedics...')">Start Onboarding</button><button class="action-btn ab-reset" onclick="alert('Sending welcome email to Dr. Kim...')">Welcome Email</button></div></div>
+        <div class="section-head"><div><div class="section-title">Onboarding Pipeline</div></div></div>
+        <div class="card">
+          <table class="table">
+            <thead><tr><th>Practice</th><th>Step</th><th>Progress</th><th>CS Admin</th><th>Days Since Signup</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><div><div class="user-name">Piedmont Orthopedics</div><div class="user-email">Dr. Rachel Kim · 303XX</div></div></td><td>Step 1 — Account setup</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:10%;height:100%;background:var(--amber)"></div></div><span style="font-size:10px;font-weight:600;color:var(--amber)">10%</span></div></td><td>Priya Nair</td><td style="color:var(--amber);font-weight:700">0 days</td><td><button class="action-btn ab-edit" onclick="alert('Opening onboarding wizard for Piedmont...')">Open Wizard</button></td></tr>
+              <tr><td><div><div class="user-name">Coweta Family Medicine</div><div class="user-email">Dr. Torres · 302XX</div></div></td><td>Step 4 — EHR integration</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:44%;height:100%;background:var(--blue)"></div></div><span style="font-size:10px;font-weight:600;color:var(--blue)">44%</span></div></td><td>Priya Nair</td><td style="color:var(--red);font-weight:700">6 days stalled</td><td><button class="action-btn ab-edit" onclick="alert('Sending nudge to Coweta re: EHR credentials...')">Send Nudge</button></td></tr>
+              <tr><td><div><div class="user-name">Athens Sleep &amp; Wellness</div><div class="user-email">Dr. Agrawal · 30606</div></div></td><td>Step 9 — LIVE ✓</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--green)"></div></div><span style="font-size:10px;font-weight:600;color:var(--green)">100%</span></div></td><td>Priya Nair</td><td style="color:var(--green);font-weight:700">Complete</td><td><button class="action-btn" style="background:var(--green-light);color:var(--green)" onclick="switchAdminPage('impersonation',null)">View Practice</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ IMPERSONATION ══ -->
+      <div class="admin-page" id="page-impersonation">
+        <div class="section-head"><div><div class="section-title">Practice Impersonation</div><div class="section-sub">View any practice dashboard as if you were their admin · Full HIPAA audit trail · Session expires in 30 min</div></div></div>
+        <div class="card" style="margin-bottom:16px">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text)">Select Practice to Impersonate</div>
+          <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Choose a practice — you will see their dashboard exactly as their Practice Admin does</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px">
+              <div style="border:1.5px solid var(--border);border-radius:var(--radius);padding:12px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'" onclick="alert('Starting impersonation session...\n\nYou are now viewing as: Athens Sleep & Wellness\nPractice Admin: Dr. Subodh Agrawal\n\nThis session is HIPAA-logged.\nSession expires: 30 minutes.\nReason required for audit trail.')">
+                <div style="font-size:18px;margin-bottom:5px">🌙</div>
+                <div style="font-size:12px;font-weight:700">Athens Sleep &amp; Wellness</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Dr. Agrawal · Professional</div>
+                <div style="margin-top:7px"><span style="font-size:10px;font-weight:600;padding:2px 7px;background:var(--red-light);color:var(--red);border-radius:5px">⚠ Webhook issue</span></div>
+              </div>
+              <div style="border:1.5px solid var(--border);border-radius:var(--radius);padding:12px;cursor:pointer" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'" onclick="alert('Starting impersonation session for Valley Ridge...\n\nThis session is HIPAA-logged.')">
+                <div style="font-size:18px;margin-bottom:5px">🏥</div>
+                <div style="font-size:12px;font-weight:700">Valley Ridge FM</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Dr. Williams · Enterprise · 8 providers</div>
+                <div style="margin-top:7px"><span style="font-size:10px;font-weight:600;padding:2px 7px;background:var(--amber-light);color:var(--amber);border-radius:5px">High latency</span></div>
+              </div>
+              <div style="border:1.5px solid var(--border);border-radius:var(--radius);padding:12px;cursor:pointer" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'" onclick="alert('Starting impersonation session for Buchanan Rural...\n\nThis session is HIPAA-logged.')">
+                <div style="font-size:18px;margin-bottom:5px">🌿</div>
+                <div style="font-size:12px;font-weight:700">Buchanan Rural Clinic</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Dr. Patel · Professional</div>
+                <div style="margin-top:7px"><span style="font-size:10px;font-weight:600;padding:2px 7px;background:#ECFDF5;color:var(--green);border-radius:5px">Healthy ✓</span></div>
+              </div>
+              <div style="border:1.5px solid var(--border);border-radius:var(--radius);padding:12px;cursor:pointer" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'" onclick="alert('Starting impersonation session for Haralson Peds...\n\nThis session is HIPAA-logged.')">
+                <div style="font-size:18px;margin-bottom:5px">👶</div>
+                <div style="font-size:12px;font-weight:700">Haralson County Peds</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Dr. Lee · Lite</div>
+                <div style="margin-top:7px"><span style="font-size:10px;font-weight:600;padding:2px 7px;background:#ECFDF5;color:var(--green);border-radius:5px">Healthy ✓</span></div>
+              </div>
+              <div style="border:1.5px solid var(--border);border-radius:var(--radius);padding:12px;cursor:pointer" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'" onclick="alert('Starting impersonation session for West Point Urgent...\n\nThis session is HIPAA-logged.')">
+                <div style="font-size:18px;margin-bottom:5px">🚨</div>
+                <div style="font-size:12px;font-weight:700">West Point Urgent Care</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Dr. Anderson · Professional · 3 providers</div>
+                <div style="margin-top:7px"><span style="font-size:10px;font-weight:600;padding:2px 7px;background:var(--amber-light);color:var(--amber);border-radius:5px">Containment ↓</span></div>
+              </div>
+              <div style="border:1.5px solid var(--border);border-radius:var(--radius);padding:12px;cursor:pointer" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'" onclick="alert('Starting impersonation session for Coweta Family Med...\n\nThis session is HIPAA-logged.')">
+                <div style="font-size:18px;margin-bottom:5px">⚠️</div>
+                <div style="font-size:12px;font-weight:700">Coweta Family Medicine</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Dr. Torres · Pro+Overage · 4 providers</div>
+                <div style="margin-top:7px"><span style="font-size:10px;font-weight:600;padding:2px 7px;background:var(--amber-light);color:var(--amber);border-radius:5px">279 min overage</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700">Recent Impersonation Sessions — HIPAA Audit Log</div>
+          <div style="padding:0">
+            <div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;font-size:12px"><span style="color:var(--text3);width:110px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px">Today 10:42 AM</span><span><strong>Priya Nair</strong> (CS Admin) impersonated Athens Sleep &amp; Wellness · Duration: 8 min · Reason: Onboarding check · No data modified</span></div>
+            <div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;font-size:12px"><span style="color:var(--text3);width:110px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px">Today 09:15 AM</span><span><strong>Mike Torres</strong> (Technical Admin) impersonated Athens Sleep &amp; Wellness · Duration: 22 min · Reason: Webhook debugging · Agent config modified</span></div>
+            <div style="padding:11px 16px;display:flex;gap:12px;font-size:12px"><span style="color:var(--text3);width:110px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px">Yesterday 4:30 PM</span><span><strong>James Kim</strong> (Super Admin) impersonated Valley Ridge FM · Duration: 15 min · Reason: QA review · No data modified</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ REVENUE ══ -->
+      <div class="admin-page" id="page-revenue">
+        <div class="section-head"><div><div class="section-title">Revenue Dashboard — MOF Platform</div><div class="section-sub">All 6 practices · April 2026 · Stripe Live · Amy Chen (Financial Admin)</div></div><button class="tbtn tbtn-outline">⬇ Export P&amp;L</button></div>
+        <div class="kpi-row" style="grid-template-columns:repeat(5,1fr)">
+          <div class="kpi-card"><div class="kpi-label">MRR</div><div class="kpi-value" style="color:var(--green)">$634</div><div class="kpi-change kpi-up">↑ $149 vs Mar</div></div>
+          <div class="kpi-card"><div class="kpi-label">ARR</div><div class="kpi-value">$7,608</div><div class="kpi-change kpi-up">Growing</div></div>
+          <div class="kpi-card"><div class="kpi-label">Subscription MRR</div><div class="kpi-value">$495</div><div class="kpi-change kpi-neutral">6 practices</div></div>
+          <div class="kpi-card"><div class="kpi-label">Overage MRR</div><div class="kpi-value" style="color:var(--amber)">$139.50</div><div class="kpi-change kpi-neutral">Coweta only</div></div>
+          <div class="kpi-card"><div class="kpi-label">Overdue</div><div class="kpi-value" style="color:var(--red)">$30</div><div class="kpi-change kpi-down">PedsFirst</div></div>
+        </div>
+        <div class="card">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700">Revenue by Practice — April 2026</div>
+          <table class="table">
+            <thead><tr><th>Practice</th><th>Plan</th><th>Subscription</th><th>Overage</th><th>Total</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Athens Sleep &amp; Wellness</strong></td><td><span class="role-pill" style="background:var(--blue-light);color:var(--blue)">Professional</span></td><td>$79.00</td><td style="color:var(--green)">$0.00</td><td style="font-weight:700">$79.00</td><td><span class="status-dot dot-green"></span>Paid ✓</td></tr>
+              <tr><td><strong>Valley Ridge FM</strong></td><td><span class="role-pill" style="background:var(--purple-light);color:var(--purple)">Enterprise</span></td><td>$149.00</td><td style="color:var(--green)">$0.00</td><td style="font-weight:700">$149.00</td><td><span class="status-dot dot-green"></span>Paid ✓</td></tr>
+              <tr><td><strong>Buchanan Rural Clinic</strong></td><td><span class="role-pill" style="background:var(--blue-light);color:var(--blue)">Professional</span></td><td>$79.00</td><td style="color:var(--green)">$0.00</td><td style="font-weight:700">$79.00</td><td><span class="status-dot dot-green"></span>Paid ✓</td></tr>
+              <tr><td><strong>Haralson County Peds</strong></td><td><span class="role-pill" style="background:var(--gray-light);color:var(--text3)">Lite</span></td><td>$30.00</td><td style="color:var(--green)">$0.00</td><td style="font-weight:700">$30.00</td><td><span class="status-dot dot-green"></span>Paid ✓</td></tr>
+              <tr><td><strong>West Point Urgent Care</strong></td><td><span class="role-pill" style="background:var(--blue-light);color:var(--blue)">Professional</span></td><td>$79.00</td><td style="color:var(--green)">$0.00</td><td style="font-weight:700">$79.00</td><td><span class="status-dot dot-green"></span>Paid ✓</td></tr>
+              <tr><td><strong>Coweta Family Medicine</strong></td><td><span class="role-pill" style="background:var(--amber-light);color:var(--amber)">Pro+Overage</span></td><td>$79.00</td><td style="color:var(--amber);font-weight:700">$139.50</td><td style="font-weight:700;color:var(--purple)">$218.50</td><td><span class="status-dot dot-green"></span>Paid ✓</td></tr>
+              <tr><td><strong>PedsFirst Pediatrics</strong></td><td><span class="role-pill" style="background:var(--gray-light);color:var(--text3)">Lite</span></td><td>$30.00</td><td>—</td><td style="font-weight:700;color:var(--red)">$30.00</td><td><span class="status-dot dot-red"></span><span style="color:var(--red)">Failed</span></td></tr>
+              <tr style="background:var(--green-light);font-weight:800"><td>TOTAL</td><td></td><td>$525.00</td><td style="color:var(--amber)">$139.50</td><td style="color:var(--green)">$634.50</td><td><span style="color:var(--green)">All current</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ INVOICES ══ -->
+      <div class="admin-page" id="page-invoices">
+        <div class="section-head"><div><div class="section-title">Invoices &amp; Billing Management</div><div class="section-sub">All invoices · Stripe auto-deduction · Amy Chen (Financial Admin)</div></div><button class="tbtn tbtn-outline">⬇ Export All Invoices</button></div>
+        <div class="card">
+          <table class="table">
+            <thead><tr><th>Invoice #</th><th>Practice</th><th>Amount</th><th>Due Date</th><th>Paid</th><th>Method</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px">INV-2026-001</td><td>Athens Sleep &amp; Wellness</td><td>$79.00</td><td>Apr 11, 2026</td><td><span class="status-dot dot-green"></span>Paid ✓</td><td>Visa ••••6411</td><td><div class="actions-cell"><button class="action-btn ab-edit">View</button><button class="action-btn ab-reset">PDF</button></div></td></tr>
+              <tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px">INV-VR-2026-001</td><td>Valley Ridge FM</td><td>$149.00</td><td>Apr 28, 2026</td><td><span class="status-dot dot-green"></span>Paid ✓</td><td>Visa ••••2234</td><td><div class="actions-cell"><button class="action-btn ab-edit">View</button><button class="action-btn ab-reset">PDF</button></div></td></tr>
+              <tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px">INV-BC-2026-001</td><td>Buchanan Rural</td><td>$79.00</td><td>Apr 15, 2026</td><td><span class="status-dot dot-green"></span>Paid ✓</td><td>MC ••••8871</td><td><div class="actions-cell"><button class="action-btn ab-edit">View</button><button class="action-btn ab-reset">PDF</button></div></td></tr>
+              <tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px">INV-HC-2026-001</td><td>Haralson Peds</td><td>$30.00</td><td>Apr 28, 2026</td><td><span class="status-dot dot-green"></span>Paid ✓</td><td>Visa ••••5590</td><td><div class="actions-cell"><button class="action-btn ab-edit">View</button><button class="action-btn ab-reset">PDF</button></div></td></tr>
+              <tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px">INV-WP-2026-001</td><td>West Point Urgent</td><td>$79.00</td><td>Apr 5, 2026</td><td><span class="status-dot dot-green"></span>Paid ✓</td><td>AmEx ••••0043</td><td><div class="actions-cell"><button class="action-btn ab-edit">View</button><button class="action-btn ab-reset">PDF</button></div></td></tr>
+              <tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px">INV-CF-2026-001</td><td>Coweta Family Med</td><td>$218.50</td><td>Apr 1, 2026</td><td><span class="status-dot dot-green"></span>Paid ✓</td><td>Visa ••••3317</td><td><div class="actions-cell"><button class="action-btn ab-edit">View</button><button class="action-btn ab-reset">PDF</button></div></td></tr>
+              <tr style="background:var(--red-light)"><td style="font-family:'JetBrains Mono',monospace;font-size:11px">INV-PF-2026-001</td><td><strong style="color:var(--red)">PedsFirst Pediatrics</strong></td><td>$30.00</td><td>Apr 18, 2026</td><td><span class="status-dot dot-red"></span><span style="color:var(--red)">Failed</span></td><td>Visa ••••4412</td><td><div class="actions-cell"><button class="action-btn ab-deact" onclick="alert('Sending payment retry to PedsFirst...')">Retry</button><button class="action-btn ab-reset" onclick="alert('Sending past-due email to Dr. Park...')">Email</button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ BAA VAULT ══ -->
+      <div class="admin-page" id="page-baa">
+        <div class="section-head"><div><div class="section-title">BAA Vault — Business Associate Agreements</div><div class="section-sub">HIPAA-required BAAs · Practice + vendor agreements · DocuSign managed</div></div><button class="tbtn tbtn-outline">⬇ Export All</button></div>
+        <div class="section-head" style="margin-top:4px"><div><div style="font-size:13px;font-weight:700">Practice BAAs — 6 Signed</div></div></div>
+        <div class="card" style="margin-bottom:14px">
+          <table class="table">
+            <thead><tr><th>Practice</th><th>Signed Date</th><th>Signatory</th><th>Expires</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Athens Sleep &amp; Wellness</strong></td><td>Mar 12, 2026</td><td>Dr. Subodh Agrawal</td><td>Mar 12, 2027</td><td><span style="color:var(--green);font-weight:700">Active ✓</span></td><td><button class="action-btn ab-edit" onclick="alert('Viewing BAA for Athens Sleep...')">View PDF</button></td></tr>
+              <tr><td><strong>Valley Ridge FM</strong></td><td>Mar 28, 2026</td><td>Dr. Michael Williams</td><td>Mar 28, 2027</td><td><span style="color:var(--green);font-weight:700">Active ✓</span></td><td><button class="action-btn ab-edit" onclick="alert('Viewing BAA for Valley Ridge...')">View PDF</button></td></tr>
+              <tr><td><strong>Buchanan Rural Clinic</strong></td><td>Apr 2, 2026</td><td>Dr. Sarah Patel</td><td>Apr 2, 2027</td><td><span style="color:var(--green);font-weight:700">Active ✓</span></td><td><button class="action-btn ab-edit">View PDF</button></td></tr>
+              <tr><td><strong>Haralson County Peds</strong></td><td>Apr 5, 2026</td><td>Dr. James Lee</td><td>Apr 5, 2027</td><td><span style="color:var(--green);font-weight:700">Active ✓</span></td><td><button class="action-btn ab-edit">View PDF</button></td></tr>
+              <tr><td><strong>West Point Urgent Care</strong></td><td>Apr 3, 2026</td><td>Dr. Amanda Anderson</td><td>Apr 3, 2027</td><td><span style="color:var(--green);font-weight:700">Active ✓</span></td><td><button class="action-btn ab-edit">View PDF</button></td></tr>
+              <tr><td><strong>Coweta Family Medicine</strong></td><td>Mar 30, 2026</td><td>Dr. Rachel Torres</td><td>Mar 30, 2027</td><td><span style="color:var(--green);font-weight:700">Active ✓</span></td><td><button class="action-btn ab-edit">View PDF</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="section-head"><div><div style="font-size:13px;font-weight:700">Vendor BAAs</div></div></div>
+        <div class="card">
+          <table class="table">
+            <thead><tr><th>Vendor</th><th>Service</th><th>BAA Date</th><th>Expires</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><strong>AWS</strong></td><td>Infrastructure, Bedrock AI</td><td>Jan 1, 2026</td><td>No expiry</td><td><span style="color:var(--green);font-weight:700">Active ✓</span></td></tr>
+              <tr><td><strong>Twilio</strong></td><td>Voice + SMS + Lookup v2</td><td>Jan 1, 2026</td><td>Dec 15, 2026</td><td><span style="color:var(--green);font-weight:700">Active ✓</span></td></tr>
+              <tr><td><strong>Deepgram</strong></td><td>Speech-to-Text (Nova-2)</td><td>Jan 1, 2026</td><td>Jan 10, 2027</td><td><span style="color:var(--green);font-weight:700">Active ✓</span></td></tr>
+              <tr><td><strong>ElevenLabs</strong></td><td>Text-to-Speech (TTS)</td><td>Jan 1, 2026</td><td>Feb 1, 2027</td><td><span style="color:var(--green);font-weight:700">Active ✓</span></td></tr>
+              <tr><td><strong>Pinecone</strong></td><td>Vector DB (RAG)</td><td>Jan 1, 2026</td><td>Jan 15, 2027</td><td><span style="color:var(--green);font-weight:700">Active ✓</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ AUDIT TRAIL ══ -->
+      <div class="admin-page" id="page-audit">
+        <div class="section-head"><div><div class="section-title">HIPAA Audit Trail</div><div class="section-sub">All platform events logged · Immutable · 6-year retention · Exportable for compliance review</div></div><div style="display:flex;gap:6px"><button class="tbtn tbtn-outline">⬇ Export CSV</button><button class="tbtn tbtn-outline">⬇ Export PDF</button></div></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+          <div class="kpi-card"><div class="kpi-label">Events Today</div><div class="kpi-value">847</div><div class="kpi-change kpi-neutral">Normal</div></div>
+          <div class="kpi-card"><div class="kpi-label">PHI Accesses</div><div class="kpi-value" style="color:var(--amber)">23</div><div class="kpi-change kpi-neutral">All authorized</div></div>
+          <div class="kpi-card"><div class="kpi-label">Impersonations</div><div class="kpi-value">3</div><div class="kpi-change kpi-neutral">Today</div></div>
+          <div class="kpi-card"><div class="kpi-label">Anomalies</div><div class="kpi-value" style="color:var(--green)">0</div><div class="kpi-change kpi-up">Clean ✓</div></div>
+        </div>
+        <div class="card">
+          <div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px">
+            <input style="padding:5px 9px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Outfit',sans-serif;font-size:12px;flex:1" placeholder="Search events, admin, practice, action...">
+            <select style="padding:5px 9px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Outfit',sans-serif;background:white"><option>All event types</option><option>PHI Access</option><option>Impersonation</option><option>Admin changes</option><option>Billing</option></select>
+          </div>
+          <div style="padding:0">
+            <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;font-size:11px"><span style="color:var(--text3);width:120px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px">10:42:33 AM</span><span style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;background:var(--blue-light);color:var(--blue);flex-shrink:0">IMPERSONATION</span><span style="flex:1"><strong>Priya Nair</strong> started impersonation session for Athens Sleep &amp; Wellness · Reason: Onboarding check · IP: 74.12.xxx</span></div>
+            <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;font-size:11px"><span style="color:var(--text3);width:120px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px">10:23:07 AM</span><span style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;background:var(--red-light);color:var(--red);flex-shrink:0">SYSTEM ERROR</span><span style="flex:1">Twilio webhook 503 for Athens Sleep &amp; Wellness · Agent aria-aswc-v2.1 unable to process inbound calls · Auto-alert sent to Mike Torres</span></div>
+            <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;font-size:11px"><span style="color:var(--text3);width:120px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px">09:58:14 AM</span><span style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;background:var(--amber-light);color:var(--amber);flex-shrink:0">PHI ACCESS</span><span style="flex:1"><strong>Mike Torres</strong> accessed call transcript TXN-4719 for Athens Sleep &amp; Wellness (patient: redacted) during webhook debug session</span></div>
+            <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;font-size:11px"><span style="color:var(--text3);width:120px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px">09:15:22 AM</span><span style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;background:var(--purple-light);color:var(--purple);flex-shrink:0">AGENT CONFIG</span><span style="flex:1"><strong>Mike Torres</strong> updated prompt for Athens Sleep &amp; Wellness · v2.0 → v2.1 · Diff: +SMS timeout, billing FAQ expansion · Sandbox tested ✓</span></div>
+            <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;font-size:11px"><span style="color:var(--text3);width:120px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px">08:30:44 AM</span><span style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;background:var(--teal-light);color:var(--teal);flex-shrink:0">BILLING</span><span style="flex:1"><strong>Amy Chen</strong> generated monthly statement STMT-2026-04 · 6 practices · $634.50 total · Stripe auto-deduction initiated</span></div>
+            <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;font-size:11px"><span style="color:var(--text3);width:120px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px">08:14:02 AM</span><span style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;background:var(--green-light);color:var(--green);flex-shrink:0">LOGIN</span><span style="flex:1"><strong>James Kim</strong> (Super Admin) logged in · 2FA verified · IP: 74.12.xxx · /admin/login</span></div>
+            <div style="padding:10px 16px;display:flex;gap:12px;font-size:11px"><span style="color:var(--text3);width:120px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px">Yesterday</span><span style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;background:var(--blue-light);color:var(--blue);flex-shrink:0">ADMIN CREATED</span><span style="flex:1"><strong>James Kim</strong> created admin account for Priya Nair (CS Admin) · Zone: ATL 303XX-304XX · Practices: Athens Sleep, PedsFirst</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end admin-content -->
+  </div><!-- end admin-main -->
+</div><!-- end admin-layout -->
+</div>
+
+<!-- ════════════════════════════════════
+     VIEW C: ADD ADMIN WIZARD
+     ════════════════════════════════════ -->
+<div class="view" id="view-wizard">
+<div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+  <div style="display:grid;grid-template-columns:260px 1fr;flex:1;overflow:hidden;">
+
+  <!-- Wizard Sidebar -->
+  <div class="wiz-sidebar">
+    <div class="wiz-sb-title">Add New Admin</div>
+    <div class="wiz-step-item wiz-done" id="wiz-step-1" onclick="goWizStep(1)">
+      <div class="wiz-step-circle"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div class="wiz-step-info"><div class="wiz-step-name">Identity</div><div class="wiz-step-desc">Name, email, phone</div></div>
+    </div>
+    <div class="wiz-step-item wiz-done" id="wiz-step-2" onclick="goWizStep(2)">
+      <div class="wiz-step-circle"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div class="wiz-step-info"><div class="wiz-step-name">Role & Zone</div><div class="wiz-step-desc">Role type + ZIP zones</div></div>
+    </div>
+    <div class="wiz-step-item wiz-active" id="wiz-step-3" onclick="goWizStep(3)">
+      <div class="wiz-step-circle">3</div>
+      <div class="wiz-step-info"><div class="wiz-step-name">Assign Practices</div><div class="wiz-step-desc">Which practices they manage</div></div>
+    </div>
+    <div class="wiz-step-item" id="wiz-step-4" onclick="goWizStep(4)">
+      <div class="wiz-step-circle">4</div>
+      <div class="wiz-step-info"><div class="wiz-step-name">Permissions & Send</div><div class="wiz-step-desc">Fine-tune access + invite email</div></div>
+    </div>
+
+    <div class="wiz-preview">
+      <div class="wiz-preview-label">New Admin Preview</div>
+      <div class="wiz-preview-row"><span class="wiz-preview-key">Name</span><span class="wiz-preview-val">Priya Nair</span></div>
+      <div class="wiz-preview-row"><span class="wiz-preview-key">Email</span><span class="wiz-preview-val">priya.n@mof.ai</span></div>
+      <div class="wiz-preview-row"><span class="wiz-preview-key">Role</span><span class="wiz-preview-val">CS Admin</span></div>
+      <div class="wiz-preview-row"><span class="wiz-preview-key">Zone</span><span class="wiz-preview-val">ATL 303XX–304XX</span></div>
+      <div class="wiz-preview-row"><span class="wiz-preview-key">Practices</span><span class="wiz-preview-val">2 of 6 assigned</span></div>
+    </div>
+  </div>
+
+  <!-- Wizard Main -->
+  <div style="overflow-y:auto;padding:24px;background:#F1F5F9;display:flex;flex-direction:column;gap:0;" id="wizContent">
+
+    <!-- Step 1: Identity -->
+    <div class="wiz-page active" id="wiz-page-1">
+      <div class="wiz-page-tag">Step 1 of 4 · Identity</div>
+      <div class="wiz-page-title">Admin Identity</div>
+      <div class="wiz-page-sub">Enter the new admin's personal information. An invite email will be sent at the end.</div>
+      <div class="wiz-card">
+        <div class="wiz-card-head"><div class="wiz-card-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="wiz-card-title">Personal Information</div><div class="wiz-card-sub">Contact details for login and notifications</div></div></div>
+        <div class="wiz-card-body">
+          <div class="form-grid">
+            <div class="form-grid form-grid-2">
+              <div class="form-group"><label class="form-label">First Name <span class="req">*</span></label><input class="form-input filled" value="Priya"></div>
+              <div class="form-group"><label class="form-label">Last Name <span class="req">*</span></label><input class="form-input filled" value="Nair"></div>
+            </div>
+            <div class="form-group"><label class="form-label">MOF Email <span class="req">*</span></label><input class="form-input filled" value="priya.n@mof.ai"><div class="form-hint">Must be @mof.ai domain. Temporary password will be emailed.</div></div>
+            <div class="form-group"><label class="form-label">Mobile (for 2FA SMS) <span class="req">*</span></label><input class="form-input filled" value="(404) 555-0197"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Role & Zone (done) -->
+    <div class="wiz-page" id="wiz-page-2">
+      <div class="wiz-page-tag">Step 2 of 4 · Role & Zone</div>
+      <div class="wiz-page-title">Role & Geographic Zone</div>
+      <div class="wiz-page-sub">Select the admin's role. Regional Admins are ZIP-restricted; Technical and Financial Admins can be assigned globally.</div>
+      <div class="wiz-card">
+        <div class="wiz-card-head"><div class="wiz-card-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div><div class="wiz-card-title">Role Selection</div><div class="wiz-card-sub">Determines what this admin can see and do</div></div></div>
+        <div class="wiz-card-body">
+          <div class="role-grid" style="margin-bottom:14px;">
+            <div class="role-card" onclick="selectRole(this,'Regional')"><div class="role-card-icon">🗺️</div><div class="role-card-name">Regional</div><div class="role-card-desc">ZIP-restricted, Tech+Finance</div></div>
+            <div class="role-card" onclick="selectRole(this,'Technical')"><div class="role-card-icon">🔧</div><div class="role-card-name">Technical</div><div class="role-card-desc">Agents, prompts, webhooks</div></div>
+            <div class="role-card" onclick="selectRole(this,'Financial')"><div class="role-card-icon">💰</div><div class="role-card-name">Financial</div><div class="role-card-desc">Billing, invoices, MRR</div></div>
+            <div class="role-card selected" onclick="selectRole(this,'CS')"><div class="role-card-icon">🤝</div><div class="role-card-name">CS Admin</div><div class="role-card-desc">Onboarding & outreach</div></div>
+            <div class="role-card" onclick="selectRole(this,'Super')" style="border-color:#FCD34D;"><div class="role-card-icon">👑</div><div class="role-card-name">Super</div><div class="role-card-desc">Full access — careful!</div></div>
+          </div>
+          <div class="form-group" style="margin-bottom:12px;"><label class="form-label">ZIP Zone Assignment</label><div class="zip-grid">
+            <div class="zip-chip sel">303XX (Atlanta)</div>
+            <div class="zip-chip sel">304XX (Marietta)</div>
+            <div class="zip-chip unsel" onclick="this.classList.toggle('sel');this.classList.toggle('unsel')">305XX (Roswell)</div>
+            <div class="zip-chip unsel" onclick="this.classList.toggle('sel');this.classList.toggle('unsel')">306XX (Athens)</div>
+            <div class="zip-chip unsel" onclick="this.classList.toggle('sel');this.classList.toggle('unsel')">307XX (Gainesville)</div>
+            <div class="zip-chip unsel" onclick="this.classList.toggle('sel');this.classList.toggle('unsel')">ALL ZONES</div>
+          </div><div class="form-hint" style="margin-top:6px;">CS Admin and Regional Admins are ZIP-restricted. Technical and Financial Admins typically get all zones.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Assign Practices (active) -->
+    <div class="wiz-page" id="wiz-page-3">
+      <div class="wiz-page-tag">Step 3 of 4 · Practice Assignment</div>
+      <div class="wiz-page-title">Assign Practices</div>
+      <div class="wiz-page-sub">Select which practices Priya Nair (CS Admin) will manage. Only practices within her ATL zone are shown.</div>
+      <div class="wiz-card">
+        <div class="wiz-card-head"><div class="wiz-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M9 8h6M9 12h6M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg></div><div><div class="wiz-card-title">Practice Assignment</div><div class="wiz-card-sub">3 practices in ATL zone (303XX–304XX) available</div></div></div>
+        <div class="wiz-card-body">
+          <div class="practice-list">
+            <div class="practice-assign-item assigned" onclick="togglePractice(this)">
+              <div class="pai-info"><div class="pai-icon">🏥</div><div><div class="pai-name">Athens Sleep & Wellness Center</div><div class="pai-plan">Dr. Subodh Agrawal · Professional $79 · 30606 · LIVE</div></div></div>
+              <div class="pai-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+            </div>
+            <div class="practice-assign-item assigned" onclick="togglePractice(this)">
+              <div class="pai-info"><div class="pai-icon">👶</div><div><div class="pai-name">PedsFirst Pediatrics</div><div class="pai-plan">Dr. James Park · Lite $30 · 30060 · Payment issue</div></div></div>
+              <div class="pai-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+            </div>
+            <div class="practice-assign-item" onclick="togglePractice(this)">
+              <div class="pai-info"><div class="pai-icon">🧠</div><div><div class="pai-name">NeuroMed Atlanta</div><div class="pai-plan">Dr. Kim Su · Professional $79 · 30340 · Setup 60%</div></div></div>
+              <div class="pai-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+            </div>
+          </div>
+          <div class="notice blue" style="margin-top:12px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            <div class="notice-text"><strong>2 of 3 assigned.</strong> Priya will be notified of new signups in her zone automatically, even for unassigned practices, so she can request access from Super Admin.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Permissions & Send -->
+    <div class="wiz-page" id="wiz-page-4">
+      <div class="wiz-page-tag">Step 4 of 4 · Permissions & Invite</div>
+      <div class="wiz-page-title">Fine-Tune Permissions & Send Invite</div>
+      <div class="wiz-page-sub">Review and customize Priya's access, then send the invite email with a secure one-time login link.</div>
+      <div class="wiz-card">
+        <div class="wiz-card-head"><div class="wiz-card-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div><div class="wiz-card-title">Permission Toggles — CS Admin</div><div class="wiz-card-sub">Pre-set for CS Admin role. Super Admin can override any toggle.</div></div></div>
+        <div class="wiz-card-body">
+          <table class="perm-table">
+            <thead><tr><th>Permission</th><th style="width:80px;text-align:center;">Enabled</th></tr></thead>
+            <tbody>
+              <tr><td>View practice dashboards (impersonation)</td><td style="text-align:center;"><div class="mini-toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="mini-knob"></div></div></td></tr>
+              <tr><td>Send in-platform messages to practices</td><td style="text-align:center;"><div class="mini-toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="mini-knob"></div></div></td></tr>
+              <tr><td>View call transcripts</td><td style="text-align:center;"><div class="mini-toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="mini-knob"></div></div></td></tr>
+              <tr><td>Send outreach emails to practice admins</td><td style="text-align:center;"><div class="mini-toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="mini-knob"></div></div></td></tr>
+              <tr><td>View agent health scores</td><td style="text-align:center;"><div class="mini-toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="mini-knob"></div></div></td></tr>
+              <tr><td>Configure AI agents or prompts</td><td style="text-align:center;"><div class="mini-toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="mini-knob"></div></div></td></tr>
+              <tr><td>View billing and invoices</td><td style="text-align:center;"><div class="mini-toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="mini-knob"></div></div></td></tr>
+              <tr><td>Create or deactivate other admins</td><td style="text-align:center;"><div class="mini-toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="mini-knob"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="wiz-card">
+        <div class="wiz-card-head"><div class="wiz-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="wiz-card-title">Invite Email Preview</div><div class="wiz-card-sub">Sent immediately upon clicking "Create Admin"</div></div></div>
+        <div class="wiz-card-body">
+          <div class="email-preview">
+            <div class="ep-label">Email Preview</div>
+            <div class="ep-row"><span class="ep-key">To:</span><span class="ep-val">priya.n@mof.ai</span></div>
+            <div class="ep-row"><span class="ep-key">From:</span><span class="ep-val">noreply@medicalofficeforce.com</span></div>
+            <div class="ep-row"><span class="ep-key">Subject:</span><span class="ep-val">You've been added as a CS Admin at Medical Office Force</span></div>
+            <div class="ep-body">Hi Priya,<br><br>James Kim has added you as a <strong style="color:#FCD34D;">Customer Success Admin</strong> on the Medical Office Force platform.<br><br>You've been assigned to: Athens Sleep & Wellness, PedsFirst Pediatrics<br>Zone: ATL Metro (303XX–304XX)<br><br>Click the secure link below to set your password and configure 2FA. This link expires in 24 hours.<br><br><span style="color:#60A5FA;">→ https://app.medicalofficeforce.com/admin/setup?token=ey...</span><br><br>Welcome to the team,<br>Medical Office Force</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: Success -->
+    <div class="wiz-page" id="wiz-page-5">
+      <div class="wiz-success">
+        <div class="wiz-success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="wiz-success-title">Admin Account Created!</div>
+        <div class="wiz-success-sub">Priya Nair (CS Admin) has been added. Invite email sent to priya.n@mof.ai. She must set her password and configure 2FA within 24 hours.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px;">
+          <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;"><div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Invite sent</div><div style="font-size:13px;font-weight:700;color:var(--green);">✓ Delivered</div></div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;"><div style="font-size:11px;color:var(--text3);margin-bottom:4px;">2FA required</div><div style="font-size:13px;font-weight:700;color:var(--amber);">Pending setup</div></div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;"><div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Audit logged</div><div style="font-size:13px;font-weight:700;color:var(--blue);">✓ HIPAA log</div></div>
+        </div>
+        <button class="lbtn" style="background:var(--amber);color:#fff;border:none;margin-top:16px;max-width:280px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;padding:10px 24px;border-radius:var(--radius-sm);cursor:pointer;" onclick="switchView('dashboard');switchAdminPage('admins',null)">View Admin Team →</button>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- Wizard Nav Bar -->
+  <div class="wiz-nav">
+    <button class="wiz-back" id="wizBack" onclick="wizNav(-1)">← Back</button>
+    <div class="wiz-step-pills">
+      <div class="wiz-step-pill" id="wpill-1"></div>
+      <div class="wiz-step-pill" id="wpill-2"></div>
+      <div class="wiz-step-pill" id="wpill-3"></div>
+      <div class="wiz-step-pill" id="wpill-4"></div>
+    </div>
+    <button class="wiz-next" id="wizNext" onclick="wizNav(1)">Next Step <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div>
+
+</div>
+</div>
+
+</div><!-- shell -->
+
+<script>
+let currentWizStep = 1;
+
+function switchView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.mode-tab').forEach((t,i)=>{
+    const views=['login','dashboard','wizard'];
+    t.classList.toggle('active', views[i]===v);
+  });
+}
+
+function switchAdminPage(page, btn){
+  document.querySelectorAll('.admin-page').forEach(p=>p.classList.remove('active'));
+  const el = document.getElementById('page-'+page);
+  if(el) el.classList.add('active');
+  if(btn){ document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+  const titles={overview:'Dashboard',admins:'Admin Roles & Credentials',org:'Org Structure',matrix:'Access Control Matrix',health:'Agent Health Monitor',livecalls:'Live Call Monitor',alerts:'Proactive Alerts',practices:'All Practices',signups:'New Signups',impersonation:'Practice Impersonation',revenue:'Revenue Dashboard',invoices:'Invoices & Billing',baa:'BAA Vault',audit:'Audit Trail'};
+  const bc = document.getElementById('adminPageBc');
+  if(bc) bc.textContent = titles[page]||page;
+}
+
+function fillPractice(el, email, name){
+  document.querySelectorAll('.demo-chip.practice-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('practiceEmail').value = email;
+}
+
+function fillAdmin(el, email, role, initials){
+  document.querySelectorAll('.demo-chip.admin-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('adminEmail').value = email;
+}
+
+function adminLogin(btn){
+  btn.textContent='Verifying 2FA…';
+  setTimeout(()=>{btn.textContent='✓ Access granted — redirecting…';btn.style.background='linear-gradient(135deg,#22C55E,#15803D)';},800);
+  setTimeout(()=>switchView('dashboard'),1800);
+}
+
+function goWizStep(n){
+  currentWizStep = n;
+  renderWiz();
+}
+
+function wizNav(dir){
+  currentWizStep = Math.max(1, Math.min(5, currentWizStep + dir));
+  renderWiz();
+}
+
+function renderWiz(){
+  document.querySelectorAll('.wiz-page').forEach(p=>p.classList.remove('active'));
+  const pg = document.getElementById('wiz-page-'+currentWizStep);
+  if(pg) pg.classList.add('active');
+
+  // Sidebar steps
+  for(let i=1;i<=4;i++){
+    const si = document.getElementById('wiz-step-'+i);
+    if(!si) continue;
+    si.classList.remove('wiz-active','wiz-done');
+    if(i < currentWizStep) si.classList.add('wiz-done');
+    else if(i === currentWizStep) si.classList.add('wiz-active');
+    const circ = si.querySelector('.wiz-step-circle');
+    if(i < currentWizStep){
+      circ.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>';
+    } else {
+      circ.textContent = i;
+    }
+  }
+
+  // Pills
+  for(let i=1;i<=4;i++){
+    const pill = document.getElementById('wpill-'+i);
+    if(pill) pill.classList.toggle('done', i <= currentWizStep);
+  }
+
+  // Nav buttons
+  const back = document.getElementById('wizBack');
+  const next = document.getElementById('wizNext');
+  if(back) back.style.visibility = currentWizStep===1?'hidden':'visible';
+  if(next){
+    if(currentWizStep===4){
+      next.innerHTML='Create Admin & Send Invite ✓';
+      next.style.padding='8px 16px';
+    } else if(currentWizStep===5){
+      next.style.display='none';
+      if(back) back.style.visibility='hidden';
+    } else {
+      next.style.display='flex';
+      next.innerHTML='Next Step <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+      next.style.padding='8px 22px';
+    }
+  }
+}
+
+function selectRole(el,role){
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function togglePractice(el){
+  el.classList.toggle('assigned');
+  const check = el.querySelector('.pai-check');
+  const svg = check.querySelector('svg');
+  if(el.classList.contains('assigned')){
+    svg.style.display='block';
+  } else {
+    svg.style.display='none';
+  }
+}
+
+renderWiz();
+</script>
+</body>
+</html>
