@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedFlow AI — Multi-Language Configuration · Athens Sleep & Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1B6B4A;--green2:#059669;--green-light:#ECFDF5;--green-dark:#14533A;
+  --amber:#D97706;--amber2:#F59E0B;--amber-light:#FEF3C7;--amber-dark:#92400E;
+  --blue:#1D4ED8;--blue2:#3B82F6;--blue-light:#EFF6FF;
+  --red:#DC2626;--red-light:#FEF2F2;
+  --purple:#7C3AED;--purple-light:#F5F3FF;
+  --teal:#0D9488;--teal-light:#F0FDFA;
+  --orange:#EA580C;--orange-light:#FFF7ED;
+  --pink:#DB2777;--pink-light:#FDF2F8;
+  --navy:#0F2A4A;--navy2:#1A3A5C;
+  --gray:#6B7280;--gray-light:#F9FAFB;--border:#E5E7EB;--border2:#D1D5DB;
+  --text:#111827;--text2:#374151;--text3:#6B7280;
+  --surface:#FFFFFF;--bg:#F1F5F9;
+  --r:10px;--rs:6px;--rl:14px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.05);
+  --shm:0 4px 16px rgba(0,0,0,.10);
+  --shl:0 8px 32px rgba(0,0,0,.14);
+}
+html,body{height:100%;font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;}
+
+/* ── SHELL ── */
+.shell{display:grid;grid-template-rows:52px 48px 1fr;height:100vh;overflow:hidden;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--navy);display:flex;align-items:center;padding:0 20px;gap:0;}
+.tb-logo{display:flex;align-items:center;gap:8px;margin-right:14px;}
+.tb-logo-mark{width:28px;height:28px;background:linear-gradient(135deg,#4ADE80,#1B6B4A);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.tb-logo-mark svg{width:15px;height:15px;}
+.tb-logo-text{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.2px;}
+.tb-sep{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 12px;}
+.tb-practice{display:flex;align-items:center;gap:7px;}
+.tb-practice-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.85);}
+.tb-practice-role{font-size:10px;color:rgba(255,255,255,.4);}
+.tb-spacer{flex:1;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.tb-chip{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;}
+.tc-green{background:rgba(74,222,128,.15);color:#86EFAC;}
+.tc-amber{background:rgba(251,191,36,.15);color:#FCD34D;}
+.tc-blue{background:rgba(96,165,250,.15);color:#93C5FD;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-btn{padding:5px 14px;border-radius:var(--rs);border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
+.tb-btn:hover{background:rgba(255,255,255,.15);}
+.tb-btn-primary{border:none;background:linear-gradient(135deg,#4ADE80,#1B6B4A);font-weight:700;}
+
+/* ── MAIN TABS ── */
+.main-tabs{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:0;overflow-x:auto;}
+.mtab{padding:12px 16px;font-size:12.5px;font-weight:500;color:var(--text3);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0;}
+.mtab:hover{color:var(--text2);}
+.mtab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600;}
+.mtab-badge{padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;}
+.mb-green{background:var(--green-light);color:var(--green);}
+.mb-amber{background:var(--amber-light);color:var(--amber);}
+.mb-blue{background:var(--blue-light);color:var(--blue);}
+.mtab-spacer{flex:1;}
+.lang-status-bar{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:5px 12px;border-radius:var(--rs);background:var(--green-light);color:var(--green);border:1px solid #A7F3D0;white-space:nowrap;}
+.lang-status-bar .flag{font-size:13px;}
+
+/* ── PANELS ── */
+.panel{display:none;height:calc(100vh - 100px);overflow:hidden;}
+.panel.active{display:flex;}
+
+/* ── SHARED LAYOUT ── */
+.two-col{display:grid;grid-template-columns:1fr 300px;height:100%;overflow:hidden;}
+.three-col{display:grid;grid-template-columns:260px 1fr 280px;height:100%;overflow:hidden;}
+.scroll{overflow-y:auto;}
+.pad{padding:20px 22px;}
+
+/* ── SIDEBAR (dark left) ── */
+.lang-sidebar{background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;}
+.ls-head{padding:16px 14px 14px;border-bottom:1px solid rgba(255,255,255,.07);}
+.ls-title{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:10px;}
+.lang-card{margin-bottom:8px;border-radius:8px;overflow:hidden;cursor:pointer;transition:all .18s;border:1.5px solid transparent;}
+.lang-card.selected{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06);}
+.lang-card:hover{background:rgba(255,255,255,.04);}
+.lang-card.lang-en{border-color:rgba(74,222,128,.3);}
+.lang-card.lang-es{border-color:rgba(251,191,36,.3);}
+.lang-card.lang-zh{border-color:rgba(239,68,68,.3);}
+.lang-card-inner{display:flex;align-items:center;gap:10px;padding:10px 12px;}
+.lc-flag{font-size:22px;flex-shrink:0;}
+.lc-info{flex:1;}
+.lc-name{font-size:13px;font-weight:700;color:#fff;}
+.lc-sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px;}
+.lc-badges{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;}
+.lc-badge{padding:1px 6px;border-radius:6px;font-size:9px;font-weight:700;}
+.lcb-primary{background:rgba(74,222,128,.2);color:#86EFAC;}
+.lcb-active{background:rgba(96,165,250,.2);color:#93C5FD;}
+.lcb-review{background:rgba(251,191,36,.2);color:#FCD34D;}
+.lcb-off{background:rgba(255,255,255,.08);color:rgba(255,255,255,.4);}
+.lc-pct{font-size:18px;font-weight:800;color:rgba(255,255,255,.7);letter-spacing:-1px;}
+
+.add-lang-btn{margin:10px 14px;padding:9px;border-radius:var(--rs);border:1.5px dashed rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.4);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;width:calc(100% - 28px);}
+.add-lang-btn:hover{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.7);}
+
+.ls-stats{padding:14px;border-top:1px solid rgba(255,255,255,.07);margin-top:auto;}
+.ls-stat-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;}
+.ls-stat-key{color:rgba(255,255,255,.35);}
+.ls-stat-val{color:rgba(255,255,255,.7);font-weight:600;}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.card-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.card-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.ci-green{background:var(--green-light);}
+.ci-blue{background:var(--blue-light);}
+.ci-amber{background:var(--amber-light);}
+.ci-red{background:var(--red-light);}
+.ci-purple{background:var(--purple-light);}
+.ci-teal{background:var(--teal-light);}
+.ci-navy{background:rgba(15,42,74,.08);}
+.ci-pink{background:var(--pink-light);}
+.card-title{font-size:13px;font-weight:700;color:var(--text);}
+.card-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.card-body{padding:14px 16px;}
+.card-head-right{margin-left:auto;display:flex;align-items:center;gap:6px;}
+
+/* ── LANGUAGE SELECTION GRID ── */
+.lang-select-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.ls-card{border:2px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .2s;text-align:center;position:relative;overflow:hidden;}
+.ls-card:hover{border-color:var(--border2);box-shadow:var(--sh);}
+.ls-card.ls-active{border-color:var(--green);box-shadow:0 0 0 1px var(--green);}
+.ls-card.ls-pending{border-color:var(--amber);}
+.ls-card.ls-available{border-color:var(--border);opacity:.7;}
+.ls-card-flag{font-size:32px;margin-bottom:8px;}
+.ls-card-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.ls-card-calls{font-size:11px;color:var(--text3);margin-bottom:8px;}
+.ls-card-status{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:11px;font-weight:700;}
+.ss-active{background:var(--green-light);color:var(--green);}
+.ss-review{background:var(--amber-light);color:var(--amber);}
+.ss-available{background:var(--gray-light);color:var(--text3);}
+.ls-card-pct{position:absolute;top:10px;right:10px;font-size:11px;font-weight:700;color:var(--text3);}
+.ls-card.ls-active .ls-card-pct{color:var(--green);}
+.ls-card.ls-pending .ls-card-pct{color:var(--amber);}
+
+/* ── KB TRANSLATION TABLE ── */
+.kb-table{width:100%;border-collapse:collapse;}
+.kb-table th{padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--gray-light);}
+.kb-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);vertical-align:top;}
+.kb-table tr:last-child td{border-bottom:none;}
+.kb-table tr:hover td{background:var(--gray-light);}
+.kb-en{font-size:12px;color:var(--text2);line-height:1.5;}
+.kb-translated{font-size:12px;color:var(--text2);line-height:1.5;}
+.kb-translated.needs-review{color:var(--amber-dark);background:var(--amber-light);padding:4px 6px;border-radius:4px;}
+.kb-translated.approved{color:var(--green);}
+.kb-translated.auto{color:var(--text2);}
+.kb-action{display:flex;gap:4px;align-items:center;}
+.kb-btn{padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;border:1.5px solid;transition:all .15s;white-space:nowrap;}
+.kb-btn-approve{border-color:var(--green);color:var(--green);background:var(--surface);}
+.kb-btn-approve:hover{background:var(--green);color:#fff;}
+.kb-btn-approved{border-color:var(--green-light);color:var(--green);background:var(--green-light);cursor:default;}
+.kb-btn-edit{border-color:var(--border);color:var(--text3);background:var(--surface);}
+.kb-btn-edit:hover{border-color:var(--blue);color:var(--blue);}
+.kb-badge{padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600;}
+.kb-auto{background:var(--blue-light);color:var(--blue);}
+.kb-human{background:var(--green-light);color:var(--green);}
+.kb-needs{background:var(--amber-light);color:var(--amber);}
+
+/* ── VOICE CARD ── */
+.voice-assignment{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
+.voice-card{border:2px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .18s;position:relative;}
+.voice-card:hover{border-color:var(--border2);box-shadow:var(--sh);}
+.voice-card.vc-selected{border-color:var(--green);box-shadow:0 0 0 1px var(--green);}
+.vc-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.vc-lang{font-size:11px;color:var(--text3);margin-bottom:6px;}
+.vc-traits{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px;}
+.vc-trait{padding:2px 6px;border-radius:5px;font-size:10px;background:var(--gray-light);color:var(--text3);}
+.vc-play{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--rs);border:1.5px solid var(--border);background:var(--surface);font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;color:var(--text2);}
+.vc-play:hover{border-color:var(--green);color:var(--green);}
+.vc-selected-badge{position:absolute;top:8px;right:8px;padding:2px 7px;border-radius:6px;background:var(--green-light);color:var(--green);font-size:9px;font-weight:700;}
+.vc-accent{font-size:11px;font-weight:500;color:var(--text3);margin-bottom:4px;}
+
+/* ── DETECTION FLOW ── */
+.detection-steps{display:flex;flex-direction:column;gap:10px;}
+.det-step{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--surface);}
+.det-step.step-active{border-color:var(--blue);background:var(--blue-light);}
+.det-step.step-success{border-color:var(--green);background:var(--green-light);}
+.det-step.step-warn{border-color:var(--amber);background:var(--amber-light);}
+.det-step.step-neutral{border-color:var(--border);background:var(--gray-light);}
+.ds-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.dn-blue{background:var(--blue);color:#fff;}
+.dn-green{background:var(--green2);color:#fff;}
+.dn-amber{background:var(--amber2);color:#fff;}
+.dn-gray{background:var(--border2);color:#fff;}
+.ds-content{flex:1;}
+.ds-title{font-size:12.5px;font-weight:700;color:var(--text2);margin-bottom:2px;}
+.ds-detail{font-size:11px;color:var(--text3);line-height:1.5;}
+.ds-quote{font-size:11px;font-style:italic;padding:5px 10px;border-left:2px solid var(--border2);margin-top:5px;color:var(--text2);line-height:1.5;border-radius:0 var(--rs) var(--rs) 0;background:rgba(255,255,255,.6);}
+.ds-quote.dq-en{border-color:var(--green);}
+.ds-quote.dq-es{border-color:var(--amber);}
+.ds-quote.dq-zh{border-color:var(--red);}
+.ds-time{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text3);margin-top:3px;display:flex;align-items:center;gap:5px;}
+.ds-tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.ds-tag{padding:2px 7px;border-radius:7px;font-size:10px;font-weight:600;}
+.dt-blue{background:var(--blue-light);color:var(--blue);}
+.dt-green{background:var(--green-light);color:var(--green);}
+.dt-amber{background:var(--amber-light);color:var(--amber);}
+.dt-red{background:var(--red-light);color:var(--red);}
+.dt-gray{background:var(--gray-light);color:var(--text3);}
+.ds-right{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.ds-confidence{font-size:16px;font-weight:800;letter-spacing:-1px;}
+.dc-high{color:var(--green2);}
+.dc-mid{color:var(--amber);}
+.dc-low{color:var(--red);}
+
+/* ── SMS FALLBACK ── */
+.sms-flow{display:flex;flex-direction:column;gap:8px;}
+.sms-step{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--rs);border:1px solid var(--border);}
+.ss-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.ssi-blue{background:var(--blue-light);}
+.ssi-green{background:var(--green-light);}
+.ssi-amber{background:var(--amber-light);}
+.ssi-teal{background:var(--teal-light);}
+.ssi-purple{background:var(--purple-light);}
+.ss-label{font-size:12px;font-weight:600;color:var(--text2);flex:1;}
+.ss-detail{font-size:11px;color:var(--text3);margin-top:2px;}
+.ss-chip{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;flex-shrink:0;}
+
+/* SMS preview bubbles */
+.sms-preview{background:var(--gray-light);border-radius:var(--r);padding:14px;border:1px solid var(--border);}
+.sms-preview-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.sph-icon{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--green2),var(--green-dark));display:flex;align-items:center;justify-content:center;font-size:14px;}
+.sph-name{font-size:13px;font-weight:700;color:var(--text);}
+.sph-number{font-size:11px;color:var(--text3);}
+.sms-bubble-container{display:flex;flex-direction:column;gap:7px;}
+.sms-bubble{max-width:80%;border-radius:12px;padding:9px 12px;font-size:12px;line-height:1.6;}
+.sb-outgoing{background:var(--green);color:#fff;align-self:flex-end;border-radius:12px 12px 2px 12px;}
+.sb-incoming{background:var(--surface);border:1px solid var(--border);color:var(--text2);align-self:flex-start;border-radius:12px 12px 12px 2px;}
+.sb-incoming.sb-es{background:#FFFBF0;border-color:#FDE68A;}
+.sb-incoming.sb-zh{background:#FFF0F9;border-color:#FBCFE8;}
+.sms-meta{font-size:10px;color:var(--text3);text-align:right;}
+
+/* ── METRICS SIDEBAR ── */
+.metrics-panel{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;padding:14px;}
+.mp-section{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text3);margin:12px 0 8px;}
+.mp-section:first-child{margin-top:0;}
+.metric-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.mr-label{font-size:12px;color:var(--text2);}
+.mr-val{font-size:12px;font-weight:700;}
+.mr-bar{height:4px;background:var(--border);border-radius:2px;margin-top:3px;overflow:hidden;}
+.mb-green{height:100%;background:var(--green2);border-radius:2px;}
+.mb-amber{height:100%;background:var(--amber2);border-radius:2px;}
+.mb-blue{height:100%;background:var(--blue2);border-radius:2px;}
+.call-volume-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;padding:7px 10px;border-radius:var(--rs);border:1px solid var(--border);background:var(--gray-light);}
+.cvr-flag{font-size:16px;}
+.cvr-lang{font-size:12px;font-weight:600;color:var(--text2);flex:1;}
+.cvr-count{font-size:12px;font-weight:700;}
+.cvr-pct{font-size:11px;color:var(--text3);margin-left:4px;}
+.cvr-bar{height:3px;background:var(--border);border-radius:2px;margin-top:4px;overflow:hidden;}
+
+/* ── TOGGLE ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.toggle-label{font-size:12px;color:var(--text2);}
+.toggle-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+.tg{width:34px;height:19px;border-radius:10px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.tg.on{background:var(--green);}
+.tg.off{background:var(--border2);}
+.tg-knob{width:15px;height:15px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tg.on .tg-knob{left:17px;}
+.tg.off .tg-knob{left:2px;}
+
+/* ── MISC ── */
+.notice{display:flex;align-items:flex-start;gap:7px;padding:9px 11px;border-radius:var(--rs);margin-bottom:10px;font-size:11px;line-height:1.5;}
+.notice.green{background:var(--green-light);border:1px solid #A7F3D0;color:var(--green);}
+.notice.amber{background:var(--amber-light);border:1px solid #FDE68A;color:var(--amber-dark);}
+.notice.blue{background:var(--blue-light);border:1px solid #BFDBFE;color:var(--blue);}
+.notice.red{background:var(--red-light);border:1px solid #FECACA;color:var(--red);}
+.notice svg{width:12px;height:12px;flex-shrink:0;margin-top:1px;}
+.notice strong{font-weight:700;}
+.btn{padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:5px;}
+.btn svg{width:12px;height:12px;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:var(--green-dark);}
+.btn-outline{background:var(--surface);border:1.5px solid var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:var(--border2);}
+.btn-amber{background:var(--amber-light);color:var(--amber);border:1px solid #FDE68A;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+.form-group{margin-bottom:11px;}
+.form-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:3px;display:block;}
+.form-input{padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:12px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;width:100%;transition:border .15s;}
+.form-input:focus{border-color:var(--green);}
+.form-select{padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:12px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;width:100%;background:var(--surface);}
+.tag{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;}
+.tag-green{background:var(--green-light);color:var(--green);}
+.tag-amber{background:var(--amber-light);color:var(--amber);}
+.tag-blue{background:var(--blue-light);color:var(--blue);}
+.tag-red{background:var(--red-light);color:var(--red);}
+.tag-gray{background:var(--gray-light);color:var(--text3);}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-logo">
+    <div class="tb-logo-mark"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5L13 4.5V10.5L7.5 13.5L2 10.5V4.5L7.5 1.5Z" fill="white" opacity=".9"/><circle cx="7.5" cy="7.5" r="2" fill="white"/></svg></div>
+    <span class="tb-logo-text">MedFlow AI</span>
+  </div>
+  <div class="tb-sep"></div>
+  <div class="tb-practice">
+    <div>
+      <div class="tb-practice-name">🏥 Athens Sleep and Wellness Center</div>
+      <div class="tb-practice-role">Multi-Language Configuration · Aria v2.1 · Agent Studio</div>
+    </div>
+  </div>
+  <div class="tb-spacer"></div>
+  <div class="tb-right">
+    <div class="tb-chip tc-green"><div class="live-dot"></div>Agent Live</div>
+    <div class="tb-chip tc-blue">🌐 3 Languages</div>
+    <div class="tb-chip tc-amber">⚠️ 8 KB items need review</div>
+    <button class="tb-btn">💾 Save Draft</button>
+    <button class="tb-btn tb-btn-primary">🚀 Deploy Changes</button>
+  </div>
+</div>
+
+<!-- MAIN TABS -->
+<div class="main-tabs">
+  <div class="mtab active" id="tab-select" onclick="switchTab('select')">🌐 Language Selection <span class="mtab-badge mb-green">3 Active</span></div>
+  <div class="mtab" id="tab-kb" onclick="switchTab('kb')">📚 KB Translation Review <span class="mtab-badge mb-amber">8 Pending</span></div>
+  <div class="mtab" id="tab-detection" onclick="switchTab('detection')">🔍 Detection Settings</div>
+  <div class="mtab" id="tab-voice" onclick="switchTab('voice')">🎙️ Voice Assignment</div>
+  <div class="mtab" id="tab-sms" onclick="switchTab('sms')">💬 SMS Fallback in Language</div>
+  <div class="mtab-spacer"></div>
+  <div class="lang-status-bar"><span class="flag">🇺🇸</span>EN <span style="opacity:.4;">·</span> <span class="flag">🇪🇸</span>ES <span style="opacity:.4;">·</span> <span class="flag">🇨🇳</span>ZH &nbsp;Active</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANEL 1: LANGUAGE SELECTION
+══════════════════════════════════════════ -->
+<div class="panel active" id="panel-select">
+<div class="two-col">
+  <div class="scroll pad">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.3px;">Multi-Language Configuration</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Athens Sleep & Wellness · Professional Plan includes 6 languages · Enterprise includes all 12</div>
+      </div>
+      <div style="display:flex;gap:8px;"><button class="btn btn-outline">+ Add Language</button><button class="btn btn-green">Save Configuration</button></div>
+    </div>
+
+    <div class="notice blue">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span><strong>How it works:</strong> Deepgram analyzes the caller's first 3 seconds of speech. If a supported language is detected with ≥75% confidence, Aria switches immediately — no question asked. The entire conversation continues in the detected language.</span>
+    </div>
+
+    <!-- Active Languages -->
+    <div class="section-label">Active Languages (3 of 6 included in Professional plan)</div>
+    <div class="lang-select-grid">
+      <div class="ls-card ls-active" onclick="selectLang(this,'en')">
+        <div class="ls-card-pct">91.4% calls</div>
+        <div class="ls-card-flag">🇺🇸</div>
+        <div class="ls-card-name">English</div>
+        <div class="ls-card-calls">247 calls this month</div>
+        <div class="ls-card-status ss-active"><div class="live-dot" style="width:5px;height:5px;"></div>Primary Active</div>
+      </div>
+      <div class="ls-card ls-active" onclick="selectLang(this,'es')">
+        <div class="ls-card-pct">7.1% calls</div>
+        <div class="ls-card-flag">🇪🇸</div>
+        <div class="ls-card-name">Spanish</div>
+        <div class="ls-card-calls">19 calls this month</div>
+        <div class="ls-card-status ss-active"><div class="live-dot" style="width:5px;height:5px;"></div>Secondary Active</div>
+      </div>
+      <div class="ls-card ls-pending" onclick="selectLang(this,'zh')">
+        <div class="ls-card-pct">1.5% calls</div>
+        <div class="ls-card-flag">🇨🇳</div>
+        <div class="ls-card-name">Mandarin Chinese</div>
+        <div class="ls-card-calls">4 calls this month</div>
+        <div class="ls-card-status ss-review">⚠ KB Review Needed</div>
+      </div>
+    </div>
+
+    <!-- Available to Add -->
+    <div class="section-label" style="margin-top:4px;">Available to Add — Professional Plan</div>
+    <div class="lang-select-grid">
+      <div class="ls-card ls-available" onclick="addLanguage('vi')">
+        <div class="ls-card-flag">🇻🇳</div>
+        <div class="ls-card-name">Vietnamese</div>
+        <div class="ls-card-calls">High demand in GA</div>
+        <div class="ls-card-status ss-available">+ Add Language</div>
+      </div>
+      <div class="ls-card ls-available" onclick="addLanguage('hi')">
+        <div class="ls-card-flag">🇮🇳</div>
+        <div class="ls-card-name">Hindi</div>
+        <div class="ls-card-calls">Growing patient base</div>
+        <div class="ls-card-status ss-available">+ Add Language</div>
+      </div>
+      <div class="ls-card ls-available" onclick="addLanguage('fr')">
+        <div class="ls-card-flag">🇫🇷</div>
+        <div class="ls-card-name">French</div>
+        <div class="ls-card-calls">Haitian Creole speakers</div>
+        <div class="ls-card-status ss-available">+ Add Language</div>
+      </div>
+    </div>
+
+    <!-- Enterprise upgrade -->
+    <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r);margin-bottom:14px;">
+      <div style="font-size:28px;">🌍</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;">Unlock 12 Languages with Enterprise</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);">Add Arabic, Korean, Tagalog, Portuguese, Russian, and more. $149/mo — includes all 12 languages + outbound campaigns.</div>
+      </div>
+      <button style="padding:8px 16px;border:none;border-radius:var(--rs);background:var(--amber2);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;">Upgrade to Enterprise</button>
+    </div>
+
+    <!-- Per-language config -->
+    <div class="section-label">Per-Language Configuration</div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-amber">🇪🇸</div>
+        <div><div class="card-title">Spanish (Español) — Configuration</div><div class="card-sub">Auto-detected · Verified by Dr. Maria Lopez (NPI staff) · 19 calls this month</div></div>
+        <div class="card-head-right"><span class="tag tag-green">Active</span><button class="btn btn-outline" style="font-size:11px;padding:4px 10px;">Edit</button></div>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <div class="toggle-row"><div><div class="toggle-label">Auto-detect & switch</div><div class="toggle-sub">Aria switches without asking</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+            <div class="toggle-row"><div><div class="toggle-label">SMS fallback in Spanish</div><div class="toggle-sub">Texts sent in detected language</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+            <div class="toggle-row"><div><div class="toggle-label">Spanish appointment SMS</div><div class="toggle-sub">Confirmation texts en español</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+          </div>
+          <div>
+            <div class="toggle-row"><div><div class="toggle-label">After-hours greeting</div><div class="toggle-sub">Spanish after-hours message</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+            <div class="toggle-row"><div><div class="toggle-label">Emergency protocol</div><div class="toggle-sub">911 instruction in Spanish</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+            <div class="toggle-row"><div><div class="toggle-label">Spanish voice (ElevenLabs)</div><div class="toggle-sub">Sofia — Natural female, Mexico</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-red">🇨🇳</div>
+        <div><div class="card-title">Mandarin Chinese (普通话) — Configuration</div><div class="card-sub">Recently added · KB translation 62% complete · 4 calls this month</div></div>
+        <div class="card-head-right"><span class="tag tag-amber">⚠ KB Incomplete</span><button class="btn btn-outline" style="font-size:11px;padding:4px 10px;">Edit</button></div>
+      </div>
+      <div class="card-body">
+        <div class="notice amber" style="margin-bottom:12px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <span>8 of 13 KB items translated. 5 items need manual review before Mandarin can go fully live. Voice assigned but not yet tested. <a href="#" onclick="switchTab('kb');return false;" style="color:var(--amber);font-weight:700;">Review KB translations →</a></span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <div class="toggle-row"><div><div class="toggle-label">Auto-detect & switch</div><div class="toggle-sub">Active — 75% confidence threshold</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+            <div class="toggle-row"><div><div class="toggle-label">SMS fallback in Mandarin</div><div class="toggle-sub">Simplified Chinese characters</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+          </div>
+          <div>
+            <div class="toggle-row"><div><div class="toggle-label">Emergency protocol</div><div class="toggle-sub">911 instruction in Mandarin</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+            <div class="toggle-row"><div><div class="toggle-label">Mandarin voice (ElevenLabs)</div><div class="toggle-sub">Lin Mei — Professional female</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right metrics panel -->
+  <div class="metrics-panel">
+    <div class="mp-section">This Month's Language Split</div>
+    <div class="call-volume-row">
+      <div class="cvr-flag">🇺🇸</div>
+      <div style="flex:1;"><div class="cvr-lang">English</div><div class="cvr-bar"><div style="width:91.4%;height:100%;background:var(--green2);border-radius:2px;"></div></div></div>
+      <div><div class="cvr-count" style="color:var(--green);">247</div><div class="cvr-pct">91.4%</div></div>
+    </div>
+    <div class="call-volume-row">
+      <div class="cvr-flag">🇪🇸</div>
+      <div style="flex:1;"><div class="cvr-lang">Spanish</div><div class="cvr-bar"><div style="width:71%;height:100%;background:var(--amber2);border-radius:2px;"></div></div></div>
+      <div><div class="cvr-count" style="color:var(--amber);">19</div><div class="cvr-pct">7.1%</div></div>
+    </div>
+    <div class="call-volume-row">
+      <div class="cvr-flag">🇨🇳</div>
+      <div style="flex:1;"><div class="cvr-lang">Mandarin</div><div class="cvr-bar"><div style="width:40%;height:100%;background:var(--red);border-radius:2px;"></div></div></div>
+      <div><div class="cvr-count" style="color:var(--red);">4</div><div class="cvr-pct">1.5%</div></div>
+    </div>
+
+    <div class="mp-section">Detection Performance</div>
+    <div style="margin-bottom:9px;">
+      <div class="metric-row"><span class="mr-label">Detection accuracy</span><span class="mr-val" style="color:var(--green);">97.3%</span></div>
+      <div class="mr-bar"><div class="mb-green" style="width:97.3%;"></div></div>
+    </div>
+    <div style="margin-bottom:9px;">
+      <div class="metric-row"><span class="mr-label">Avg detect time</span><span class="mr-val" style="color:var(--green);">2.1s</span></div>
+      <div style="font-size:10px;color:var(--text3);">Target: &lt;3s</div>
+    </div>
+    <div style="margin-bottom:9px;">
+      <div class="metric-row"><span class="mr-label">False switch rate</span><span class="mr-val" style="color:var(--green);">0.4%</span></div>
+      <div class="mr-bar"><div class="mb-green" style="width:4%;"></div></div>
+    </div>
+    <div style="margin-bottom:9px;">
+      <div class="metric-row"><span class="mr-label">ES containment</span><span class="mr-val" style="color:var(--green);">84%</span></div>
+      <div class="mr-bar"><div class="mb-green" style="width:84%;"></div></div>
+    </div>
+    <div style="margin-bottom:9px;">
+      <div class="metric-row"><span class="mr-label">ZH containment</span><span class="mr-val" style="color:var(--amber);">61%</span></div>
+      <div class="mr-bar"><div class="mb-amber" style="width:61%;"></div></div>
+      <div style="font-size:10px;color:var(--amber);">KB translation incomplete</div>
+    </div>
+
+    <div class="mp-section">MOF Monitoring</div>
+    <div class="notice blue" style="font-size:11px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span>MOF Technical Admin audits 5 calls per language per month for accuracy and tone. Monthly language quality report sent to practice admin.</span>
+    </div>
+    <div class="notice amber">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <span><strong>Action needed:</strong> Complete Mandarin KB translation to unlock full ZH deployment.</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANEL 2: KB TRANSLATION REVIEW
+══════════════════════════════════════════ -->
+<div class="panel" id="panel-kb">
+<div class="two-col">
+  <div class="scroll pad">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.3px;">Knowledge Base Translation Review</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">AI auto-translated all Q&As · Human review required for medical accuracy</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <select class="form-select" style="width:160px;" id="kbLangFilter" onchange="filterKB(this.value)">
+          <option value="all">All Languages</option>
+          <option value="es">🇪🇸 Spanish</option>
+          <option value="zh">🇨🇳 Mandarin</option>
+        </select>
+        <button class="btn btn-green" onclick="approveAll()">✓ Approve All Reviewed</button>
+      </div>
+    </div>
+
+    <div class="notice green">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span><strong>AI translation powered by GPT-4o with medical terminology fine-tuning.</strong> All translations include sleep medicine vocabulary (CPAP, polysomnography, hypopnea, apnea). Human review catches nuance AI misses — especially for patient-facing scripts.</span>
+    </div>
+
+    <!-- Progress bars -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+      <div style="padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;"><span style="font-weight:600;color:var(--text2);">🇪🇸 Spanish Translation</span><span style="font-weight:800;color:var(--green);">100%</span></div>
+        <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;"><div style="width:100%;height:100%;background:var(--green2);border-radius:3px;"></div></div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;">13/13 items approved · 0 pending</div>
+      </div>
+      <div style="padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;"><span style="font-weight:600;color:var(--text2);">🇨🇳 Mandarin Translation</span><span style="font-weight:800;color:var(--amber);">62%</span></div>
+        <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;"><div style="width:62%;height:100%;background:var(--amber2);border-radius:3px;"></div></div>
+        <div style="font-size:10px;color:var(--amber);margin-top:4px;">8/13 approved · 5 need review</div>
+      </div>
+    </div>
+
+    <!-- KB Table -->
+    <div class="card" style="overflow:hidden;">
+      <div style="overflow-x:auto;">
+        <table class="kb-table">
+          <thead>
+            <tr>
+              <th style="width:30px;">#</th>
+              <th style="width:200px;">English Original</th>
+              <th style="width:90px;">Language</th>
+              <th>Translation</th>
+              <th style="width:80px;">Source</th>
+              <th style="width:110px;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="kbTableBody">
+            <!-- Spanish rows (approved) -->
+            <tr class="kb-row" data-lang="es">
+              <td class="trt-num">1</td>
+              <td class="kb-en">What are your office hours?</td>
+              <td><span style="font-size:16px;">🇪🇸</span></td>
+              <td class="kb-translated approved">¿Cuáles son sus horarios de atención?</td>
+              <td><span class="kb-badge kb-human">Human ✓</span></td>
+              <td class="kb-action"><span class="kb-btn kb-btn-approved">✓ Approved</span></td>
+            </tr>
+            <tr class="kb-row" data-lang="es">
+              <td class="trt-num">2</td>
+              <td class="kb-en">Do you accept new patients?</td>
+              <td><span style="font-size:16px;">🇪🇸</span></td>
+              <td class="kb-translated approved">¿Aceptan pacientes nuevos?</td>
+              <td><span class="kb-badge kb-human">Human ✓</span></td>
+              <td class="kb-action"><span class="kb-btn kb-btn-approved">✓ Approved</span></td>
+            </tr>
+            <tr class="kb-row" data-lang="es">
+              <td class="trt-num">3</td>
+              <td class="kb-en">How do I schedule a CPAP resupply?</td>
+              <td><span style="font-size:16px;">🇪🇸</span></td>
+              <td class="kb-translated approved">¿Cómo puedo solicitar un reabastecimiento de CPAP?</td>
+              <td><span class="kb-badge kb-human">Human ✓</span></td>
+              <td class="kb-action"><span class="kb-btn kb-btn-approved">✓ Approved</span></td>
+            </tr>
+            <tr class="kb-row" data-lang="es">
+              <td class="trt-num">4</td>
+              <td class="kb-en">What insurance do you accept?</td>
+              <td><span style="font-size:16px;">🇪🇸</span></td>
+              <td class="kb-translated approved">¿Qué seguros médicos aceptan?</td>
+              <td><span class="kb-badge kb-human">Human ✓</span></td>
+              <td class="kb-action"><span class="kb-btn kb-btn-approved">✓ Approved</span></td>
+            </tr>
+            <!-- Mandarin - approved -->
+            <tr class="kb-row" data-lang="zh">
+              <td class="trt-num">5</td>
+              <td class="kb-en">What are your office hours?</td>
+              <td><span style="font-size:16px;">🇨🇳</span></td>
+              <td class="kb-translated approved">您的办公时间是什么时候？</td>
+              <td><span class="kb-badge kb-human">Human ✓</span></td>
+              <td class="kb-action"><span class="kb-btn kb-btn-approved">✓ Approved</span></td>
+            </tr>
+            <tr class="kb-row" data-lang="zh">
+              <td class="trt-num">6</td>
+              <td class="kb-en">Do you accept new patients?</td>
+              <td><span style="font-size:16px;">🇨🇳</span></td>
+              <td class="kb-translated approved">您们接受新患者吗？</td>
+              <td><span class="kb-badge kb-human">Human ✓</span></td>
+              <td class="kb-action"><span class="kb-btn kb-btn-approved">✓ Approved</span></td>
+            </tr>
+            <tr class="kb-row" data-lang="zh">
+              <td class="trt-num">7</td>
+              <td class="kb-en">What insurance do you accept?</td>
+              <td><span style="font-size:16px;">🇨🇳</span></td>
+              <td class="kb-translated approved">您们接受哪些保险？</td>
+              <td><span class="kb-badge kb-human">Human ✓</span></td>
+              <td class="kb-action"><span class="kb-btn kb-btn-approved">✓ Approved</span></td>
+            </tr>
+            <tr class="kb-row" data-lang="zh">
+              <td class="trt-num">8</td>
+              <td class="kb-en">I'd like to schedule a sleep study.</td>
+              <td><span style="font-size:16px;">🇨🇳</span></td>
+              <td class="kb-translated approved">我想预约睡眠研究。</td>
+              <td><span class="kb-badge kb-human">Human ✓</span></td>
+              <td class="kb-action"><span class="kb-btn kb-btn-approved">✓ Approved</span></td>
+            </tr>
+            <!-- Mandarin - needs review -->
+            <tr class="kb-row" data-lang="zh" style="background:rgba(251,191,36,.03);">
+              <td class="trt-num" style="color:var(--amber);">9</td>
+              <td class="kb-en">How do I request a CPAP resupply for masks and filters?</td>
+              <td><span style="font-size:16px;">🇨🇳</span></td>
+              <td class="kb-translated needs-review">如何申请CPAP面罩和过滤器的补充供应？<br><span style="font-size:10px;color:var(--amber);font-style:normal;">⚠ "补充供应" may be unclear — consider "重新订购" for patient audience</span></td>
+              <td><span class="kb-badge kb-auto">AI Draft</span></td>
+              <td class="kb-action"><button class="kb-btn kb-btn-approve" onclick="approveRow(this)">Approve</button><button class="kb-btn kb-btn-edit" onclick="editRow(this)">Edit</button></td>
+            </tr>
+            <tr class="kb-row" data-lang="zh" style="background:rgba(251,191,36,.03);">
+              <td class="trt-num" style="color:var(--amber);">10</td>
+              <td class="kb-en">Please leave your name, callback number, and a brief message.</td>
+              <td><span style="font-size:16px;">🇨🇳</span></td>
+              <td class="kb-translated needs-review">请留下您的姓名、回拨电话和简短留言。<br><span style="font-size:10px;color:var(--amber);font-style:normal;">⚠ Verified correct but review tone — formal register appropriate for medical context?</span></td>
+              <td><span class="kb-badge kb-auto">AI Draft</span></td>
+              <td class="kb-action"><button class="kb-btn kb-btn-approve" onclick="approveRow(this)">Approve</button><button class="kb-btn kb-btn-edit" onclick="editRow(this)">Edit</button></td>
+            </tr>
+            <tr class="kb-row" data-lang="zh" style="background:rgba(251,191,36,.03);">
+              <td class="trt-num" style="color:var(--amber);">11</td>
+              <td class="kb-en">We require 24 hours notice for cancellations. A $50 no-show fee applies.</td>
+              <td><span style="font-size:16px;">🇨🇳</span></td>
+              <td class="kb-translated needs-review">我们需要24小时的取消通知。未出席将收取50美元的费用。<br><span style="font-size:10px;color:var(--amber);font-style:normal;">⚠ "$50" currency — confirm this applies to Chinese-speaking patients or should say "fifty dollars"</span></td>
+              <td><span class="kb-badge kb-auto">AI Draft</span></td>
+              <td class="kb-action"><button class="kb-btn kb-btn-approve" onclick="approveRow(this)">Approve</button><button class="kb-btn kb-btn-edit" onclick="editRow(this)">Edit</button></td>
+            </tr>
+            <tr class="kb-row" data-lang="zh" style="background:rgba(251,191,36,.03);">
+              <td class="trt-num" style="color:var(--amber);">12</td>
+              <td class="kb-en">For medical emergencies, hang up and call 911 immediately.</td>
+              <td><span style="font-size:16px;">🇨🇳</span></td>
+              <td class="kb-translated needs-review">如有医疗紧急情况，请立即挂断并拨打911。<br><span style="font-size:10px;color:var(--amber);font-style:normal;">⚠ CRITICAL: Emergency script — must be verified by bilingual medical staff before deployment</span></td>
+              <td><span class="kb-badge kb-auto">AI Draft</span></td>
+              <td class="kb-action"><button class="kb-btn kb-btn-approve" onclick="approveRow(this)">Approve</button><button class="kb-btn kb-btn-edit" onclick="editRow(this)">Edit</button></td>
+            </tr>
+            <tr class="kb-row" data-lang="zh" style="background:rgba(251,191,36,.03);">
+              <td class="trt-num" style="color:var(--amber);">13</td>
+              <td class="kb-en">I'm connecting you to our front desk team. Please hold for a moment.</td>
+              <td><span style="font-size:16px;">🇨🇳</span></td>
+              <td class="kb-translated needs-review">我正在将您转接到我们的前台团队。请稍候。<br><span style="font-size:10px;color:var(--amber);font-style:normal;">⚠ Tone check: "前台团队" is correct but consider "接诊人员" (reception staff) for warmer tone</span></td>
+              <td><span class="kb-badge kb-auto">AI Draft</span></td>
+              <td class="kb-action"><button class="kb-btn kb-btn-approve" onclick="approveRow(this)">Approve</button><button class="kb-btn kb-btn-edit" onclick="editRow(this)">Edit</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Side panel -->
+  <div class="metrics-panel">
+    <div class="mp-section">Translation Quality Guide</div>
+    <div style="font-size:11px;color:var(--text2);line-height:1.7;margin-bottom:12px;">Review each AI translation for:<br><br>
+      <strong>1. Medical accuracy</strong> — terms like CPAP, apnea, polysomnography must be exact<br><br>
+      <strong>2. Patient-friendly tone</strong> — avoid overly clinical language in patient-facing scripts<br><br>
+      <strong>3. Cultural appropriateness</strong> — honorifics, formality level, and idioms vary by culture<br><br>
+      <strong>4. Emergency scripts</strong> — 911 instructions must be verified by bilingual medical staff
+    </div>
+    <div class="notice red">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span><strong>Emergency scripts</strong> (item #12) require verification by bilingual medical staff before deployment. MOF will flag these for Technical Admin review.</span>
+    </div>
+    <div class="mp-section">MOF Translation Support</div>
+    <div class="notice blue">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span>MOF offers professional human translation review for $49/language. Includes medical bilingual review of all KB items. Typical turnaround: 2 business days.</span>
+    </div>
+    <button class="btn btn-green" style="width:100%;margin-bottom:8px;" onclick="alert('Professional translation request submitted for Mandarin Chinese. MOF team will contact you within 4 business hours.')">Request Professional Review ($49)</button>
+    <button class="btn btn-outline" style="width:100%;">Download All for External Review</button>
+
+    <div class="mp-section" style="margin-top:14px;">Sleep Medicine Terminology</div>
+    <div style="display:flex;flex-direction:column;gap:4px;font-size:11px;">
+      <div style="padding:5px 8px;background:var(--gray-light);border-radius:5px;border:1px solid var(--border);">
+        <div style="font-weight:600;color:var(--text2);">CPAP</div>
+        <div style="color:var(--text3);">ES: CPAP (same) &nbsp;·&nbsp; ZH: CPAP呼吸机</div>
+      </div>
+      <div style="padding:5px 8px;background:var(--gray-light);border-radius:5px;border:1px solid var(--border);">
+        <div style="font-weight:600;color:var(--text2);">Sleep apnea</div>
+        <div style="color:var(--text3);">ES: apnea del sueño &nbsp;·&nbsp; ZH: 睡眠呼吸暂停</div>
+      </div>
+      <div style="padding:5px 8px;background:var(--gray-light);border-radius:5px;border:1px solid var(--border);">
+        <div style="font-weight:600;color:var(--text2);">Sleep study</div>
+        <div style="color:var(--text3);">ES: estudio del sueño &nbsp;·&nbsp; ZH: 睡眠研究/多导睡眠图</div>
+      </div>
+      <div style="padding:5px 8px;background:var(--gray-light);border-radius:5px;border:1px solid var(--border);">
+        <div style="font-weight:600;color:var(--text2);">Polysomnography</div>
+        <div style="color:var(--text3);">ES: polisomnografía &nbsp;·&nbsp; ZH: 多导睡眠图</div>
+      </div>
+      <div style="padding:5px 8px;background:var(--gray-light);border-radius:5px;border:1px solid var(--border);">
+        <div style="font-weight:600;color:var(--text2);">Hypopnea</div>
+        <div style="color:var(--text3);">ES: hipopnea &nbsp;·&nbsp; ZH: 低通气</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANEL 3: DETECTION SETTINGS
+══════════════════════════════════════════ -->
+<div class="panel" id="panel-detection">
+<div class="two-col">
+  <div class="scroll pad">
+    <div style="font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.3px;margin-bottom:4px;">Language Detection Settings</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">How Aria detects and switches languages in real time · Powered by Deepgram Nova-2 multilingual model</div>
+
+    <!-- Detection config -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-blue">🔍</div>
+        <div><div class="card-title">Deepgram Language Detection Configuration</div><div class="card-sub">Nova-2 multilingual model · Real-time streaming · Per-word confidence scoring</div></div>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-group">
+            <label class="form-label">Detection window</label>
+            <select class="form-select"><option>First 3 seconds (Recommended)</option><option>First 2 seconds (Faster)</option><option>First 5 seconds (More accurate)</option></select>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px;">Audio analyzed before Aria speaks first response</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confidence threshold to switch</label>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+              <input type="range" min="50" max="95" value="75" style="flex:1;" id="confSlider" oninput="document.getElementById('confVal').textContent=this.value+'%'">
+              <span style="font-size:13px;font-weight:700;color:var(--blue);min-width:36px;" id="confVal">75%</span>
+            </div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px;">Below this → keep English, offer Spanish/Mandarin option</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mid-call re-detection</label>
+            <select class="form-select"><option>Disabled — keep detected language</option><option>Allow switch once per call</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unsupported language fallback</label>
+            <select class="form-select"><option>Stay in English, offer to transfer</option><option>Transfer immediately to bilingual staff</option></select>
+          </div>
+        </div>
+        <div class="toggle-row" style="margin-top:8px;"><div><div class="toggle-label">Silent switch — no announcement</div><div style="font-size:10px;color:var(--text3);">Aria switches without saying "I'm switching to Spanish"</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+        <div class="toggle-row"><div><div class="toggle-label">Log language detected per call</div><div style="font-size:10px;color:var(--text3);">Recorded in call metadata for analytics</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+        <div class="toggle-row"><div><div class="toggle-label">Alert MOF if unsupported language detected 3+ times</div><div style="font-size:10px;color:var(--text3);">Signals demand for a new language to add</div></div><div class="tg on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="tg-knob"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Live detection flow -->
+    <div class="section-label">Detection Flow — Three Live Call Examples</div>
+
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;padding:6px 10px;background:var(--green-light);border-radius:var(--rs);border:1px solid #A7F3D0;">Example 1 — Spanish Detected (High Confidence)</div>
+    <div class="detection-steps" style="margin-bottom:16px;">
+      <div class="det-step step-active">
+        <div class="ds-num dn-blue">1</div>
+        <div class="ds-content">
+          <div class="ds-title">Call connects · Deepgram Nova-2 streaming begins immediately</div>
+          <div class="ds-detail">Audio stream opens. Language ID model analyzes phoneme patterns, prosody, and vocabulary in parallel with STT.</div>
+          <div class="ds-time"><span style="color:var(--blue);">0.0s</span> · Call starts</div>
+        </div>
+        <div class="ds-right"><span class="ds-confidence dc-high">—</span><span class="ds-tag dt-blue">Streaming</span></div>
+      </div>
+      <div class="det-step step-active">
+        <div class="ds-num dn-blue">2</div>
+        <div class="ds-content">
+          <div class="ds-title">Caller speaks first words</div>
+          <div class="ds-quote dq-es">"Hola, necesito hacer una cita con el doctor Agrawal para el martes."</div>
+          <div class="ds-time"><span style="color:var(--blue);">1.8s</span> · 6 words analyzed</div>
+          <div class="ds-tags"><span class="ds-tag dt-amber">Language: Spanish</span><span class="ds-tag dt-blue">Region: Latin American</span></div>
+        </div>
+        <div class="ds-right"><span class="ds-confidence dc-high">96%</span><span class="ds-tag dt-green">→ Switch</span></div>
+      </div>
+      <div class="det-step step-success">
+        <div class="ds-num dn-green">3</div>
+        <div class="ds-content">
+          <div class="ds-title">96% confidence ≥ 75% threshold → Aria responds in Spanish immediately</div>
+          <div class="ds-quote dq-es">"¡Hola! Con mucho gusto le ayudo a agendar su cita. ¿Es usted paciente nuevo o ya ha visitado nuestra clínica?"</div>
+          <div class="ds-time"><span style="color:var(--green);">2.1s</span> · Switch complete · Sofia voice activated</div>
+          <div class="ds-tags"><span class="ds-tag dt-green">✓ Contained</span><span class="ds-tag dt-green">Sofia Voice (ES)</span><span class="ds-tag dt-green">No announcement needed</span></div>
+        </div>
+        <div class="ds-right"><span class="ds-confidence dc-high">✓</span><span class="ds-tag dt-green">Live</span></div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;padding:6px 10px;background:#FFF0F9;border-radius:var(--rs);border:1px solid #FBCFE8;">Example 2 — Mandarin Detected (Medium Confidence — below threshold)</div>
+    <div class="detection-steps" style="margin-bottom:16px;">
+      <div class="det-step step-active">
+        <div class="ds-num dn-blue">1</div>
+        <div class="ds-content">
+          <div class="ds-title">Caller speaks — short phrase, noisy background</div>
+          <div class="ds-quote dq-zh">"你好，我想预约..." [background noise]</div>
+          <div class="ds-time"><span style="color:var(--blue);">1.4s</span> · Only 3 words clear</div>
+        </div>
+        <div class="ds-right"><span class="ds-confidence dc-mid">68%</span><span class="ds-tag dt-amber">Unclear</span></div>
+      </div>
+      <div class="det-step step-warn">
+        <div class="ds-num dn-amber">2</div>
+        <div class="ds-content">
+          <div class="ds-title">68% confidence &lt; 75% threshold → Aria stays in English, offers Mandarin</div>
+          <div class="ds-quote dq-en">"Hello! If you'd prefer to speak in Mandarin Chinese, please press 1 or say '普通话'. Otherwise, how may I help you today?"</div>
+          <div class="ds-time"><span style="color:var(--amber);">2.3s</span> · Bilingual prompt offered</div>
+          <div class="ds-tags"><span class="ds-tag dt-amber">Low confidence</span><span class="ds-tag dt-amber">Bilingual prompt</span></div>
+        </div>
+        <div class="ds-right"><span class="ds-confidence dc-mid">68%</span><span class="ds-tag dt-amber">Fallback</span></div>
+      </div>
+      <div class="det-step step-success">
+        <div class="ds-num dn-green">3</div>
+        <div class="ds-content">
+          <div class="ds-title">Caller confirms Mandarin → Lin Mei voice activated</div>
+          <div class="ds-quote dq-zh">"我想预约一个睡眠检查。" — Aria responds: "好的，我来帮您安排睡眠研究预约。请问您是新患者吗？"</div>
+          <div class="ds-time"><span style="color:var(--green);">3.8s</span> · Lin Mei voice · ZH KB loaded</div>
+        </div>
+        <div class="ds-right"><span class="ds-confidence dc-high">✓</span><span class="ds-tag dt-green">Confirmed</span></div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;padding:6px 10px;background:var(--gray-light);border-radius:var(--rs);border:1px solid var(--border);">Example 3 — Unsupported Language (Korean) → Graceful Transfer</div>
+    <div class="detection-steps">
+      <div class="det-step step-neutral">
+        <div class="ds-num dn-gray">1</div>
+        <div class="ds-content">
+          <div class="ds-title">Korean detected — not in supported language list</div>
+          <div class="ds-quote" style="border-color:var(--border2);">"안녕하세요, 진료 예약을 하고 싶어요..."</div>
+          <div class="ds-time">Language: Korean · Not supported</div>
+        </div>
+        <div class="ds-right"><span class="ds-confidence dc-high">89%</span><span class="ds-tag dt-gray">KO</span></div>
+      </div>
+      <div class="det-step step-neutral">
+        <div class="ds-num dn-gray">2</div>
+        <div class="ds-content">
+          <div class="ds-title">Aria offers English + transfer option</div>
+          <div class="ds-quote dq-en">"I apologize — I'm currently able to assist in English, Spanish, and Mandarin. I'd be happy to connect you with our front desk team. Would that work?"</div>
+          <div class="ds-tags"><span class="ds-tag dt-gray">Unsupported</span><span class="ds-tag dt-gray">Transfer offered</span></div>
+        </div>
+        <div class="ds-right"><span class="ds-confidence dc-low">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Config sidebar -->
+  <div class="metrics-panel">
+    <div class="mp-section">Detection Engine</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;font-size:11px;">
+      <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--gray-light);border-radius:var(--rs);"><span style="color:var(--text3);">STT Engine</span><span style="font-weight:600;">Deepgram Nova-2</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--gray-light);border-radius:var(--rs);"><span style="color:var(--text3);">LID Model</span><span style="font-weight:600;">Whisper + Nova-2</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--gray-light);border-radius:var(--rs);"><span style="color:var(--text3);">Detection window</span><span style="font-weight:600;">3 seconds</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--gray-light);border-radius:var(--rs);"><span style="color:var(--text3);">Confidence threshold</span><span style="font-weight:600;">75%</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--gray-light);border-radius:var(--rs);"><span style="color:var(--text3);">Supported languages</span><span style="font-weight:600;">3 active</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--gray-light);border-radius:var(--rs);"><span style="color:var(--text3);">Avg switch time</span><span style="font-weight:600;color:var(--green);">2.1s</span></div>
+    </div>
+    <div class="mp-section">Detection Accuracy — 30 days</div>
+    <div style="margin-bottom:8px;"><div class="metric-row"><span class="mr-label">English correct</span><span class="mr-val" style="color:var(--green);">99.8%</span></div><div class="mr-bar"><div class="mb-green" style="width:99.8%;"></div></div></div>
+    <div style="margin-bottom:8px;"><div class="metric-row"><span class="mr-label">Spanish correct</span><span class="mr-val" style="color:var(--green);">97.3%</span></div><div class="mr-bar"><div class="mb-green" style="width:97.3%;"></div></div></div>
+    <div style="margin-bottom:8px;"><div class="metric-row"><span class="mr-label">Mandarin correct</span><span class="mr-val" style="color:var(--amber);">91.2%</span></div><div class="mr-bar"><div class="mb-amber" style="width:91.2%;"></div></div></div>
+    <div style="margin-bottom:8px;"><div class="metric-row"><span class="mr-label">False positives</span><span class="mr-val" style="color:var(--green);">0.4%</span></div><div class="mr-bar"><div class="mb-green" style="width:4%;"></div></div></div>
+    <div class="notice green" style="margin-top:10px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span>Detection performance is above MOF's quality threshold for all 3 languages. Mandarin improves as more calls are processed.</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANEL 4: VOICE ASSIGNMENT
+══════════════════════════════════════════ -->
+<div class="panel" id="panel-voice">
+<div class="two-col">
+  <div class="scroll pad">
+    <div style="font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.3px;margin-bottom:4px;">ElevenLabs Voice Assignment per Language</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">Each language gets its own voice, accent, speaking pace, and tone · ElevenLabs Multilingual v2 model</div>
+
+    <!-- English -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-green">🇺🇸</div>
+        <div><div class="card-title">English — Primary Voice</div><div class="card-sub">Used for 247 calls/month (91.4%) · Base voice for the agent</div></div>
+        <div class="card-head-right"><span class="tag tag-green">Primary Active</span></div>
+      </div>
+      <div class="card-body">
+        <div class="voice-assignment">
+          <div class="voice-card vc-selected">
+            <div class="vc-selected-badge">Selected ✓</div>
+            <div class="vc-name">Rachel</div>
+            <div class="vc-accent">Southern American · Female</div>
+            <div class="vc-lang">ElevenLabs v2 · EN-US</div>
+            <div class="vc-traits"><span class="vc-trait">Warm</span><span class="vc-trait">Professional</span><span class="vc-trait">Patient</span></div>
+            <button class="vc-play" onclick="playVoice('Rachel','Thank you for calling Athens Sleep and Wellness Center. This is Aria. How may I help you today?')">▶ Preview</button>
+          </div>
+          <div class="voice-card" onclick="selectVoice(this)">
+            <div class="vc-name">Emily</div>
+            <div class="vc-accent">Neutral American · Female</div>
+            <div class="vc-lang">ElevenLabs v2 · EN-US</div>
+            <div class="vc-traits"><span class="vc-trait">Clear</span><span class="vc-trait">Crisp</span><span class="vc-trait">Confident</span></div>
+            <button class="vc-play" onclick="playVoice('Emily','Hello! Thank you for calling. This is Aria — how can I assist you today?')">▶ Preview</button>
+          </div>
+          <div class="voice-card" onclick="selectVoice(this)">
+            <div class="vc-name">James</div>
+            <div class="vc-accent">Neutral American · Male</div>
+            <div class="vc-lang">ElevenLabs v2 · EN-US</div>
+            <div class="vc-traits"><span class="vc-trait">Calm</span><span class="vc-trait">Reassuring</span><span class="vc-trait">Deep</span></div>
+            <button class="vc-play" onclick="playVoice('James','Thank you for calling Athens Sleep and Wellness. My name is Aria. How can I help you?')">▶ Preview</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px;">
+          <div class="form-group"><label class="form-label">Speaking pace</label><select class="form-select"><option>Normal (1.0×)</option><option>Slightly slower (0.9×)</option><option>Slightly faster (1.1×)</option></select></div>
+          <div class="form-group"><label class="form-label">Stability</label><select class="form-select"><option>Balanced (0.75)</option><option>More stable (0.9)</option><option>More expressive (0.5)</option></select></div>
+          <div class="form-group"><label class="form-label">Similarity boost</label><select class="form-select"><option>High (0.85) — More consistent</option><option>Medium (0.65)</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spanish -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-amber">🇪🇸</div>
+        <div><div class="card-title">Spanish (Español) — Secondary Voice</div><div class="card-sub">Activated on Spanish detection · 19 calls/month · Sofia — Latin American accent</div></div>
+        <div class="card-head-right"><span class="tag tag-green">Active ✓</span></div>
+      </div>
+      <div class="card-body">
+        <div class="voice-assignment">
+          <div class="voice-card vc-selected">
+            <div class="vc-selected-badge">Selected ✓</div>
+            <div class="vc-name">Sofía</div>
+            <div class="vc-accent">Latin American · Female</div>
+            <div class="vc-lang">ElevenLabs v2 · ES-419</div>
+            <div class="vc-traits"><span class="vc-trait">Warm</span><span class="vc-trait">Natural</span><span class="vc-trait">Clear</span></div>
+            <button class="vc-play" onclick="playVoice('Sofía','¡Hola! Gracias por llamar a Athens Sleep and Wellness. Con gusto le ayudo hoy.')">▶ Preview</button>
+          </div>
+          <div class="voice-card" onclick="selectVoice(this)">
+            <div class="vc-name">Isabella</div>
+            <div class="vc-accent">Mexican Spanish · Female</div>
+            <div class="vc-lang">ElevenLabs v2 · ES-MX</div>
+            <div class="vc-traits"><span class="vc-trait">Energetic</span><span class="vc-trait">Friendly</span><span class="vc-trait">Clear</span></div>
+            <button class="vc-play" onclick="playVoice('Isabella','Buenos días, le habla el asistente virtual de la clínica. ¿En qué puedo ayudarle?')">▶ Preview</button>
+          </div>
+          <div class="voice-card" onclick="selectVoice(this)">
+            <div class="vc-name">Carlos</div>
+            <div class="vc-accent">Neutral Spanish · Male</div>
+            <div class="vc-lang">ElevenLabs v2 · ES-ES</div>
+            <div class="vc-traits"><span class="vc-trait">Professional</span><span class="vc-trait">Calm</span><span class="vc-trait">Measured</span></div>
+            <button class="vc-play" onclick="playVoice('Carlos','Hola, muchas gracias por su llamada. Estoy aquí para ayudarle.')">▶ Preview</button>
+          </div>
+        </div>
+        <div class="notice green" style="margin-top:8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span><strong>Sofía is performing well.</strong> 84% Spanish containment rate. Patient sentiment score 4.3/5 for Spanish calls. No issues detected in MOF monthly audit.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mandarin -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-red">🇨🇳</div>
+        <div><div class="card-title">Mandarin Chinese (普通话) — Tertiary Voice</div><div class="card-sub">Activated on Mandarin detection · 4 calls/month · Lin Mei — Mainland accent · Not yet tested</div></div>
+        <div class="card-head-right"><span class="tag tag-amber">⚠ Untested</span></div>
+      </div>
+      <div class="card-body">
+        <div class="voice-assignment">
+          <div class="voice-card vc-selected">
+            <div class="vc-selected-badge">Selected ✓</div>
+            <div class="vc-name">Lin Mei</div>
+            <div class="vc-accent">Mainland · Standard Mandarin</div>
+            <div class="vc-lang">ElevenLabs v2 · ZH-CN</div>
+            <div class="vc-traits"><span class="vc-trait">Professional</span><span class="vc-trait">Clear</span><span class="vc-trait">Formal</span></div>
+            <button class="vc-play" onclick="playVoice('Lin Mei','您好！感谢您致电雅典睡眠与健康中心。我是Aria，请问有什么可以帮助您？')">▶ Preview</button>
+          </div>
+          <div class="voice-card" onclick="selectVoice(this)">
+            <div class="vc-name">Mei Ling</div>
+            <div class="vc-accent">Taiwanese · Warm</div>
+            <div class="vc-lang">ElevenLabs v2 · ZH-TW</div>
+            <div class="vc-traits"><span class="vc-trait">Warm</span><span class="vc-trait">Friendly</span><span class="vc-trait">Natural</span></div>
+            <button class="vc-play" onclick="playVoice('Mei Ling','您好，歡迎致電，我是Aria，請問我可以怎麼幫助您呢？')">▶ Preview</button>
+          </div>
+          <div class="voice-card" onclick="selectVoice(this)">
+            <div class="vc-name">Wei Chen</div>
+            <div class="vc-accent">Mainland · Male</div>
+            <div class="vc-lang">ElevenLabs v2 · ZH-CN</div>
+            <div class="vc-traits"><span class="vc-trait">Deep</span><span class="vc-trait">Authoritative</span><span class="vc-trait">Clear</span></div>
+            <button class="vc-play" onclick="playVoice('Wei Chen','您好！请问有什么需要帮助的？')">▶ Preview</button>
+          </div>
+        </div>
+        <div class="notice amber" style="margin-top:8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <span>Lin Mei has been assigned but not yet sandbox tested for medical terminology. MOF Technical Admin Mike Torres should run 5 Mandarin test calls before full deployment. KB translation must also be completed first.</span>
+        </div>
+        <button class="btn btn-green" onclick="alert('Mandarin voice sandbox test queued for Mike Torres (Technical Admin). Will run 5 test calls against Mandarin KB. Results available within 24 hours.')">Queue Mandarin Voice Test →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voice metrics sidebar -->
+  <div class="metrics-panel">
+    <div class="mp-section">ElevenLabs Model</div>
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:11px;">
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span style="color:var(--text3);">Model</span><span style="font-weight:600;">Multilingual v2</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span style="color:var(--text3);">Latency</span><span style="font-weight:600;color:var(--green);">&lt;400ms</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span style="color:var(--text3);">Languages</span><span style="font-weight:600;">28 supported</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span style="color:var(--text3);">BAA</span><span style="font-weight:600;color:var(--green);">HIPAA signed ✓</span></div>
+    </div>
+    <div class="mp-section">Voice Performance</div>
+    <div style="margin-bottom:8px;"><div class="metric-row"><span class="mr-label">Rachel (EN) — naturalness</span><span class="mr-val" style="color:var(--green);">4.7/5</span></div></div>
+    <div style="margin-bottom:8px;"><div class="metric-row"><span class="mr-label">Sofía (ES) — naturalness</span><span class="mr-val" style="color:var(--green);">4.4/5</span></div></div>
+    <div style="margin-bottom:8px;"><div class="metric-row"><span class="mr-label">Lin Mei (ZH) — untested</span><span class="mr-val" style="color:var(--text3);">—</span></div></div>
+    <div class="mp-section" style="margin-top:4px;">Preview Last Heard</div>
+    <div id="voicePreviewBox" style="padding:10px;background:var(--navy);border-radius:var(--r);text-align:center;">
+      <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;">Click ▶ Preview to hear a voice sample</div>
+      <div style="font-size:24px;">🎙️</div>
+    </div>
+    <div class="mp-section" style="margin-top:10px;">Voice Tips</div>
+    <div style="font-size:11px;color:var(--text2);line-height:1.6;">
+      <strong>For Spanish:</strong> Latin American accent (ES-419) is preferred over Castilian (ES-ES) for US-based practices with Mexican/Central American patient populations.<br><br>
+      <strong>For Mandarin:</strong> If your patient base is primarily from Taiwan or Hong Kong, consider Mei Ling (ZH-TW) over Lin Mei (ZH-CN). The written characters also differ.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANEL 5: SMS FALLBACK IN LANGUAGE
+══════════════════════════════════════════ -->
+<div class="panel" id="panel-sms">
+<div class="two-col">
+  <div class="scroll pad">
+    <div style="font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.3px;margin-bottom:4px;">SMS Fallback in Detected Language</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">When voice fails, the SMS is sent in the same language Aria detected · Never forces caller to type in English</div>
+
+    <div class="notice blue">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span><strong>Language-aware SMS:</strong> The fallback text message is automatically sent in the caller's detected language. If Aria is speaking Spanish and triggers SMS, the text arrives in Spanish. If Mandarin, it arrives in Simplified Chinese. Patients never have to switch languages mid-call.</span>
+    </div>
+
+    <!-- Config cards -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-green">🇺🇸</div>
+        <div><div class="card-title">English SMS Fallback</div><div class="card-sub">Default language · Sent to all mobile callers when STT confidence &lt;70%</div></div>
+        <div class="card-head-right"><span class="tag tag-green">Active</span></div>
+      </div>
+      <div class="card-body">
+        <div class="form-group"><label class="form-label">SMS Bridge Message (voice script)</label><textarea class="form-input" rows="2" style="resize:none;">I want to make sure I get this right — I just sent you a quick text to {caller_number}. Could you type your answer there? I'll wait right here on the line.</textarea></div>
+        <div class="form-group"><label class="form-label">SMS Text Content (sent to patient)</label><textarea class="form-input" rows="2" style="resize:none;">Athens Sleep & Wellness: Aria here 🩺 Could you type {question_field} here? I'll read it right back to you on the call.</textarea></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div class="form-group"><label class="form-label">Reply timeout</label><select class="form-select"><option>60 seconds</option><option>45 seconds</option><option>90 seconds</option></select></div>
+          <div class="form-group"><label class="form-label">Max SMS per call</label><select class="form-select"><option>3 (then offer transfer)</option><option>2</option><option>Unlimited</option></select></div>
+          <div class="form-group"><label class="form-label">Landline detection</label><select class="form-select"><option>Twilio Lookup v2</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-amber">🇪🇸</div>
+        <div><div class="card-title">Spanish SMS Fallback (Español)</div><div class="card-sub">Sent when Aria is in Spanish mode · Simplified Spanish for text readability</div></div>
+        <div class="card-head-right"><span class="tag tag-green">Active ✓</span></div>
+      </div>
+      <div class="card-body">
+        <div class="form-group"><label class="form-label">SMS Bridge Message — Voice (in Spanish)</label><textarea class="form-input" rows="2" style="resize:none;">Quiero asegurarme de entender bien — acabo de enviarle un mensaje de texto. ¿Podría escribir su respuesta allí? Estaré aquí esperando.</textarea></div>
+        <div class="form-group"><label class="form-label">SMS Text Content — Sent to Patient (Spanish)</label><textarea class="form-input" rows="2" style="resize:none;">Athens Sleep & Wellness: Hola, soy Aria 🩺 ¿Podría escribir {question_field} aquí? Lo leeré de inmediato en la llamada.</textarea></div>
+        <div class="notice green" style="margin-top:4px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span><strong>Verified by bilingual staff.</strong> Spanish SMS scripts approved by Dr. Maria Lopez (MOF bilingual reviewer). Tone is warm and patient-friendly.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-red">🇨🇳</div>
+        <div><div class="card-title">Mandarin SMS Fallback (中文)</div><div class="card-sub">Sent in Simplified Chinese · Pending bilingual review · Twilio supports Unicode (emoji + Chinese characters)</div></div>
+        <div class="card-head-right"><span class="tag tag-amber">⚠ Needs Review</span></div>
+      </div>
+      <div class="card-body">
+        <div class="form-group"><label class="form-label">SMS Bridge Message — Voice (in Mandarin)</label><textarea class="form-input" rows="2" style="resize:none;">我想确保理解正确 — 我刚刚给您发了一条短信。您能在那里输入您的回答吗？我在这里等您。</textarea></div>
+        <div class="form-group"><label class="form-label">SMS Text Content — Sent to Patient (Mandarin)</label><textarea class="form-input" rows="2" style="resize:none;">雅典睡眠诊所：您好，我是Aria 🩺 请问您能输入{question_field}吗？我会立即在通话中确认。</textarea></div>
+        <div class="notice amber" style="margin-top:4px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <span>Mandarin SMS requires bilingual medical review before deployment. "诊所" (clinic) vs "医院" (hospital) — confirm correct term for this practice.</span>
+        </div>
+        <button class="btn btn-amber" onclick="alert('Mandarin SMS review request submitted to MOF bilingual team. Turnaround: 2 business days.')">Request Bilingual SMS Review</button>
+      </div>
+    </div>
+
+    <!-- Live SMS Previews -->
+    <div class="section-label" style="margin-top:4px;">Live SMS Preview — How Patients See It</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:6px;">🇺🇸 English SMS</div>
+        <div class="sms-preview">
+          <div class="sms-preview-header">
+            <div class="sph-icon">🏥</div>
+            <div><div class="sph-name">Athens Sleep & Wellness</div><div class="sph-number">+1 (877) 581-2599</div></div>
+          </div>
+          <div class="sms-bubble-container">
+            <div class="sms-bubble sb-outgoing">Athens Sleep & Wellness: Aria here 🩺 Could you type your date of birth here? I'll read it right back to you on the call.</div>
+            <div class="sms-meta">Delivered · 10:42 AM</div>
+            <div class="sms-bubble sb-incoming">March 15, 1970</div>
+            <div class="sms-bubble sb-outgoing" style="font-size:11px;">Got it — March 15, 1970! Back to you in a second ✓</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:6px;">🇪🇸 Spanish SMS</div>
+        <div class="sms-preview">
+          <div class="sms-preview-header">
+            <div class="sph-icon">🏥</div>
+            <div><div class="sph-name">Athens Sleep & Wellness</div><div class="sph-number">+1 (877) 581-2599</div></div>
+          </div>
+          <div class="sms-bubble-container">
+            <div class="sms-bubble sb-outgoing">Athens Sleep & Wellness: Hola, soy Aria 🩺 ¿Podría escribir su fecha de nacimiento aquí? Lo leeré de inmediato en la llamada.</div>
+            <div class="sms-meta">Entregado · 10:44 AM</div>
+            <div class="sms-bubble sb-incoming sb-es">15 de marzo de 1970</div>
+            <div class="sms-bubble sb-outgoing" style="font-size:11px;">¡Perfecto! 15 de marzo de 1970. ¡Ya tengo su información! ✓</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:6px;">🇨🇳 Mandarin SMS</div>
+        <div class="sms-preview">
+          <div class="sms-preview-header">
+            <div class="sph-icon">🏥</div>
+            <div><div class="sph-name">Athens Sleep & Wellness</div><div class="sph-number">+1 (877) 581-2599</div></div>
+          </div>
+          <div class="sms-bubble-container">
+            <div class="sms-bubble sb-outgoing">雅典睡眠诊所：您好，我是Aria 🩺 请问您能输入您的出生日期吗？我会立即在通话中确认。</div>
+            <div class="sms-meta">已送达 · 上午10:46</div>
+            <div class="sms-bubble sb-incoming sb-zh">1970年3月15日</div>
+            <div class="sms-bubble sb-outgoing" style="font-size:11px;">太好了！1970年3月15日。信息已收到！✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SMS metrics sidebar -->
+  <div class="metrics-panel">
+    <div class="mp-section">SMS Fallback Stats — 30 days</div>
+    <div style="margin-bottom:8px;">
+      <div class="metric-row"><span class="mr-label">EN SMS triggers</span><span class="mr-val">18 calls</span></div>
+      <div class="mr-bar"><div class="mb-blue" style="width:72%;"></div></div>
+    </div>
+    <div style="margin-bottom:8px;">
+      <div class="metric-row"><span class="mr-label">ES SMS triggers</span><span class="mr-val">4 calls</span></div>
+      <div class="mr-bar"><div class="mb-amber" style="width:40%;"></div></div>
+    </div>
+    <div style="margin-bottom:8px;">
+      <div class="metric-row"><span class="mr-label">ZH SMS triggers</span><span class="mr-val">1 call</span></div>
+      <div class="mr-bar"><div class="mb-green" style="width:10%;"></div></div>
+    </div>
+    <div style="margin-bottom:8px;">
+      <div class="metric-row"><span class="mr-label">Reply rate (all langs)</span><span class="mr-val" style="color:var(--green);">91%</span></div>
+      <div class="mr-bar"><div class="mb-green" style="width:91%;"></div></div>
+    </div>
+    <div style="margin-bottom:8px;">
+      <div class="metric-row"><span class="mr-label">Avg reply time</span><span class="mr-val" style="color:var(--green);">12.4s</span></div>
+    </div>
+    <div style="margin-bottom:8px;">
+      <div class="metric-row"><span class="mr-label">Landlines skipped</span><span class="mr-val">3 calls</span></div>
+    </div>
+    <div class="mp-section">Twilio Unicode Support</div>
+    <div style="font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px;">Twilio supports full Unicode in SMS, including:<br><br>• Chinese characters (Simplified + Traditional)<br>• Spanish accented characters (á, é, ñ)<br>• Emoji (✓ 🩺 🏥)<br><br>Note: Unicode SMS uses 70 chars per segment vs 160 for ASCII. Long Mandarin messages may split into 2 segments ($0.015 × 2).</div>
+    <div class="notice amber">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <span>Keep Mandarin SMS under 70 characters to avoid splitting into 2 message segments. Current template: 62 chars ✓</span>
+    </div>
+    <div class="mp-section">Cost per SMS Fallback</div>
+    <div style="display:flex;flex-direction:column;gap:4px;font-size:11px;">
+      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:var(--gray-light);border-radius:4px;"><span>English SMS (ASCII)</span><span style="font-weight:600;">$0.0075</span></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:var(--gray-light);border-radius:4px;"><span>Spanish SMS (Unicode)</span><span style="font-weight:600;">$0.015</span></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:var(--gray-light);border-radius:4px;"><span>Mandarin SMS (Unicode)</span><span style="font-weight:600;">$0.015</span></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:var(--gray-light);border-radius:4px;"><span>Twilio Lookup v2</span><span style="font-weight:600;">$0.005</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- shell -->
+
+<script>
+function switchTab(t){
+  document.querySelectorAll('.mtab').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.getElementById('panel-'+t).classList.add('active');
+}
+
+function selectLang(el,code){
+  // visual feedback only — clicking the card focuses that language
+  console.log('Language selected:',code);
+}
+
+function addLanguage(code){
+  const names={vi:'Vietnamese',hi:'Hindi',fr:'French'};
+  if(confirm(`Add ${names[code]||code} to your active languages?\n\nThis will start AI translation of your Knowledge Base. You'll need to review and approve translations before the language goes live.\n\nEstimated setup time: 15 minutes.`)){
+    alert(`✅ ${names[code]} added!\n\nAI translation of your 13 KB items has started. You'll receive an email when translations are ready for review.\n\nElevenLabs voice selection will be available in the Voice Assignment tab.`);
+  }
+}
+
+function approveRow(btn){
+  const row = btn.closest('tr');
+  const td = row.querySelector('.kb-translated');
+  td.classList.remove('needs-review');
+  td.classList.add('approved');
+  // Remove the warning note
+  const note = td.querySelector('span');
+  if(note) note.remove();
+  // Change badge
+  const badge = row.querySelector('.kb-badge');
+  if(badge){ badge.textContent='Human ✓'; badge.className='kb-badge kb-human'; }
+  // Change action
+  const actionCell = row.querySelector('.kb-action');
+  actionCell.innerHTML = '<span class="kb-btn kb-btn-approved">✓ Approved</span>';
+  row.style.background='';
+  // Update counter
+  updatePendingCount();
+}
+
+function editRow(btn){
+  const row = btn.closest('tr');
+  const td = row.querySelector('.kb-translated');
+  const currentText = td.childNodes[0].textContent.trim();
+  const newText = prompt('Edit translation:', currentText);
+  if(newText && newText !== currentText){
+    td.childNodes[0].textContent = newText;
+  }
+}
+
+function updatePendingCount(){
+  const pending = document.querySelectorAll('.kb-translated.needs-review').length;
+  const badge = document.getElementById('tab-kb').querySelector('.mtab-badge');
+  if(badge) badge.textContent = pending > 0 ? `${pending} Pending` : 'All Approved';
+  if(pending === 0) badge.className = 'mtab-badge mb-green';
+}
+
+function approveAll(){
+  document.querySelectorAll('.kb-btn-approve').forEach(btn => approveRow(btn));
+  alert('✅ All Mandarin translations approved!\n\nMandarin Chinese is now fully configured. MOF Technical Admin will run 5 Mandarin test calls in the sandbox before full deployment.');
+}
+
+function filterKB(lang){
+  document.querySelectorAll('.kb-row').forEach(row => {
+    if(lang === 'all') { row.style.display = ''; }
+    else { row.style.display = row.dataset.lang === lang ? '' : 'none'; }
+  });
+}
+
+function selectVoice(card){
+  const parentCard = card.closest('.card-body');
+  parentCard.querySelectorAll('.voice-card').forEach(c => {
+    c.classList.remove('vc-selected');
+    const badge = c.querySelector('.vc-selected-badge');
+    if(badge) badge.remove();
+  });
+  card.classList.add('vc-selected');
+  const badge = document.createElement('div');
+  badge.className = 'vc-selected-badge';
+  badge.textContent = 'Selected ✓';
+  card.insertBefore(badge, card.firstChild);
+}
+
+function playVoice(name, script){
+  const box = document.getElementById('voicePreviewBox');
+  if(box){
+    box.innerHTML = `<div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:5px;">Now playing: ${name}</div><div style="font-size:13px;color:#fff;font-weight:600;">🎙️ ${name}</div><div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:6px;line-height:1.5;font-style:italic;">"${script.substring(0,80)}..."</div><div style="margin-top:8px;"><div style="height:3px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;"><div style="height:100%;background:var(--green2);border-radius:2px;width:0%;animation:loadbar 3s linear forwards;"></div></div></div>`;
+  }
+  alert(`▶ Playing voice preview: ${name}\n\nScript: "${script}"\n\n(In production, ElevenLabs API generates real audio. This mockup shows the preview UI.)`)
+}
+</script>
+<style>
+@keyframes loadbar{from{width:0%}to{width:100%}}
+</style>
+</body>
+</html>
