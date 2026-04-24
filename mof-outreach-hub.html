@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedFlow AI — Outreach Hub · Athens Sleep & Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1B6B4A;--green2:#059669;--gl:#ECFDF5;--gd:#14533A;
+  --amber:#D97706;--amber2:#F59E0B;--al:#FEF3C7;--ad:#92400E;
+  --blue:#1D4ED8;--blue2:#3B82F6;--bl:#EFF6FF;
+  --red:#DC2626;--rl:#FEF2F2;
+  --purple:#7C3AED;--pl:#F5F3FF;
+  --teal:#0D9488;--tl:#F0FDFA;
+  --orange:#EA580C;--ol:#FFF7ED;
+  --navy:#0F2A4A;--navy2:#1A3A5C;
+  --gray:#6B7280;--grl:#F9FAFB;--bdr:#E5E7EB;--bdr2:#D1D5DB;
+  --tx:#111827;--tx2:#374151;--tx3:#6B7280;
+  --bg:#F1F5F9;--sur:#FFFFFF;
+  --r:10px;--rs:6px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.05);
+  --shm:0 4px 16px rgba(0,0,0,.10);
+}
+html,body{height:100%;font-family:"Outfit",system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;overflow:hidden;}
+.shell{display:grid;grid-template-rows:52px 48px 1fr;height:100vh;overflow:hidden;}
+
+/* TOPBAR */
+.topbar{background:var(--navy);display:flex;align-items:center;padding:0 20px;gap:0;}
+.tmark{width:28px;height:28px;background:linear-gradient(135deg,#4ADE80,#1B6B4A);border-radius:7px;display:flex;align-items:center;justify-content:center;margin-right:8px;}
+.tmark svg{width:15px;height:15px;}
+.tname{font-size:14px;font-weight:700;color:#fff;margin-right:14px;}
+.tsep{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 12px;}
+.tbread{font-size:12px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:4px;}
+.tbread span{color:rgba(255,255,255,.85);font-weight:600;}
+.tsp{flex:1;}
+.tright{display:flex;align-items:center;gap:8px;}
+.tchip{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;}
+.tcg{background:rgba(74,222,128,.15);color:#86EFAC;}
+.tcb{background:rgba(96,165,250,.15);color:#93C5FD;}
+.ldot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tbtn{padding:5px 14px;border-radius:var(--rs);border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;}
+.tbtnp{border:none;background:linear-gradient(135deg,#4ADE80,#1B6B4A);}
+
+/* MAIN TABS */
+.tabs{background:var(--sur);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 20px;overflow-x:auto;}
+.tab{padding:12px 15px;font-size:12.5px;font-weight:500;color:var(--tx3);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.tab:hover{color:var(--tx2);}
+.tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600;}
+.tbadge{padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;}
+.tbg{background:var(--gl);color:var(--green);}
+.tba{background:var(--al);color:var(--amber);}
+.tbb{background:var(--bl);color:var(--blue);}
+.tabs-sp{flex:1;}
+.comp-chip{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--rs);background:var(--gl);border:1px solid #A7F3D0;font-size:11px;font-weight:700;color:var(--green);white-space:nowrap;}
+
+/* PANELS */
+.panel{display:none;height:calc(100vh - 100px);overflow:hidden;}
+.panel.active{display:flex;}
+.scr{overflow-y:auto;}
+.pad{padding:20px 22px;}
+.twoc{display:grid;grid-template-columns:1fr 300px;height:100%;overflow:hidden;}
+.threec{display:grid;grid-template-columns:280px 1fr;height:100%;overflow:hidden;}
+
+/* CAMPAIGN CARDS */
+.camp-card{background:var(--sur);border:1.5px solid var(--bdr);border-radius:var(--r);margin-bottom:10px;overflow:hidden;cursor:pointer;transition:all .15s;}
+.camp-card:hover{border-color:var(--bdr2);box-shadow:var(--sh);}
+.camp-card.cc-active{border-left:4px solid var(--green);}
+.camp-card.cc-scheduled{border-left:4px solid var(--blue);}
+.camp-card.cc-paused{border-left:4px solid var(--amber);}
+.camp-card.cc-draft{border-left:4px solid var(--bdr2);}
+.cc-head{display:flex;align-items:center;gap:10px;padding:12px 14px;}
+.cc-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.cci-green{background:var(--gl);}
+.cci-blue{background:var(--bl);}
+.cci-amber{background:var(--al);}
+.cci-purple{background:var(--pl);}
+.cci-teal{background:var(--tl);}
+.cci-orange{background:var(--ol);}
+.cc-title{font-size:13px;font-weight:700;color:var(--tx);}
+.cc-sub{font-size:11px;color:var(--tx3);margin-top:1px;}
+.cc-status{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;}
+.cs-live{background:var(--gl);color:var(--green);}
+.cs-sched{background:var(--bl);color:var(--blue);}
+.cs-paused{background:var(--al);color:var(--amber);}
+.cs-draft{background:var(--grl);color:var(--tx3);}
+.cc-body{padding:0 14px 12px;border-top:1px solid var(--bdr);}
+.cc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;}
+.cc-stat{text-align:center;}
+.ccs-val{font-size:16px;font-weight:800;letter-spacing:-.5px;}
+.ccs-label{font-size:9px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;margin-top:1px;}
+.cc-progress{margin-top:8px;}
+.cp-bar{height:4px;background:var(--bdr);border-radius:2px;overflow:hidden;margin-top:3px;}
+.cpb-fill{height:100%;border-radius:2px;}
+.cpbg{background:var(--green2);}
+.cpba{background:var(--amber2);}
+.cpbb{background:var(--blue2);}
+
+/* WIZARD */
+.wizard{display:flex;align-items:center;gap:0;margin-bottom:20px;}
+.wstep{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;color:var(--tx3);cursor:pointer;transition:all .15s;position:relative;}
+.wstep.ws-done{color:var(--green2);}
+.wstep.ws-active{background:var(--green);color:#fff;border-radius:var(--rs);}
+.wstep.ws-todo{color:var(--bdr2);}
+.ws-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.wsn-done{background:var(--green2);color:#fff;}
+.wsn-active{background:rgba(255,255,255,.3);color:#fff;}
+.wsn-todo{background:var(--bdr);color:var(--tx3);}
+.wline{flex:1;height:2px;background:var(--bdr);margin:0 4px;}
+.wline.wl-done{background:var(--green2);}
+
+/* AUDIENCE TARGETING */
+.seg-card{background:var(--sur);border:1.5px solid var(--bdr);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.seg-card:hover{border-color:var(--bdr2);box-shadow:var(--sh);}
+.seg-card.seg-sel{border-color:var(--green);background:var(--gl);}
+.seg-name{font-size:12px;font-weight:700;color:var(--tx);}
+.seg-count{font-size:11px;color:var(--tx3);margin-top:2px;}
+.seg-tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.seg-tag{padding:1px 6px;border-radius:5px;font-size:10px;font-weight:600;}
+
+/* SMS PREVIEW */
+.phone-frame{width:220px;background:#1C1C1E;border-radius:36px;padding:12px;box-shadow:0 0 0 2px #3A3A3C,0 10px 40px rgba(0,0,0,.4);flex-shrink:0;}
+.phone-screen{background:#000;border-radius:26px;overflow:hidden;min-height:380px;}
+.ph-status{display:flex;justify-content:space-between;align-items:center;padding:12px 16px 6px;font-size:10px;font-weight:600;color:#fff;}
+.ph-msgs{padding:10px 10px 14px;}
+.ph-msg{max-width:82%;margin-bottom:7px;}
+.ph-msg-out{margin-left:auto;}
+.ph-bubble{padding:8px 11px;border-radius:14px;font-size:11px;line-height:1.5;}
+.phb-in{background:#1C1C1E;color:#fff;border-radius:14px 14px 14px 2px;}
+.phb-out{background:#007AFF;color:#fff;border-radius:14px 14px 2px 14px;}
+.ph-time{font-size:9px;color:rgba(255,255,255,.35);margin-top:2px;text-align:right;}
+
+/* AI CALL CONFIG */
+.call-script-box{background:var(--navy);border-radius:var(--r);overflow:hidden;margin-bottom:12px;}
+.csb-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.07);}
+.csb-dots{display:flex;gap:4px;}
+.csb-dot{width:9px;height:9px;border-radius:50%;}
+.csb-r{background:#FF5F57;} .csb-y{background:#FEBC2E;} .csb-g{background:#28C840;}
+.csb-title{font-size:10px;color:rgba(255,255,255,.4);font-weight:600;flex:1;text-align:center;}
+.csb-body{padding:12px 14px;font-family:"JetBrains Mono",monospace;font-size:11px;line-height:1.8;color:rgba(255,255,255,.75);}
+.csb-aria{color:#86EFAC;}
+.csb-patient{color:#93C5FD;}
+.csb-sys{color:rgba(255,255,255,.3);font-style:italic;}
+.csb-var{color:#FCD34D;}
+
+/* PROVIDER TABLE */
+.prov-table{width:100%;border-collapse:collapse;}
+.prov-table th{padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--bdr);background:var(--grl);}
+.prov-table td{padding:10px 12px;border-bottom:1px solid var(--bdr);font-size:12px;color:var(--tx2);vertical-align:middle;}
+.prov-table tr:hover td{background:var(--grl);}
+.prov-avail{display:flex;gap:3px;flex-wrap:wrap;}
+.pa-slot{padding:1px 5px;border-radius:4px;font-size:9px;font-weight:700;}
+.pas-open{background:var(--gl);color:var(--green);}
+.pas-full{background:var(--rl);color:var(--red);}
+.pas-lim{background:var(--al);color:var(--amber);}
+
+/* ANALYTICS */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;}
+.kpi{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:12px 14px;}
+.kpi-val{font-size:22px;font-weight:800;letter-spacing:-1px;line-height:1;}
+.kpi-label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-top:3px;}
+.kpi-delta{font-size:10px;font-weight:600;margin-top:2px;}
+.ku{color:var(--green2);}
+.kd{color:var(--red);}
+.chart-bar-h{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.bar-label{font-size:11px;color:var(--tx2);width:130px;flex-shrink:0;}
+.bar-track{flex:1;height:8px;background:var(--bdr);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width .3s;}
+.bar-val{font-size:11px;font-weight:700;color:var(--tx2);width:40px;text-align:right;flex-shrink:0;}
+.funnel-step{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);margin-bottom:6px;}
+.fs-num{font-size:18px;font-weight:800;letter-spacing:-.5px;width:60px;flex-shrink:0;}
+.fs-label{font-size:12px;font-weight:600;color:var(--tx2);flex:1;}
+.fs-pct{font-size:12px;font-weight:700;}
+.fs-bar{height:6px;background:var(--bdr);border-radius:3px;overflow:hidden;margin-top:4px;}
+.fsb-fill{height:100%;border-radius:3px;}
+
+/* MISC */
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.chead{padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px;}
+.cicon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.icg{background:var(--gl);}
+.icb{background:var(--bl);}
+.ica{background:var(--al);}
+.icp{background:var(--pl);}
+.ict{background:var(--tl);}
+.ico{background:var(--ol);}
+.ctitle{font-size:13px;font-weight:700;color:var(--tx);}
+.csub{font-size:11px;color:var(--tx3);margin-top:1px;}
+.chr{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.cbody{padding:14px 16px;}
+.notice{display:flex;align-items:flex-start;gap:7px;padding:9px 11px;border-radius:var(--rs);margin-bottom:10px;font-size:11px;line-height:1.5;}
+.ng{background:var(--gl);border:1px solid #A7F3D0;color:var(--green);}
+.na{background:var(--al);border:1px solid #FDE68A;color:var(--ad);}
+.nb{background:var(--bl);border:1px solid #BFDBFE;color:var(--blue);}
+.nr{background:var(--rl);border:1px solid #FECACA;color:var(--red);}
+.notice svg{width:12px;height:12px;flex-shrink:0;margin-top:1px;}
+.notice strong{font-weight:700;}
+.btn{padding:7px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:5px;}
+.bg{background:var(--green);color:#fff;}
+.bg:hover{background:var(--gd);}
+.bn{background:var(--navy);color:#fff;}
+.bo{background:var(--sur);border:1.5px solid var(--bdr);color:var(--tx2);}
+.bo:hover{border-color:var(--bdr2);}
+.ba{background:var(--al);color:var(--amber);border:1px solid #FDE68A;}
+.br{background:var(--rl);color:var(--red);border:1px solid #FECACA;}
+.tag{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;}
+.tg{background:var(--gl);color:var(--green);}
+.ta{background:var(--al);color:var(--amber);}
+.tb{background:var(--bl);color:var(--blue);}
+.tr{background:var(--rl);color:var(--red);}
+.tp{background:var(--pl);color:var(--purple);}
+.ttn{background:var(--grl);color:var(--tx3);}
+.fg{margin-bottom:11px;}
+.fl{font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:3px;display:block;}
+.fi{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;transition:border .15s;}
+.fi:focus{border-color:var(--green);}
+.fif{border-color:var(--green);background:#FAFFFE;}
+.fs{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;background:var(--sur);}
+.fta{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;resize:vertical;line-height:1.6;}
+.fta:focus{border-color:var(--green);}
+.slabel{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;}
+.sp{background:var(--sur);border-left:1px solid var(--bdr);overflow-y:auto;padding:14px;}
+.spsec{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin:12px 0 8px;}
+.spsec:first-child{margin-top:0;}
+.trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.tgg{width:34px;height:19px;border-radius:10px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.tgg.on{background:var(--green);}
+.tgg.off{background:var(--bdr2);}
+.tggk{width:15px;height:15px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tgg.on .tggk{left:17px;}
+.tgg.off .tggk{left:2px;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- TOPBAR WITH PRACTICE CHOOSER -->
+<div class="topbar">
+  <div class="tmark"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5L13 4.5V10.5L7.5 13.5L2 10.5V4.5L7.5 1.5Z" fill="white" opacity=".9"/><circle cx="7.5" cy="7.5" r="2" fill="white"/></svg></div>
+  <span class="tname">MedFlow AI</span>
+  <div class="tsep"></div>
+  <span style="font-size:11px;color:rgba(255,255,255,.45);margin-right:10px;white-space:nowrap">Outreach Hub</span>
+  <div class="tsep"></div>
+  <!-- PRACTICE CHOOSER — synced via localStorage key: mof_selected_practice -->
+  <div style="display:flex;align-items:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:8px;overflow:hidden;height:32px;margin-right:8px;">
+    <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.38);padding:0 8px;text-transform:uppercase;letter-spacing:.6px;border-right:1px solid rgba(255,255,255,.1);height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;">Practice</div>
+    <select id="practiceSelect" onchange="switchPractice(this.value)" style="background:transparent;border:none;color:#fff;font-size:11.5px;font-weight:600;font-family:'Outfit',sans-serif;padding:0 8px;cursor:pointer;outline:none;height:100%;min-width:210px;appearance:none;-webkit-appearance:none;">
+      <option value="athens">🌙  Athens Sleep &amp; Wellness · Sleep Med</option>
+      <option value="valley">🏥  Valley Ridge Family Medicine · Fam Med</option>
+      <option value="buchanan">🌿  Buchanan Rural Clinic · Primary Care</option>
+      <option value="haralson">👶  Haralson County Pediatrics · Peds</option>
+      <option value="westpoint">🚨  West Point Urgent Care · Urgent Care</option>
+      <option value="coweta">⚠️  Coweta Family Medicine · Fam Med</option>
+    </select>
+    <div style="padding:0 8px;color:rgba(255,255,255,.38);font-size:9px;flex-shrink:0;pointer-events:none;">▾</div>
+  </div>
+  <div class="tsp"></div>
+  <div class="tchip tcg"><div class="ldot"></div>Aria Live</div>
+  <div class="tchip tcb" id="campCountChip">4 Active Campaigns</div>
+  <button class="tbtn tbtnp" onclick="ST('builder')">+ New Campaign</button>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" id="tab-overview" onclick="ST('overview')">&#128202; Campaign Overview</div>
+  <div class="tab" id="tab-builder" onclick="ST('builder')">&#128736;&#65039; Campaign Builder <span class="tbadge tba">Draft</span></div>
+  <div class="tab" id="tab-sms" onclick="ST('sms')">&#128172; SMS Campaigns</div>
+  <div class="tab" id="tab-ai" onclick="ST('ai')">&#129302; AI Outbound Calls</div>
+  <div class="tab" id="tab-providers" onclick="ST('providers')">&#128101; Multi-Location Providers</div>
+  <div class="tab" id="tab-analytics" onclick="ST('analytics')">&#128200; Campaign Analytics</div>
+  <div class="tabs-sp"></div>
+  <div class="comp-chip">&#9989; TCPA &#183; 10DLC Registered &#183; HIPAA Compliant</div>
+</div>
+
+<!-- ═══ PANEL 1: OVERVIEW ═══ -->
+<div class="panel active" id="panel-overview">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div><div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px" id="overviewTitle">Active Campaigns &#8212; Athens Sleep & Wellness</div><div style="font-size:11px;color:var(--tx3);margin-top:2px" id="overviewSub">4 active &#183; 2 scheduled &#183; 1 draft &#183; TCPA-compliant &#183; 10DLC registered</div></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn bo" style="font-size:11px">&#8595; Export All</button>
+      <button class="btn bg" style="font-size:11px" onclick="ST('builder')">&#43; New Campaign</button>
+    </div>
+  </div>
+
+  <div class="notice ng">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span id="overviewNotice"><strong>This month: 342 outbound touchpoints sent.</strong> Appointment reminder campaign recovered 12 no-shows ($2,400 estimated revenue). CPAP resupply recall generated 8 new appointments.</span>
+  </div>
+
+  <!-- Active campaigns -->
+  <div class="slabel">Active Now</div>
+
+  <div class="camp-card cc-active" onclick="goDetail('reminder')">
+    <div class="cc-head">
+      <div class="cc-icon cci-green">&#128197;</div>
+      <div style="flex:1">
+        <div class="cc-title">Appointment Reminder Campaign &#8212; 24h + 1h</div>
+        <div class="cc-sub">SMS + AI call &#183; Auto-trigger 24h and 1h before all confirmed appointments</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <span class="cc-status cs-live">&#9679; Live</span>
+        <span class="tag tb">Automated</span>
+      </div>
+    </div>
+    <div class="cc-body">
+      <div class="cc-stats">
+        <div class="cc-stat"><div class="ccs-val" style="color:var(--green2)">312</div><div class="ccs-label">Sent</div></div>
+        <div class="cc-stat"><div class="ccs-val" style="color:var(--green2)">94%</div><div class="ccs-label">Delivered</div></div>
+        <div class="cc-stat"><div class="ccs-val">68%</div><div class="ccs-label">Confirmed</div></div>
+        <div class="cc-stat"><div class="ccs-val" style="color:var(--amber)">4.2%</div><div class="ccs-label">No-show rate</div></div>
+      </div>
+      <div class="cc-progress">
+        <div style="font-size:10px;color:var(--tx3);display:flex;justify-content:space-between"><span>Confirmation rate</span><span>68%</span></div>
+        <div class="cp-bar"><div class="cpb-fill cpbg" style="width:68%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="camp-card cc-active" onclick="goDetail('cpap')">
+    <div class="cc-head">
+      <div class="cc-icon cci-purple">&#129325;</div>
+      <div style="flex:1">
+        <div class="cc-title">CPAP Resupply Recall &#8212; 90-Day Supply Cycle</div>
+        <div class="cc-sub">Targets CPAP patients due for supply resupply &#183; SMS outreach &#183; Sleep Medicine specialty</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <span class="cc-status cs-live">&#9679; Live</span>
+        <span class="tag tp">Sleep Specialty</span>
+      </div>
+    </div>
+    <div class="cc-body">
+      <div class="cc-stats">
+        <div class="cc-stat"><div class="ccs-val">48</div><div class="ccs-label">Sent</div></div>
+        <div class="cc-stat"><div class="ccs-val" style="color:var(--green2)">91%</div><div class="ccs-label">Delivered</div></div>
+        <div class="cc-stat"><div class="ccs-val" style="color:var(--green2)">38%</div><div class="ccs-label">Responded</div></div>
+        <div class="cc-stat"><div class="ccs-val" style="color:var(--green2)">8</div><div class="ccs-label">Appts booked</div></div>
+      </div>
+      <div class="cc-progress">
+        <div style="font-size:10px;color:var(--tx3);display:flex;justify-content:space-between"><span>Response rate</span><span>38%</span></div>
+        <div class="cp-bar"><div class="cpb-fill cpbg" style="width:38%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="camp-card cc-active" onclick="goDetail('noshow')">
+    <div class="cc-head">
+      <div class="cc-icon cci-orange">&#128531;</div>
+      <div style="flex:1">
+        <div class="cc-title">No-Show Follow-Up &#8212; Rebook Within 48h</div>
+        <div class="cc-sub">Auto-triggers 1h after missed appointment &#183; AI outbound call &#183; Reschedule immediately</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <span class="cc-status cs-live">&#9679; Live</span>
+        <span class="tag tg">Auto-trigger</span>
+      </div>
+    </div>
+    <div class="cc-body">
+      <div class="cc-stats">
+        <div class="cc-stat"><div class="ccs-val">22</div><div class="ccs-label">Triggered</div></div>
+        <div class="cc-stat"><div class="ccs-val">77%</div><div class="ccs-label">Reached</div></div>
+        <div class="cc-stat"><div class="ccs-val" style="color:var(--green2)">54%</div><div class="ccs-label">Rebooked</div></div>
+        <div class="cc-stat"><div class="ccs-val" style="color:var(--green2)">$2,700</div><div class="ccs-label">Rev recovered</div></div>
+      </div>
+      <div class="cc-progress">
+        <div style="font-size:10px;color:var(--tx3);display:flex;justify-content:space-between"><span>Rebook rate</span><span>54%</span></div>
+        <div class="cp-bar"><div class="cpb-fill cpbg" style="width:54%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="camp-card cc-active" onclick="goDetail('annual')">
+    <div class="cc-head">
+      <div class="cc-icon cci-teal">&#129658;</div>
+      <div style="flex:1">
+        <div class="cc-title">Annual Sleep Study Recall &#8212; 12-Month Cycle</div>
+        <div class="cc-sub">Patients who had PSG 12+ months ago &#183; AI outbound call &#183; Follow-up scheduling</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <span class="cc-status cs-live">&#9679; Live</span>
+        <span class="tag tp">Sleep Specialty</span>
+      </div>
+    </div>
+    <div class="cc-body">
+      <div class="cc-stats">
+        <div class="cc-stat"><div class="ccs-val">67</div><div class="ccs-label">Called</div></div>
+        <div class="cc-stat"><div class="ccs-val">71%</div><div class="ccs-label">Reached</div></div>
+        <div class="cc-stat"><div class="ccs-val">29%</div><div class="ccs-label">Booked</div></div>
+        <div class="cc-stat"><div class="ccs-val" style="color:var(--green2)">19</div><div class="ccs-label">New appts</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slabel" style="margin-top:4px">Scheduled & Draft</div>
+
+  <div class="camp-card cc-scheduled">
+    <div class="cc-head">
+      <div class="cc-icon cci-blue">&#128140;</div>
+      <div style="flex:1">
+        <div class="cc-title">Post-Visit Survey &#8212; Sleep Study Quality</div>
+        <div class="cc-sub">Sends 48h after sleep study completion &#183; SMS &#183; 5-question survey</div>
+      </div>
+      <span class="cc-status cs-sched">Scheduled &#8212; May 1</span>
+    </div>
+  </div>
+
+  <div class="camp-card cc-draft">
+    <div class="cc-head">
+      <div class="cc-icon" style="background:var(--grl);font-size:14px">&#128203;</div>
+      <div style="flex:1">
+        <div class="cc-title">Insurance Wellness Reminder &#8212; Annual Physical</div>
+        <div class="cc-sub">Draft &#183; Targets patients with unused preventive care benefits</div>
+      </div>
+      <div style="display:flex;gap:5px">
+        <span class="cc-status cs-draft">Draft</span>
+        <button class="btn bg" style="font-size:10px;padding:3px 9px" onclick="ST('builder')">Edit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sp">
+  <div class="spsec">This Month</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px">
+    <div style="padding:10px;background:var(--gl);border-radius:var(--r);border:1px solid #A7F3D0;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--green2)">342</div><div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase">Touchpoints</div></div>
+    <div style="padding:10px;background:var(--gl);border-radius:var(--r);border:1px solid #A7F3D0;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--green2)">35</div><div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase">Appts Booked</div></div>
+    <div style="padding:10px;background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:20px;font-weight:800">$5,100</div><div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase">Rev Attributed</div></div>
+    <div style="padding:10px;background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:20px;font-weight:800;color:var(--blue2)">4.2%</div><div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase">No-show Rate</div></div>
+  </div>
+  <div class="spsec">Compliance Status</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:12px">
+    <div style="padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0;display:flex;justify-content:space-between"><span>TCPA Compliant</span><span style="font-weight:700;color:var(--green)">&#10003;</span></div>
+    <div style="padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0;display:flex;justify-content:space-between"><span>10DLC Registered</span><span style="font-weight:700;color:var(--green)">&#10003;</span></div>
+    <div style="padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0;display:flex;justify-content:space-between"><span>Opt-out honoring</span><span style="font-weight:700;color:var(--green)">&#10003;</span></div>
+    <div style="padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0;display:flex;justify-content:space-between"><span>Quiet hours enforced</span><span style="font-weight:700;color:var(--green)">8a&#8211;8p</span></div>
+  </div>
+  <div class="spsec">Campaign Types</div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:4px 8px;background:var(--grl);border-radius:4px"><span>SMS campaigns</span><span style="font-weight:700">3 active</span></div>
+    <div style="display:flex;justify-content:space-between;padding:4px 8px;background:var(--grl);border-radius:4px"><span>AI outbound calls</span><span style="font-weight:700">2 active</span></div>
+    <div style="display:flex;justify-content:space-between;padding:4px 8px;background:var(--grl);border-radius:4px"><span>Combined (SMS+Call)</span><span style="font-weight:700">1 active</span></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 2: CAMPAIGN BUILDER ═══ -->
+<div class="panel" id="panel-builder">
+<div class="twoc">
+<div class="scr pad">
+  <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:4px">Campaign Builder &#8212; 4-Step Wizard</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">Create a new outbound campaign &#183; SMS, AI Call, or Combined &#183; TCPA-compliant scheduling</div>
+
+  <!-- Wizard steps -->
+  <div class="wizard">
+    <div class="wstep ws-done" id="ws1" onclick="showWStep(1)"><div class="ws-num wsn-done">&#10003;</div>Campaign Type</div>
+    <div class="wline wl-done"></div>
+    <div class="wstep ws-active" id="ws2" onclick="showWStep(2)"><div class="ws-num wsn-active">2</div>Audience</div>
+    <div class="wline"></div>
+    <div class="wstep ws-todo" id="ws3" onclick="showWStep(3)"><div class="ws-num wsn-todo">3</div>Message / Script</div>
+    <div class="wline"></div>
+    <div class="wstep ws-todo" id="ws4" onclick="showWStep(4)"><div class="ws-num wsn-todo">4</div>Schedule & Launch</div>
+  </div>
+
+  <!-- Step 1: Campaign Type -->
+  <div id="wstep1" style="display:none">
+    <div class="slabel">Choose Campaign Type</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+      <div style="border:2px solid var(--green);border-radius:var(--r);padding:14px;cursor:pointer;background:var(--gl)">
+        <div style="font-size:22px;margin-bottom:6px">&#128172;</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:3px">SMS Campaign</div>
+        <div style="font-size:11px;color:var(--tx3)">Text message to patient list &#183; High open rate &#183; Instant delivery</div>
+        <div style="margin-top:6px"><span class="tag tg">&#10003; Selected</span></div>
+      </div>
+      <div style="border:2px solid var(--bdr);border-radius:var(--r);padding:14px;cursor:pointer" onclick="alert('AI Call campaign selected')">
+        <div style="font-size:22px;margin-bottom:6px">&#129302;</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:3px">AI Outbound Call</div>
+        <div style="font-size:11px;color:var(--tx3)">Aria calls patients directly &#183; Natural conversation &#183; Books instantly</div>
+        <div style="margin-top:6px"><span class="tag tb">Most effective</span></div>
+      </div>
+      <div style="border:2px solid var(--bdr);border-radius:var(--r);padding:14px;cursor:pointer" onclick="alert('Combined SMS+Call campaign selected')">
+        <div style="font-size:22px;margin-bottom:6px">&#127381;</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:3px">Combined (SMS + Call)</div>
+        <div style="font-size:11px;color:var(--tx3)">SMS first, AI call if no response &#183; Highest conversion</div>
+        <div style="margin-top:6px"><span class="tag tp">Recommended</span></div>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Campaign Name</label><input type="text" class="fi fif" id="campaignName" value="CPAP Resupply Recall &#8212; May 2026"></div>
+    <div class="fg"><label class="fl">Campaign Goal</label><select class="fs" id="campaignGoal" onchange="onCampaignTypeChange(this.value)"><option value="recall">Appointment booking (recall)</option><option value="resupply">Supply resupply</option><option value="noshow">No-show follow-up</option><option value="survey">Post-visit survey</option><option value="wellness">Wellness reminder</option><option value="insurance">Insurance benefit reminder</option></select></div>
+  </div>
+
+  <!-- Step 2: Audience -->
+  <div id="wstep2">
+    <div class="slabel">Define Target Audience</div>
+    <div class="notice nb">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span><strong>Smart segments automatically exclude opt-outs, landlines (if SMS), and patients contacted in the last 7 days.</strong> All targeting uses practice EHR data from athenahealth (FHIR R4) &#8212; no manual CSV uploads needed.</span>
+    </div>
+
+    <div class="slabel">Pre-built Segments</div>
+    <div id="segList">
+      <div class="seg-card" onclick="selSeg(this)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="seg-name">CPAP Patients &#8212; 90+ Days Since Last Resupply</div>
+          <div style="font-size:13px;font-weight:800;color:var(--green2)">34 patients</div>
+        </div>
+        <div class="seg-count">EHR-derived &#183; Last sync: 10:41 AM &#183; athenahealth FHIR</div>
+        <div class="seg-tags"><span class="seg-tag" style="background:var(--pl);color:var(--purple)">Sleep Medicine</span><span class="seg-tag" style="background:var(--gl);color:var(--green)">Mobile &#10003;</span><span class="seg-tag" style="background:var(--grl);color:var(--tx3)">No recent contact</span></div>
+      </div>
+      <div class="seg-card seg-sel" onclick="selSeg(this)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="seg-name">Sleep Study Patients &#8212; 12+ Months Ago (No Follow-up)</div>
+          <div style="font-size:13px;font-weight:800;color:var(--green2)">52 patients</div>
+        </div>
+        <div class="seg-count">EHR-derived &#183; Last sync: 10:41 AM &#183; PSG + HST patients</div>
+        <div class="seg-tags"><span class="seg-tag" style="background:var(--pl);color:var(--purple)">Sleep Medicine</span><span class="seg-tag" style="background:var(--gl);color:var(--green)">Mobile &#10003;</span><span class="seg-tag" style="background:var(--bl);color:var(--blue)">EHR matched</span></div>
+      </div>
+      <div class="seg-card" onclick="selSeg(this)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="seg-name">No-Show Patients &#8212; Last 30 Days (Not Rescheduled)</div>
+          <div style="font-size:13px;font-weight:800;color:var(--amber)">11 patients</div>
+        </div>
+        <div class="seg-count">EHR-derived &#183; Appointment status: no-show &#183; Not rebooked</div>
+        <div class="seg-tags"><span class="seg-tag" style="background:var(--al);color:var(--amber)">No-shows</span><span class="seg-tag" style="background:var(--gl);color:var(--green)">Mobile &#10003;</span></div>
+      </div>
+      <div class="seg-card" onclick="selSeg(this)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="seg-name">All Active Patients &#8212; Annual Wellness Reminder</div>
+          <div style="font-size:13px;font-weight:800">148 patients</div>
+        </div>
+        <div class="seg-count">All patients seen in last 24 months &#183; Not contacted this quarter</div>
+        <div class="seg-tags"><span class="seg-tag" style="background:var(--grl);color:var(--tx3)">All specialties</span><span class="seg-tag" style="background:var(--gl);color:var(--green)">Mobile &#10003;</span><span class="seg-tag" style="background:var(--grl);color:var(--tx3)">Large audience</span></div>
+      </div>
+      <div class="seg-card" style="border-style:dashed;cursor:pointer" onclick="alert('Custom segment builder &#8212; filter by: appointment type, provider, insurance, last visit date, diagnosis code, date range, language preference')">
+        <div style="text-align:center;font-size:12px;font-weight:600;color:var(--tx3);padding:4px">&#43; Build Custom Segment&#8230;</div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;padding:12px 14px;background:var(--gl);border-radius:var(--r);border:1px solid #A7F3D0;display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:13px;font-weight:700;color:var(--green)">Selected: Sleep Study Recall (52 patients)</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">52 eligible &#183; 47 mobile numbers &#183; 5 landlines (excluded from SMS) &#183; 0 opt-outs</div></div>
+      <button class="btn bg" onclick="showWStep(3)">Next: Message &#8594;</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Message -->
+  <div id="wstep3" style="display:none">
+    <div class="slabel">Compose SMS Message</div>
+    <div class="notice na">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <span><strong>TCPA Compliance required.</strong> Must include: practice name, opt-out instruction (STOP to opt out), and HIPAA-appropriate language. Cannot include diagnosis or treatment details in SMS.</span>
+    </div>
+    <div class="fg"><label class="fl">Message Template</label>
+      <textarea class="fta" rows="4" id="smsText" oninput="updateCharCount()">Athens Sleep &amp; Wellness: Hi {{first_name}}, it&#39;s been over a year since your sleep study. Dr. Agrawal recommends a follow-up visit. Call us at (706) 549-1720 or reply YES to have Aria schedule your appointment now. Reply STOP to opt out.</textarea>
+      <div style="display:flex;justify-content:space-between;margin-top:3px"><span style="font-size:10px;color:var(--tx3)">&#123;&#123;first_name&#125;&#125; personalized per patient</span><span id="charCount" style="font-size:10px;font-weight:600;color:var(--green2)">134/160 chars</span></div>
+    </div>
+    <div class="fg"><label class="fl">Fallback if no reply within 48h</label><select class="fs"><option>AI outbound call (recommended)</option><option>No follow-up</option><option>Second SMS in 7 days</option></select></div>
+  </div>
+
+  <!-- Step 4: Schedule -->
+  <div id="wstep4" style="display:none">
+    <div class="slabel">Schedule & Launch</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div class="fg"><label class="fl">Send date</label><input type="date" class="fi" value="2026-05-01"></div>
+      <div class="fg"><label class="fl">Send time</label><select class="fs"><option>10:00 AM ET (high open rate)</option><option>2:00 PM ET</option><option>9:00 AM ET</option></select></div>
+    </div>
+    <div class="fg"><label class="fl">Quiet hours (TCPA required)</label><select class="fs"><option>8:00 AM &#8211; 8:00 PM (Monday &#8211; Friday) &#8212; Recommended</option><option>9:00 AM &#8211; 7:00 PM</option></select></div>
+    <div class="fg"><label class="fl">Max messages per patient this month</label><select class="fs"><option>1 (conservative)</option><option>2 (recommended)</option><option>3 (aggressive)</option></select></div>
+    <div class="trow" style="margin-bottom:10px"><div><div style="font-size:12px;color:var(--tx2);font-weight:600">Send immediately after scheduling</div></div><div class="tgg off" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div></div>
+    <div class="notice ng">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span><strong>Campaign summary:</strong> 47 SMS messages to Sleep Study Recall segment on May 1, 2026 at 10 AM ET. AI follow-up call to non-responders after 48h. Estimated response rate: 30&#8211;38%.</span>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn bg" onclick="launchCampaign()">&#128640; Launch Campaign</button>
+      <button class="btn bo" onclick="alert('Campaign saved as draft')">&#128190; Save Draft</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sp">
+  <div class="spsec">Wizard Steps</div>
+  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;font-size:11px">
+    <div style="padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0;display:flex;gap:7px;align-items:center;cursor:pointer" onclick="showWStep(1)"><span style="color:var(--green2);font-weight:700">&#10003;</span><span>1. Campaign Type</span></div>
+    <div style="padding:6px 9px;background:var(--green);border-radius:5px;display:flex;gap:7px;align-items:center;cursor:pointer" onclick="showWStep(2)"><span style="color:rgba(255,255,255,.6);font-weight:700">&#9654;</span><span style="color:#fff;font-weight:600">2. Audience (current)</span></div>
+    <div style="padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr);display:flex;gap:7px;align-items:center;cursor:pointer" onclick="showWStep(3)"><span style="color:var(--tx3);font-weight:700">3</span><span>3. Message / Script</span></div>
+    <div style="padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr);display:flex;gap:7px;align-items:center;cursor:pointer" onclick="showWStep(4)"><span style="color:var(--tx3);font-weight:700">4</span><span>4. Schedule & Launch</span></div>
+  </div>
+  <div class="spsec">Campaign Preview</div>
+  <div style="font-size:11px;color:var(--tx2);line-height:1.7;margin-bottom:10px">
+    <strong>Type:</strong> SMS &#8594; AI Call<br>
+    <strong>Audience:</strong> Sleep Study Recall<br>
+    <strong>Patients:</strong> 52 (47 SMS-eligible)<br>
+    <strong>Send date:</strong> May 1, 2026<br>
+    <strong>Est. responses:</strong> 14&#8211;18<br>
+    <strong>Est. bookings:</strong> 8&#8211;12
+  </div>
+  <div class="spsec">TCPA Checklist</div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
+    <div style="display:flex;gap:6px;align-items:center;padding:4px 8px;background:var(--gl);border-radius:4px;border:1px solid #A7F3D0"><span style="color:var(--green)">&#10003;</span><span>Practice name included</span></div>
+    <div style="display:flex;gap:6px;align-items:center;padding:4px 8px;background:var(--gl);border-radius:4px;border:1px solid #A7F3D0"><span style="color:var(--green)">&#10003;</span><span>STOP opt-out instruction</span></div>
+    <div style="display:flex;gap:6px;align-items:center;padding:4px 8px;background:var(--gl);border-radius:4px;border:1px solid #A7F3D0"><span style="color:var(--green)">&#10003;</span><span>No PHI in SMS body</span></div>
+    <div style="display:flex;gap:6px;align-items:center;padding:4px 8px;background:var(--gl);border-radius:4px;border:1px solid #A7F3D0"><span style="color:var(--green)">&#10003;</span><span>Quiet hours enforced</span></div>
+    <div style="display:flex;gap:6px;align-items:center;padding:4px 8px;background:var(--gl);border-radius:4px;border:1px solid #A7F3D0"><span style="color:var(--green)">&#10003;</span><span>10DLC registered sender</span></div>
+    <div style="display:flex;gap:6px;align-items:center;padding:4px 8px;background:var(--gl);border-radius:4px;border:1px solid #A7F3D0"><span style="color:var(--green)">&#10003;</span><span>Landlines excluded</span></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 3: SMS CAMPAIGNS ═══ -->
+<div class="panel" id="panel-sms">
+<div class="twoc">
+<div class="scr pad">
+  <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:4px">SMS Campaign Manager</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">Manage outbound SMS campaigns &#183; 10DLC registered &#183; TCPA compliant &#183; Powered by Twilio</div>
+
+  <div class="card">
+  <div class="card" id="smsCamp1">
+    <div class="chead"><div class="cicon icg">&#128172;</div><div><div class="ctitle">Appointment Reminder &#8212; 24h Pre-Visit</div><div class="csub">Running continuously &#183; Auto-triggered from EHR appointments &#183; 312 sent this month</div></div><div class="chr"><span class="tag tg">&#9679; Live</span><button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="alert('Editing reminder campaign...')">Edit</button></div></div>
+    <div class="cbody">
+      <div style="display:grid;grid-template-columns:1fr 220px;gap:16px">
+        <div>
+          <div class="fg"><label class="fl">Message Template</label>
+            <div style="padding:10px 12px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr);font-size:12px;line-height:1.6;font-family:inherit">
+              Athens Sleep & Wellness: Hi <strong>&#123;&#123;first_name&#125;&#125;</strong>, reminder: you have an appointment with Dr. Agrawal tomorrow, <strong>&#123;&#123;appt_date&#125;&#125;</strong> at <strong>&#123;&#123;appt_time&#125;&#125;</strong>. Reply CONFIRM to confirm or CANCEL to cancel. Call (706) 549-1720 for help. Reply STOP to opt out.
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="fg"><label class="fl">Trigger timing</label><select class="fs"><option>24h before appointment &#10003;</option><option>1h before appointment</option><option>48h before</option></select></div>
+            <div class="fg"><label class="fl">Follow-up if no CONFIRM</label><select class="fs"><option>1h reminder SMS</option><option>AI phone call</option><option>No follow-up</option></select></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="fg"><label class="fl">On CONFIRM reply</label><select class="fs"><option>Mark confirmed in EHR &#10003;</option><option>No action</option></select></div>
+            <div class="fg"><label class="fl">On CANCEL reply</label><select class="fs"><option>Offer reschedule via Aria &#10003;</option><option>Mark cancelled in EHR</option></select></div>
+          </div>
+        </div>
+        <div>
+          <div class="slabel">Phone Preview</div>
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <div class="ph-status"><span>9:41</span><span>&#128246; AT&T</span><span>&#128267; 87%</span></div>
+              <div style="padding:8px 12px 4px;border-bottom:1px solid rgba(255,255,255,.08)">
+                <div style="font-size:10px;font-weight:600;color:#fff;text-align:center">Athens Sleep & Wellness<br><span style="font-weight:400;color:rgba(255,255,255,.4);font-size:9px">+1 (877) 581-2599</span></div>
+              </div>
+              <div class="ph-msgs">
+                <div class="ph-msg"><div class="ph-bubble phb-in">Athens Sleep & Wellness: Hi Sarah, reminder: you have an appointment with Dr. Agrawal tomorrow, Tue Apr 22 at 9 PM. Reply CONFIRM or CANCEL. Stop: opt out.</div><div class="ph-time">10:00 AM &#8226; Delivered</div></div>
+                <div class="ph-msg ph-msg-out"><div class="ph-bubble phb-out">CONFIRM</div><div class="ph-time" style="text-align:right">10:04 AM</div></div>
+                <div class="ph-msg"><div class="ph-bubble phb-in">&#10003; Confirmed! See you tomorrow at 9 PM. Prep: avoid caffeine 4h before. Bring your CPAP device. See you soon!</div><div class="ph-time">10:04 AM</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="smsCamp2">
+    <div class="chead"><div class="cicon icp">&#129325;</div><div><div class="ctitle">CPAP Resupply Recall</div><div class="csub">Targets CPAP patients at 90-day resupply cycle &#183; Sleep Medicine specialty &#183; 48 sent this month</div></div><div class="chr"><span class="tag tg">&#9679; Live</span><button class="btn bo" style="font-size:10px;padding:3px 8px">Edit</button></div></div>
+    <div class="cbody">
+      <div class="fg"><label class="fl">Message Template</label>
+        <div style="padding:10px 12px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr);font-size:12px;line-height:1.6">
+          Athens Sleep & Wellness: Hi <strong>&#123;&#123;first_name&#125;&#125;</strong>, it&#39;s time to reorder your CPAP supplies! Masks, filters, and tubing wear out and affect therapy quality. Reply ORDER to have our team contact you, or call (706) 549-1720. Reply STOP to opt out.
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="fg"><label class="fl">Trigger</label><select class="fs"><option>90 days since last supply order &#10003;</option><option>60 days</option><option>120 days</option></select></div>
+        <div class="fg"><label class="fl">On ORDER reply</label><select class="fs"><option>Aria calls patient to process &#10003;</option><option>Staff notification</option></select></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SMS Log -->
+  <div class="slabel" style="margin-top:4px">SMS Log &#8212; Recent Activity</div>
+  <div class="card">
+    <div class="cbody" style="padding:0">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead><tr style="background:var(--grl)"><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Time</th><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Patient</th><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Campaign</th><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Status</th><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Reply</th></tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:10px">10:42 AM</td><td style="padding:8px 12px;font-weight:600">Sarah Johnson</td><td style="padding:8px 12px"><span class="tag tg">Reminder</span></td><td style="padding:8px 12px"><span class="tag tg">Delivered &#10003;</span></td><td style="padding:8px 12px"><span style="color:var(--green);font-weight:700">CONFIRM</span></td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:10px">10:38 AM</td><td style="padding:8px 12px;font-weight:600">Marcus Williams</td><td style="padding:8px 12px"><span class="tag tp">CPAP Recall</span></td><td style="padding:8px 12px"><span class="tag tg">Delivered &#10003;</span></td><td style="padding:8px 12px"><span style="color:var(--green);font-weight:700">ORDER</span></td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:10px">10:15 AM</td><td style="padding:8px 12px;font-weight:600">James Rivera</td><td style="padding:8px 12px"><span class="tag tg">Reminder</span></td><td style="padding:8px 12px"><span class="tag tg">Delivered &#10003;</span></td><td style="padding:8px 12px"><span style="color:var(--tx3)">No reply</span></td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:10px">09:55 AM</td><td style="padding:8px 12px;font-weight:600">Linda Chen</td><td style="padding:8px 12px"><span class="tag tg">Reminder</span></td><td style="padding:8px 12px"><span class="tag tg">Delivered &#10003;</span></td><td style="padding:8px 12px"><span style="color:var(--green);font-weight:700">CONFIRM</span></td></tr>
+          <tr><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:10px">09:32 AM</td><td style="padding:8px 12px;font-weight:600">(706) 555-0188</td><td style="padding:8px 12px"><span class="tag ta">No-show F/U</span></td><td style="padding:8px 12px"><span class="tag ta">Delivered &#10003;</span></td><td style="padding:8px 12px"><span style="color:var(--blue);font-weight:700">RESCHEDULE</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="sp">
+  <div class="spsec">SMS Stats &#8212; This Month</div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Total sent</span><span style="font-weight:700">312</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>Delivered</span><span style="font-weight:700;color:var(--green2)">294 (94%)</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>CONFIRM replies</span><span style="font-weight:700;color:var(--green2)">182 (62%)</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>STOP opt-outs</span><span style="font-weight:700;color:var(--red)">3 (1%)</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Failed (landline)</span><span style="font-weight:700">14 (auto-excluded)</span></div>
+  </div>
+  <div class="spsec">10DLC Registration</div>
+  <div style="font-size:11px;color:var(--tx2);line-height:1.7;margin-bottom:10px">
+    <strong>Brand registered:</strong> Athens Sleep & Wellness<br>
+    <strong>Campaign type:</strong> Healthcare<br>
+    <strong>Registration ID:</strong> C-4729821<br>
+    <strong>Status:</strong> <span style="color:var(--green2);font-weight:700">Active &#10003;</span>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 4: AI OUTBOUND CALLS ═══ -->
+<div class="panel" id="panel-ai">
+<div class="twoc">
+<div class="scr pad">
+  <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:4px">AI Outbound Call Configuration</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">Aria places outbound calls to patients &#183; Natural AI conversation &#183; Books appointments in real time &#183; TCPA-compliant quiet hours</div>
+
+  <div class="notice ng">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span><strong>Outbound calls use the same Aria voice and personality as inbound calls.</strong> Patients who respond to the call can be immediately booked into available slots. Calls placed only within TCPA quiet hours (8 AM &#8211; 8 PM).</span>
+  </div>
+
+  <div class="card">
+    <div class="chead"><div class="cicon ico">&#128531;</div><div><div class="ctitle">No-Show Follow-Up &#8212; AI Call Configuration</div><div class="csub">Aria calls patients 1h after a missed appointment &#183; Reschedules immediately &#183; 22 triggered this month</div></div><div class="chr"><span class="tag tg">&#9679; Live</span></div></div>
+    <div class="cbody">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="fg"><label class="fl">Trigger</label><select class="fs"><option>1h after no-show &#10003;</option><option>3h after no-show</option><option>Same-day EOD</option></select></div>
+        <div class="fg"><label class="fl">Max call attempts</label><select class="fs"><option>2 (recommended)</option><option>1</option><option>3</option></select></div>
+        <div class="fg"><label class="fl">Second attempt delay</label><select class="fs"><option>4 hours later</option><option>Next day 10 AM</option></select></div>
+        <div class="fg"><label class="fl">Voicemail</label><select class="fs"><option>Leave voicemail on no-answer &#10003;</option><option>No voicemail</option></select></div>
+      </div>
+
+      <div class="slabel">Live Call Script Preview</div>
+      <div class="call-script-box">
+        <div class="csb-head">
+          <div class="csb-dots"><div class="csb-dot csb-r"></div><div class="csb-dot csb-y"></div><div class="csb-dot csb-g"></div></div>
+          <div class="csb-title">ai_outbound_noshow.script &#8212; No-Show Follow-Up</div>
+        </div>
+        <div class="csb-body">
+<span class="csb-sys">[Aria dials patient. Patient picks up.]</span>
+
+<span class="csb-aria">ARIA:</span> Hi, may I speak with <span class="csb-var">{{first_name}}</span>?
+
+<span class="csb-patient">PATIENT:</span> Yes, this is <span class="csb-var">{{first_name}}</span>.
+
+<span class="csb-aria">ARIA:</span> Hi <span class="csb-var">{{first_name}}</span>, this is Aria calling from Athens Sleep and Wellness
+  Center. I noticed you had an appointment with Dr. Agrawal today at
+  <span class="csb-var">{{appt_time}}</span> that we missed you for. I hope everything&#39;s okay!
+  Are you still interested in rescheduling?
+
+<span class="csb-patient">PATIENT:</span> Oh yes, I forgot &#8212; I&#39;m so sorry!
+
+<span class="csb-aria">ARIA:</span> No problem at all! I can get you back on the schedule right now.
+  Dr. Agrawal has availability this week &#8212; would Thursday at 2 PM
+  or Friday morning at 10 AM work for you?
+
+<span class="csb-patient">PATIENT:</span> Thursday works great.
+
+<span class="csb-aria">ARIA:</span> Perfect! I&#39;ve got you booked for Thursday <span class="csb-var">{{next_thurs}}</span> at 2 PM.
+  You&#39;ll get a confirmation text shortly. Is there anything else
+  I can help you with?
+
+<span class="csb-sys">[Books appointment in EHR &#8212; sends SMS confirmation]</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn bg" onclick="alert('Running test call to (706) 555-0190...\n\nAria will call your number using the no-show script. Duration: ~90 seconds.\n\nTiming: immediately (test bypasses quiet hours).')">&#9742;&#65039; Test Call</button>
+        <button class="btn bo" onclick="alert('Editing script for no-show follow-up campaign...')">Edit Script</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="chead"><div class="cicon ict">&#129658;</div><div><div class="ctitle">Annual Sleep Study Recall &#8212; AI Call Configuration</div><div class="csub">Aria calls patients 12+ months after PSG &#183; Personalized follow-up &#183; 67 calls placed</div></div><div class="chr"><span class="tag tg">&#9679; Live</span></div></div>
+    <div class="cbody">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="fg"><label class="fl">Trigger</label><select class="fs"><option>12 months post-PSG &#10003;</option><option>6 months post-HST</option></select></div>
+        <div class="fg"><label class="fl">Preferred call window</label><select class="fs"><option>Tue&#8211;Thu 10 AM &#8211; 3 PM &#10003;</option><option>All weekdays 8 AM &#8211; 8 PM</option></select></div>
+      </div>
+
+      <div class="slabel">Recall Call Script Preview</div>
+      <div class="call-script-box">
+        <div class="csb-head">
+          <div class="csb-dots"><div class="csb-dot csb-r"></div><div class="csb-dot csb-y"></div><div class="csb-dot csb-g"></div></div>
+          <div class="csb-title">ai_outbound_recall.script &#8212; Annual Sleep Study Recall</div>
+        </div>
+        <div class="csb-body">
+<span class="csb-aria">ARIA:</span> Hi, may I speak with <span class="csb-var">{{first_name}}</span>?
+
+<span class="csb-patient">PATIENT:</span> Speaking.
+
+<span class="csb-aria">ARIA:</span> Hi <span class="csb-var">{{first_name}}</span>, this is Aria from Athens Sleep and Wellness
+  Center. Dr. Agrawal wanted me to reach out &#8212; it&#39;s been
+  about a year since your sleep study on <span class="csb-var">{{last_study_date}}</span>, and
+  they recommend a follow-up evaluation to make sure your treatment
+  is still working optimally. Would you be interested in scheduling
+  a follow-up visit?
+
+<span class="csb-patient">PATIENT:</span> Sure, what&#39;s available?
+
+<span class="csb-aria">ARIA:</span> Wonderful! We have openings this month on <span class="csb-var">{{available_slots}}</span>.
+  Which day works best for you?
+
+<span class="csb-sys">[Books follow-up appointment &#8212; confirms with SMS]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sp">
+  <div class="spsec">Outbound Call Stats</div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Calls placed</span><span style="font-weight:700">89 this month</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>Answer rate</span><span style="font-weight:700;color:var(--green2)">74%</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>Appointments booked</span><span style="font-weight:700;color:var(--green2)">27</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Voicemails left</span><span style="font-weight:700">18</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Avg call duration</span><span style="font-weight:700">2:18 min</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Cost per booking</span><span style="font-weight:700;color:var(--green2)">$0.42</span></div>
+  </div>
+  <div class="spsec">TCPA Settings</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Call hours</span><span style="font-weight:700">8 AM&#8211;8 PM</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Days</span><span style="font-weight:700">Mon&#8211;Sat</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Max calls/patient/mo</span><span style="font-weight:700">2</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>Opt-out honoring</span><span style="font-weight:700;color:var(--green)">&#10003;</span></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 5: MULTI-LOCATION PROVIDERS ═══ -->
+<div class="panel" id="panel-providers">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div><div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px">Multi-Location Provider Manager</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">Target outbound campaigns to specific providers and locations &#183; Athens Sleep & Wellness</div></div>
+    <button class="btn bg" style="font-size:11px" onclick="alert('Add provider &#8212; enter name, specialty, location, schedule, and outreach preferences')">&#43; Add Provider</button>
+  </div>
+
+  <div class="notice nb">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span><strong>Athens Sleep & Wellness is a Solo practice.</strong> As you grow, add providers here to enable provider-specific campaign targeting, routing, and personalized outreach. Multi-location mode activates at 2+ providers.</span>
+  </div>
+
+  <div class="card">
+    <div class="chead"><div class="cicon icg">&#128104;&#8205;&#9877;&#65039;</div><div><div class="ctitle">Provider Roster &#8212; 1 Provider (Solo)</div><div class="csub">Campaign targeting and routing per provider &#183; EHR-synced schedule</div></div><div class="chr"><span class="tag tg">Solo Mode</span></div></div>
+    <div class="cbody" style="padding:0">
+      <table class="prov-table">
+        <thead><tr><th>Provider</th><th>Specialty</th><th>Location</th><th>This Week Avail.</th><th>Outreach Enabled</th><th>Languages</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><div style="font-weight:700">Dr. Subodh Agrawal</div><div style="font-size:10px;color:var(--tx3)">NPI: 1689977761</div></td>
+            <td><span class="tag tp">Sleep Medicine</span></td>
+            <td><div style="font-size:12px">125 King Ave<br><span style="font-size:10px;color:var(--tx3)">Athens, GA 30606</span></div></td>
+            <td>
+              <div class="prov-avail">
+                <span class="pa-slot pas-lim">Mon 3 slots</span>
+                <span class="pa-slot pas-full">Tue Full</span>
+                <span class="pa-slot pas-open">Wed 6 slots</span>
+                <span class="pa-slot pas-open">Thu 8 slots</span>
+                <span class="pa-slot pas-lim">Fri 2 slots</span>
+              </div>
+            </td>
+            <td>
+              <div class="trow" style="margin:0"><div class="tgg on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div></div>
+            </td>
+            <td><span class="tag tb">EN</span><span class="tag ta" style="margin-left:3px">ES</span></td>
+            <td><button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="alert('Edit Dr. Agrawal &#8212; schedule, preferences, outreach message customization')">Edit</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Multi-location preview -->
+  <div class="slabel" style="margin-top:4px">Multi-Location Mode &#8212; Preview (Available at 2+ Providers)</div>
+  <div class="notice na">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+    <span>Add a second provider to unlock multi-location targeting, location-aware call routing, and per-provider campaign scheduling.</span>
+  </div>
+  <div class="card" style="opacity:.65">
+    <div class="chead"><div class="cicon" style="background:var(--grl);font-size:14px">&#128101;</div><div><div class="ctitle">Example: Small Group Practice &#8212; 3 Providers, 2 Locations</div><div class="csub">How outreach targeting looks with multiple providers</div></div><div class="chr"><span class="tag ttn">Locked &#8212; Add providers to unlock</span></div></div>
+    <div class="cbody" style="padding:0">
+      <table class="prov-table">
+        <thead><tr><th>Provider</th><th>Specialty</th><th>Location</th><th>Avail.</th><th>Outreach</th></tr></thead>
+        <tbody>
+          <tr><td><div style="font-weight:700">Dr. Smith</div></td><td><span class="tag tp">Sleep Medicine</span></td><td>Athens Main</td><td><div class="prov-avail"><span class="pa-slot pas-open">Mon 4</span><span class="pa-slot pas-open">Wed 6</span></div></td><td><span class="tag tg">&#10003; On</span></td></tr>
+          <tr><td><div style="font-weight:700">Dr. Patel</div></td><td><span class="tag tb">Pulmonology</span></td><td>Athens East</td><td><div class="prov-avail"><span class="pa-slot pas-lim">Tue 2</span><span class="pa-slot pas-open">Fri 5</span></div></td><td><span class="tag tg">&#10003; On</span></td></tr>
+          <tr><td><div style="font-weight:700">Dr. Chen</div></td><td><span class="tag" style="background:var(--tl);color:var(--teal)">Neurology</span></td><td>Watkinsville</td><td><div class="prov-avail"><span class="pa-slot pas-full">Full</span></div></td><td><span class="tag ttn">Off &#8212; Full</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Campaign targeting by provider -->
+  <div class="slabel">Campaign-Provider Assignment</div>
+  <div class="card">
+    <div class="cbody">
+      <div style="font-size:12px;color:var(--tx3);margin-bottom:10px">Target campaigns to specific providers &#8212; patients will only receive outreach for their assigned provider&#39;s openings</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)"><div><div style="font-size:12px;font-weight:600">Sleep Study Recall</div><div style="font-size:10px;color:var(--tx3)">Annual recall campaign</div></div><div style="font-size:12px;font-weight:600">&#8594; Dr. Agrawal only</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)"><div><div style="font-size:12px;font-weight:600">CPAP Resupply Recall</div><div style="font-size:10px;color:var(--tx3)">90-day supply cycle</div></div><div style="font-size:12px;font-weight:600">&#8594; All providers</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)"><div><div style="font-size:12px;font-weight:600">No-Show Follow-Up</div><div style="font-size:10px;color:var(--tx3)">Auto-rebook trigger</div></div><div style="font-size:12px;font-weight:600">&#8594; Original provider</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sp">
+  <div class="spsec">Practice Structure</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Practice type</span><span style="font-weight:700">Solo</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Active providers</span><span style="font-weight:700">1</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Locations</span><span style="font-weight:700">1 &#8212; Athens Main</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>EHR sync</span><span style="font-weight:700;color:var(--green2)">&#10003; athenahealth</span></div>
+  </div>
+  <div class="spsec">Unlock Multi-Location</div>
+  <div style="padding:10px;background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r);margin-bottom:12px">
+    <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:4px">Add a Second Provider</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:8px">Get per-provider targeting, location-aware routing, and multi-location analytics</div>
+    <button class="btn" style="background:rgba(255,255,255,.1);color:#fff;width:100%;justify-content:center;font-size:11px" onclick="alert('Add provider modal &#8212; enter NPI, name, specialty, location, schedule')">&#43; Add Provider</button>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 6: ANALYTICS ═══ -->
+<div class="panel" id="panel-analytics">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div><div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px">Campaign Analytics Dashboard</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">All campaigns &#183; April 2026 &#183; Athens Sleep & Wellness</div></div>
+    <div style="display:flex;gap:6px">
+      <select class="fs" style="width:160px;font-size:11px;padding:5px 8px"><option>April 2026</option><option>March 2026</option><option>Last 90 days</option></select>
+      <button class="btn bo" style="font-size:11px">&#8595; Export Report</button>
+    </div>
+  </div>
+
+  <!-- Platform KPIs -->
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-val" style="color:var(--green2)">342</div><div class="kpi-label">Total Touchpoints</div><div class="kpi-delta ku">&#8593; 28% vs Mar</div></div>
+    <div class="kpi"><div class="kpi-val" style="color:var(--green2)">35</div><div class="kpi-label">Appts Booked</div><div class="kpi-delta ku">&#8593; 40% vs Mar</div></div>
+    <div class="kpi"><div class="kpi-val">$5,100</div><div class="kpi-label">Revenue Attributed</div><div class="kpi-delta ku">&#8593; $1,800 vs Mar</div></div>
+    <div class="kpi"><div class="kpi-val" style="color:var(--amber)">4.2%</div><div class="kpi-label">No-show Rate</div><div class="kpi-delta ku">&#8595; 2.1pts (improved)</div></div>
+    <div class="kpi"><div class="kpi-val">$14.57</div><div class="kpi-label">Cost per Booking</div><div class="kpi-delta ku">&#8595; vs $22 manual</div></div>
+  </div>
+
+  <!-- Campaign Performance Comparison -->
+  <div class="card">
+    <div class="chead"><div class="cicon icg">&#128200;</div><div><div class="ctitle">Campaign Performance Comparison</div><div class="csub">Conversion rate by campaign type &#8212; April 2026</div></div></div>
+    <div class="cbody">
+      <div class="chart-bar-h"><div class="bar-label">Appt Reminder (SMS)</div><div class="bar-track"><div class="bar-fill" style="width:68%;background:var(--green2)"></div></div><div class="bar-val">68%</div></div>
+      <div class="chart-bar-h"><div class="bar-label">No-Show Follow-Up (AI Call)</div><div class="bar-track"><div class="bar-fill" style="width:54%;background:var(--green2)"></div></div><div class="bar-val">54%</div></div>
+      <div class="chart-bar-h"><div class="bar-label">CPAP Recall (SMS)</div><div class="bar-track"><div class="bar-fill" style="width:38%;background:var(--blue2)"></div></div><div class="bar-val">38%</div></div>
+      <div class="chart-bar-h"><div class="bar-label">Annual Recall (AI Call)</div><div class="bar-track"><div class="bar-fill" style="width:29%;background:var(--blue2)"></div></div><div class="bar-val">29%</div></div>
+      <div style="font-size:10px;color:var(--tx3);margin-top:6px">Conversion = response/booking rate per touchpoint sent &#183; Goal: improve all above 30%</div>
+    </div>
+  </div>
+
+  <!-- Funnel -->
+  <div class="card">
+    <div class="chead"><div class="cicon icb">&#128257;</div><div><div class="ctitle">Outreach Funnel &#8212; All Campaigns Combined</div><div class="csub">April 2026 &#183; All touchpoint types</div></div></div>
+    <div class="cbody">
+      <div class="funnel-step">
+        <div class="fs-num">342</div>
+        <div style="flex:1"><div class="fs-label">Touchpoints Sent (SMS + Calls)</div><div class="fs-bar"><div class="fsb-fill" style="width:100%;background:var(--navy2)"></div></div></div>
+        <div class="fs-pct" style="color:var(--tx2)">100%</div>
+      </div>
+      <div class="funnel-step">
+        <div class="fs-num" style="color:var(--green2)">294</div>
+        <div style="flex:1"><div class="fs-label">Successfully Delivered</div><div class="fs-bar"><div class="fsb-fill" style="width:86%;background:var(--green2)"></div></div></div>
+        <div class="fs-pct" style="color:var(--green2)">86%</div>
+      </div>
+      <div class="funnel-step">
+        <div class="fs-num" style="color:var(--blue2)">211</div>
+        <div style="flex:1"><div class="fs-label">Opened / Answered Call</div><div class="fs-bar"><div class="fsb-fill" style="width:61.7%;background:var(--blue2)"></div></div></div>
+        <div class="fs-pct" style="color:var(--blue2)">62%</div>
+      </div>
+      <div class="funnel-step">
+        <div class="fs-num" style="color:var(--amber2)">98</div>
+        <div style="flex:1"><div class="fs-label">Engaged (replied / spoke to Aria)</div><div class="fs-bar"><div class="fsb-fill" style="width:28.7%;background:var(--amber2)"></div></div></div>
+        <div class="fs-pct" style="color:var(--amber2)">29%</div>
+      </div>
+      <div class="funnel-step" style="background:var(--gl);border-color:#A7F3D0">
+        <div class="fs-num" style="color:var(--green)">35</div>
+        <div style="flex:1"><div class="fs-label" style="color:var(--green)">Appointments Booked &#8212; Conversion Goal</div><div class="fs-bar"><div class="fsb-fill" style="width:10.2%;background:var(--green)"></div></div></div>
+        <div class="fs-pct" style="color:var(--green);font-weight:800">10.2%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Month-over-month -->
+  <div class="card">
+    <div class="chead"><div class="cicon ico">&#128198;</div><div><div class="ctitle">Month-Over-Month &#8212; No-Show Rate</div><div class="csub">Outbound campaigns directly reduce no-show rate</div></div></div>
+    <div class="cbody">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div style="text-align:center;padding:10px;background:var(--grl);border-radius:var(--r);border:1px solid var(--bdr)"><div style="font-size:20px;font-weight:800;color:var(--red)">11.4%</div><div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase">Jan 2026</div><div style="font-size:9px;color:var(--tx3)">Pre-campaigns</div></div>
+        <div style="text-align:center;padding:10px;background:var(--grl);border-radius:var(--r);border:1px solid var(--bdr)"><div style="font-size:20px;font-weight:800;color:var(--amber)">8.3%</div><div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase">Feb 2026</div><div style="font-size:9px;color:var(--tx3)">Reminders launched</div></div>
+        <div style="text-align:center;padding:10px;background:var(--grl);border-radius:var(--r);border:1px solid var(--bdr)"><div style="font-size:20px;font-weight:800;color:var(--amber)">6.3%</div><div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase">Mar 2026</div><div style="font-size:9px;color:var(--tx3)">AI calls added</div></div>
+        <div style="text-align:center;padding:10px;background:var(--gl);border-radius:var(--r);border:1px solid #A7F3D0"><div style="font-size:20px;font-weight:800;color:var(--green)">4.2%</div><div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase">Apr 2026 &#10003;</div><div style="font-size:9px;color:var(--green)">Target: &lt;5%</div></div>
+      </div>
+      <div style="margin-top:10px;padding:9px 12px;background:var(--gl);border-radius:var(--rs);border:1px solid #A7F3D0;font-size:11px;color:var(--green)"><strong>&#128293; 7.2-point no-show rate reduction</strong> since launching outreach campaigns &#8212; estimated $4,200/month in revenue recovered.</div>
+    </div>
+  </div>
+</div>
+
+<div class="sp">
+  <div class="spsec">ROI Summary &#8212; April</div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;font-size:11px">
+    <div style="padding:8px 10px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0">
+      <div style="font-weight:700;color:var(--green);margin-bottom:3px">Revenue from recalls</div>
+      <div style="font-size:16px;font-weight:800;color:var(--green2)">$5,100</div>
+    </div>
+    <div style="padding:8px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)">
+      <div style="color:var(--tx3);margin-bottom:2px">Campaign costs (Twilio)</div>
+      <div style="font-size:16px;font-weight:800">$14.30</div>
+    </div>
+    <div style="padding:8px 10px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0">
+      <div style="color:var(--green);font-weight:700;margin-bottom:2px">Net ROI</div>
+      <div style="font-size:16px;font-weight:800;color:var(--green2)">357&#215;</div>
+    </div>
+  </div>
+  <div class="spsec">Campaign Breakdown</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Reminders sent</span><span style="font-weight:700">312</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>CPAP recall SMS</span><span style="font-weight:700">48</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>No-show calls</span><span style="font-weight:700">22</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Annual recall calls</span><span style="font-weight:700">67</span></div>
+  </div>
+</div>
+</div>
+</div>
+
+</div><!-- shell -->
+
+<script>
+function ST(t){
+  document.querySelectorAll(".tab").forEach(e=>e.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(e=>e.classList.remove("active"));
+  document.getElementById("tab-"+t).classList.add("active");
+  document.getElementById("panel-"+t).classList.add("active");
+}
+
+function showWStep(n){
+  for(let i=1;i<=4;i++){
+    const s=document.getElementById("wstep"+i);
+    const ws=document.getElementById("ws"+i);
+    if(s) s.style.display=(i===n)?"block":"none";
+    if(ws){
+      ws.className="wstep";
+      if(i<n) ws.classList.add("ws-done");
+      else if(i===n) ws.classList.add("ws-active");
+      else ws.classList.add("ws-todo");
+      // update num
+      const num=ws.querySelector(".ws-num");
+      if(num){
+        num.className="ws-num";
+        if(i<n){num.classList.add("wsn-done");num.innerHTML="&#10003;";}
+        else if(i===n){num.classList.add("wsn-active");num.textContent=i;}
+        else{num.classList.add("wsn-todo");num.textContent=i;}
+      }
+    }
+  }
+  // update lines
+  document.querySelectorAll(".wline").forEach((l,i)=>{
+    l.classList.toggle("wl-done", i<n-1);
+  });
+  // update sidebar
+  const steps=["wstep1","wstep2","wstep3","wstep4"];
+  const sp=document.querySelector(".sp");
+  if(sp){
+    const items=sp.querySelectorAll("div[style*='cursor:pointer']");
+    // no-op here — sidebar is static for simplicity
+  }
+}
+
+function selSeg(el){
+  document.querySelectorAll(".seg-card").forEach(c=>c.classList.remove("seg-sel"));
+  el.classList.add("seg-sel");
+}
+
+function goDetail(campaign){
+  ST("analytics");
+  alert("Viewing detailed analytics for: "+campaign+" campaign\n\nIn production: drill-down shows per-patient response history, delivery timestamps, reply tracking, and individual booking outcomes.");
+}
+
+function launchCampaign(){
+  alert("&#128640; Campaign Launched!\n\nSleep Study Recall Campaign &#8212; May 2026\n47 SMS messages scheduled for May 1, 2026 at 10:00 AM ET\nAI follow-up calls queued for non-responders (May 3)\nEstimated responses: 14&#8211;18 patients\nEstimated bookings: 8&#8211;12 appointments\n\nYou can monitor progress in Campaign Analytics.");
+  ST("analytics");
+}
+</script>
+</body>
+</html>
