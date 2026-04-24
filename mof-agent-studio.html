@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedFlow AI — Agent Studio · Athens Sleep & Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1B6B4A;--green2:#059669;--green-light:#ECFDF5;--green-dark:#14533A;
+  --navy:#0F2A4A;--navy2:#1A3A5C;
+  --amber:#D97706;--amber2:#F59E0B;--amber-light:#FEF3C7;--amber-dark:#92400E;
+  --blue:#1D4ED8;--blue-light:#EFF6FF;--blue2:#3B82F6;
+  --red:#DC2626;--red-light:#FEF2F2;
+  --purple:#7C3AED;--purple-light:#F5F3FF;
+  --teal:#0D9488;--teal-light:#F0FDFA;
+  --orange:#EA580C;--orange-light:#FFF7ED;
+  --gray:#6B7280;--gray-light:#F9FAFB;--border:#E5E7EB;--border2:#D1D5DB;
+  --text:#111827;--text2:#374151;--text3:#6B7280;
+  --surface:#FFFFFF;--bg:#F1F5F9;
+  --r:10px;--rs:6px;--rl:14px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.05);
+  --shm:0 4px 16px rgba(0,0,0,.10);
+  --shl:0 8px 32px rgba(0,0,0,.14);
+}
+html,body{height:100%;font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;}
+
+/* ── SHELL ── */
+.shell{display:grid;grid-template-rows:52px 48px 1fr;height:100vh;overflow:hidden;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--navy);display:flex;align-items:center;padding:0 20px;gap:0;z-index:100;}
+.tb-logo{display:flex;align-items:center;gap:8px;margin-right:16px;}
+.tb-logo-mark{width:28px;height:28px;background:linear-gradient(135deg,#4ADE80,#1B6B4A);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.tb-logo-mark svg{width:15px;height:15px;}
+.tb-logo-text{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.2px;}
+.tb-sep{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 12px;}
+.tb-practice{display:flex;align-items:center;gap:7px;}
+.tb-practice-icon{width:22px;height:22px;border-radius:5px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:11px;}
+.tb-practice-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.85);}
+.tb-practice-role{font-size:10px;color:rgba(255,255,255,.4);}
+.tb-spacer{flex:1;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.tb-chip{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;}
+.tc-green{background:rgba(74,222,128,.15);color:#86EFAC;}
+.tc-amber{background:rgba(251,191,36,.15);color:#FCD34D;}
+.tc-red{background:rgba(239,68,68,.15);color:#FCA5A5;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-save-btn{padding:5px 14px;border-radius:var(--rs);border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
+.tb-save-btn:hover{background:rgba(255,255,255,.15);}
+.tb-deploy-btn{padding:5px 14px;border-radius:var(--rs);border:none;background:linear-gradient(135deg,#4ADE80,#1B6B4A);color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
+.tb-deploy-btn:hover{filter:brightness(1.08);}
+
+/* ── MAIN TABS ── */
+.main-tabs{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:0;}
+.mtab{padding:12px 18px;font-size:13px;font-weight:500;color:var(--text3);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.mtab:hover{color:var(--text2);}
+.mtab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600;}
+.mtab-badge{padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;}
+.mb-green{background:var(--green-light);color:var(--green);}
+.mb-amber{background:var(--amber-light);color:var(--amber);}
+.mb-red{background:var(--red-light);color:var(--red);}
+.mtab-spacer{flex:1;}
+.agent-status{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--green);padding:6px 12px;border-radius:var(--rs);background:var(--green-light);border:1px solid #A7F3D0;}
+
+/* ── PANELS ── */
+.panel{display:none;height:calc(100vh - 100px);overflow:hidden;}
+.panel.active{display:flex;}
+
+/* ════════════════════════════
+   FLOW BUILDER
+════════════════════════════ */
+.flow-layout{display:grid;grid-template-columns:220px 1fr 280px;height:100%;overflow:hidden;}
+
+/* Node palette */
+.node-palette{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:14px 12px;}
+.np-section{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);padding:10px 6px 6px;margin-top:4px;}
+.np-section:first-child{margin-top:0;}
+.np-node{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--rs);border:1.5px solid var(--border);background:var(--surface);margin-bottom:5px;cursor:grab;transition:all .15s;user-select:none;}
+.np-node:hover{border-color:var(--border2);box-shadow:var(--sh);transform:translateX(2px);}
+.np-node:active{cursor:grabbing;}
+.np-node-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.nd-greeting{background:#1B6B4A;}
+.nd-intent{background:#1D4ED8;}
+.nd-action{background:#7C3AED;}
+.nd-transfer{background:#D97706;}
+.nd-closing{background:#6B7280;}
+.nd-emergency{background:#DC2626;}
+.nd-sms{background:#0D9488;}
+.nd-collect{background:#EA580C;}
+.np-node-name{font-size:12px;font-weight:600;color:var(--text2);}
+.np-node-desc{font-size:10px;color:var(--text3);margin-top:1px;line-height:1.3;}
+
+/* Canvas */
+.flow-canvas{overflow:auto;position:relative;background:#F8FAFC;background-image:radial-gradient(circle,#D1D5DB 1px,transparent 1px);background-size:24px 24px;}
+.canvas-inner{position:relative;width:1400px;height:900px;}
+
+/* Flow nodes on canvas */
+.fnode{position:absolute;background:var(--surface);border-radius:var(--r);cursor:pointer;transition:box-shadow .15s;user-select:none;}
+.fnode:hover{box-shadow:var(--shm);}
+.fnode.selected{box-shadow:0 0 0 2px var(--green),var(--shm);}
+.fnode-header{display:flex;align-items:center;gap:8px;padding:10px 12px 8px;}
+.fnode-badge{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.fnode-title{font-size:12px;font-weight:700;color:var(--text);}
+.fnode-type{font-size:10px;font-weight:600;padding:1px 6px;border-radius:6px;margin-left:auto;}
+.fnode-body{padding:0 12px 10px;font-size:11px;color:var(--text3);line-height:1.5;border-top:1px solid var(--border);padding-top:7px;margin-top:2px;}
+.fnode-ports{display:flex;justify-content:space-between;padding:6px 12px;border-top:1px solid var(--border);}
+.fport{padding:3px 8px;border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid;}
+.fp-yes{background:var(--green-light);color:var(--green);border-color:#A7F3D0;}
+.fp-no{background:var(--red-light);color:var(--red);border-color:#FECACA;}
+.fp-transfer{background:var(--amber-light);color:var(--amber);border-color:#FDE68A;}
+.fp-next{background:var(--blue-light);color:var(--blue);border-color:#BFDBFE;}
+.fp-sms{background:var(--teal-light);color:var(--teal);border-color:#99F6E4;}
+.fp-emergency{background:var(--red-light);color:var(--red);border-color:#FECACA;}
+
+/* SVG connector arrows */
+.flow-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+
+/* Node types styling */
+.fn-greeting .fnode-header{border-left:3px solid #1B6B4A;}
+.fn-intent .fnode-header{border-left:3px solid #1D4ED8;}
+.fn-action .fnode-header{border-left:3px solid #7C3AED;}
+.fn-transfer .fnode-header{border-left:3px solid #D97706;}
+.fn-closing .fnode-header{border-left:3px solid #6B7280;}
+.fn-emergency .fnode-header{border-left:3px solid #DC2626;}
+.fn-sms .fnode-header{border-left:3px solid #0D9488;}
+.fn-collect .fnode-header{border-left:3px solid #EA580C;}
+
+/* Node inspector panel */
+.node-inspector{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;padding:16px;}
+.ni-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--text3);text-align:center;}
+.ni-empty-icon{font-size:32px;margin-bottom:8px;}
+.ni-empty-text{font-size:12px;line-height:1.5;}
+.ni-header{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.ni-badge{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.ni-title{font-size:14px;font-weight:700;color:var(--text);}
+.ni-type{font-size:11px;color:var(--text3);}
+.ni-section{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin:12px 0 7px;}
+.ni-field{margin-bottom:10px;}
+.ni-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:3px;display:block;}
+.ni-input{padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:12px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;width:100%;transition:border .15s;}
+.ni-input:focus{border-color:var(--green);}
+.ni-textarea{padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:12px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;width:100%;resize:none;line-height:1.5;transition:border .15s;}
+.ni-textarea:focus{border-color:var(--green);}
+.ni-select{padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:12px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;width:100%;background:var(--surface);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.toggle-label{font-size:12px;color:var(--text2);}
+.toggle{width:34px;height:19px;border-radius:10px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--green);}
+.toggle.off{background:var(--border2);}
+.toggle-knob{width:15px;height:15px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle.on .toggle-knob{left:17px;}
+.toggle.off .toggle-knob{left:2px;}
+.ni-btn{width:100%;padding:8px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;margin-top:4px;}
+.ni-btn-green{background:var(--green);color:#fff;border:none;}
+.ni-btn-green:hover{background:var(--green-dark);}
+.ni-btn-outline{background:var(--surface);border:1.5px solid var(--border);color:var(--text2);}
+.ni-btn-outline:hover{border-color:var(--border2);}
+.ni-btn-red{background:var(--red-light);color:var(--red);border:1px solid #FECACA;}
+.ni-btn-red:hover{background:var(--red);color:#fff;}
+
+/* ════════════════════════════
+   CONTAINMENT RULES
+════════════════════════════ */
+.rules-layout{display:grid;grid-template-columns:1fr 340px;height:100%;overflow:hidden;}
+.rules-main{overflow-y:auto;padding:20px 24px;}
+.rules-side{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;padding:16px;}
+.rule-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:all .15s;}
+.rule-card:hover{border-color:var(--border2);box-shadow:var(--sh);}
+.rule-card.rule-on{border-left:3px solid var(--green);}
+.rule-card.rule-warn{border-left:3px solid var(--amber);}
+.rule-card.rule-off{border-left:3px solid var(--border2);}
+.rule-header{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;}
+.rule-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.rn-green{background:var(--green-light);color:var(--green);}
+.rn-amber{background:var(--amber-light);color:var(--amber);}
+.rn-gray{background:var(--gray-light);color:var(--text3);}
+.rn-red{background:var(--red-light);color:var(--red);}
+.rule-name{font-size:13px;font-weight:600;color:var(--text);flex:1;}
+.rule-intent{font-size:11px;padding:2px 8px;border-radius:8px;font-weight:600;}
+.ri-scheduling{background:var(--blue-light);color:var(--blue);}
+.ri-clinical{background:var(--purple-light);color:var(--purple);}
+.ri-billing{background:var(--teal-light);color:var(--teal);}
+.ri-info{background:var(--gray-light);color:var(--text3);}
+.ri-emergency{background:var(--red-light);color:var(--red);}
+.rule-toggle{width:30px;height:17px;border-radius:9px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.rule-toggle.on{background:var(--green);}
+.rule-toggle.off{background:var(--border2);}
+.rule-knob{width:13px;height:13px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:left .18s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+.rule-toggle.on .rule-knob{left:15px;}
+.rule-toggle.off .rule-knob{left:2px;}
+.rule-body{padding:0 14px 14px;border-top:1px solid var(--border);}
+.rule-desc{font-size:12px;color:var(--text2);line-height:1.6;margin:8px 0;}
+.rule-config{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.rule-config-item{display:flex;flex-direction:column;gap:3px;}
+.rci-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;}
+.rci-value{font-size:12px;font-weight:500;color:var(--text);}
+.rule-phrases{margin-top:8px;}
+.phrase-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;}
+.phrase-chip{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:500;background:var(--gray-light);color:var(--text3);border:1px solid var(--border);}
+.rule-outcome{display:flex;align-items:center;gap:6px;margin-top:8px;padding:6px 10px;border-radius:var(--rs);font-size:11px;font-weight:600;}
+.ro-contain{background:var(--green-light);color:var(--green);}
+.ro-transfer{background:var(--amber-light);color:var(--amber);}
+.ro-emergency{background:var(--red-light);color:var(--red);}
+
+/* ════════════════════════════
+   NEVER-LOOP
+════════════════════════════ */
+.loop-layout{display:grid;grid-template-columns:1fr 320px;height:100%;overflow:hidden;}
+.loop-main{overflow-y:auto;padding:20px 24px;}
+.loop-side{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;padding:16px;}
+.loop-hero{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r);padding:18px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px;}
+.loop-hero-icon{width:48px;height:48px;border-radius:50%;background:rgba(74,222,128,.15);border:2px solid rgba(74,222,128,.3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.loop-hero-title{font-size:16px;font-weight:800;color:#fff;letter-spacing:-.2px;margin-bottom:2px;}
+.loop-hero-sub{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5;}
+.layer-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.layer-header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);}
+.layer-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.ln-1{background:var(--blue-light);color:var(--blue);}
+.ln-2{background:var(--teal-light);color:var(--teal);}
+.ln-3{background:var(--purple-light);color:var(--purple);}
+.layer-title{font-size:13px;font-weight:700;color:var(--text);}
+.layer-sub{font-size:11px;color:var(--text3);}
+.layer-body{padding:14px 16px;}
+.flow-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.flow-step:last-child{margin-bottom:0;}
+.fs-circle{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.fsc-1{background:var(--blue);color:#fff;}
+.fsc-2{background:var(--teal);color:#fff;}
+.fsc-3{background:var(--purple);color:#fff;}
+.fs-content{flex:1;}
+.fs-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:2px;}
+.fs-detail{font-size:11px;color:var(--text3);line-height:1.5;}
+.fs-quote{font-size:11px;font-style:italic;color:var(--text2);padding:6px 10px;background:var(--gray-light);border-left:2px solid var(--border2);border-radius:0 var(--rs) var(--rs) 0;margin-top:4px;line-height:1.5;}
+.metric-table{width:100%;border-collapse:collapse;font-size:12px;}
+.metric-table th{padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);background:var(--gray-light);}
+.metric-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;}
+.metric-table tr:last-child td{border-bottom:none;}
+.metric-table tr:hover td{background:var(--gray-light);}
+.metric-val{font-weight:700;color:var(--text);}
+.metric-target{font-size:11px;color:var(--green);font-weight:600;}
+.metric-alert{font-size:11px;color:var(--red);}
+.metric-bar{height:5px;background:var(--border);border-radius:3px;margin-top:4px;overflow:hidden;}
+.metric-fill{height:100%;border-radius:3px;transition:width .3s;}
+.mf-green{background:var(--green2);}
+.mf-amber{background:var(--amber2);}
+.mf-red{background:var(--red);}
+.rule-14{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px;}
+.r14-header{padding:10px 14px;background:var(--navy);display:flex;align-items:center;gap:8px;}
+.r14-title{font-size:12px;font-weight:700;color:#fff;}
+.r14-body{padding:12px 14px;}
+.rule-list-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;font-size:12px;color:var(--text2);line-height:1.5;}
+.rli-num{font-size:10px;font-weight:700;padding:1px 6px;border-radius:6px;flex-shrink:0;margin-top:1px;}
+.rli-red{background:var(--red-light);color:var(--red);}
+
+/* ════════════════════════════
+   TEST SANDBOX
+════════════════════════════ */
+.sandbox-layout{display:grid;grid-template-columns:380px 1fr;height:100%;overflow:hidden;}
+.sandbox-left{overflow-y:auto;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;}
+.sandbox-right{overflow-y:auto;padding:20px 24px;background:var(--bg);}
+
+/* Chat */
+.chat-header{padding:12px 16px;border-bottom:1px solid var(--border);background:var(--navy);}
+.chat-header-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;}
+.chat-header-sub{font-size:10px;color:rgba(255,255,255,.45);}
+.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;background:#F8FAFC;}
+.chat-msg{max-width:85%;display:flex;flex-direction:column;gap:2px;}
+.msg-agent{align-self:flex-start;}
+.msg-user{align-self:flex-end;}
+.msg-bubble{padding:9px 12px;border-radius:12px;font-size:12px;line-height:1.6;}
+.bubble-agent{background:var(--surface);border:1px solid var(--border);color:var(--text2);border-radius:12px 12px 12px 2px;}
+.bubble-user{background:var(--green);color:#fff;border-radius:12px 12px 2px 12px;}
+.msg-meta{font-size:10px;color:var(--text3);padding:0 4px;}
+.msg-badge{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:6px;font-size:9px;font-weight:700;margin-left:4px;}
+.mb-intent{background:var(--blue-light);color:var(--blue);}
+.mb-contained{background:var(--green-light);color:var(--green);}
+.mb-sms{background:var(--teal-light);color:var(--teal);}
+.chat-scenarios{padding:12px 14px;border-top:1px solid var(--border);}
+.scenario-label{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;}
+.scenario-btn{display:block;width:100%;text-align:left;padding:6px 10px;border-radius:var(--rs);border:1.5px solid var(--border);background:var(--surface);font-size:11px;font-weight:500;color:var(--text2);cursor:pointer;font-family:'Outfit',sans-serif;margin-bottom:5px;transition:all .15s;}
+.scenario-btn:hover{border-color:var(--green);color:var(--green);background:var(--green-light);}
+
+/* Test results */
+.test-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.ts-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center;}
+.ts-val{font-size:24px;font-weight:800;letter-spacing:-1px;}
+.ts-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:3px;}
+.ts-sub{font-size:10px;margin-top:2px;}
+.pass-rate-ring{position:relative;width:80px;height:80px;margin:0 auto 12px;}
+.ring-bg{fill:none;stroke:var(--border);stroke-width:6;}
+.ring-fill{fill:none;stroke:var(--green2);stroke-width:6;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dasharray .5s ease;}
+.ring-text{font-size:18px;font-weight:800;text-anchor:middle;dominant-baseline:central;fill:var(--text);}
+.ring-sub{font-size:9px;text-anchor:middle;fill:var(--text3);}
+.test-results-table{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.trt-header{display:grid;grid-template-columns:30px 1fr 100px 80px 80px 80px 80px;gap:8px;padding:9px 14px;background:var(--gray-light);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;}
+.trt-row{display:grid;grid-template-columns:30px 1fr 100px 80px 80px 80px 80px;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;cursor:pointer;transition:background .12s;}
+.trt-row:hover{background:var(--gray-light);}
+.trt-row:last-child{border-bottom:none;}
+.trt-num{font-size:11px;font-weight:700;color:var(--text3);}
+.trt-scenario{font-size:12px;font-weight:500;color:var(--text2);}
+.trt-intent{font-size:10px;font-weight:600;padding:2px 7px;border-radius:7px;}
+.ti-sched{background:var(--blue-light);color:var(--blue);}
+.ti-faq{background:var(--gray-light);color:var(--text3);}
+.ti-billing{background:var(--teal-light);color:var(--teal);}
+.ti-rx{background:var(--purple-light);color:var(--purple);}
+.ti-transfer{background:var(--amber-light);color:var(--amber);}
+.ti-emergency{background:var(--red-light);color:var(--red);}
+.ti-lang{background:#FFF0F9;color:#C026D3;}
+.ti-loop{background:var(--orange-light);color:var(--orange);}
+.trt-outcome{font-size:11px;font-weight:600;padding:2px 8px;border-radius:7px;}
+.to-pass{background:var(--green-light);color:var(--green);}
+.to-fail{background:var(--red-light);color:var(--red);}
+.to-partial{background:var(--amber-light);color:var(--amber);}
+.trt-time{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text3);}
+.trt-loops{font-size:11px;font-weight:600;}
+.tl-0{color:var(--green);}
+.tl-1{color:var(--amber);}
+.tl-2{color:var(--red);}
+.trt-contained{font-size:11px;font-weight:700;}
+.tc-yes{color:var(--green);}
+.tc-no{color:var(--red);}
+
+/* General */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px;overflow:hidden;}
+.card-head{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.card-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-icon svg{width:14px;height:14px;}
+.ci-green{background:var(--green-light);color:var(--green);}
+.ci-blue{background:var(--blue-light);color:var(--blue);}
+.ci-amber{background:var(--amber-light);color:var(--amber);}
+.ci-red{background:var(--red-light);color:var(--red);}
+.ci-purple{background:var(--purple-light);color:var(--purple);}
+.ci-teal{background:var(--teal-light);color:var(--teal);}
+.card-title{font-size:13px;font-weight:700;color:var(--text);}
+.card-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.card-body{padding:16px;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+.notice{display:flex;align-items:flex-start;gap:7px;padding:9px 11px;border-radius:var(--rs);margin-bottom:10px;font-size:11px;line-height:1.5;}
+.notice.green{background:var(--green-light);border:1px solid #A7F3D0;color:var(--green);}
+.notice.amber{background:var(--amber-light);border:1px solid #FDE68A;color:var(--amber-dark);}
+.notice.blue{background:var(--blue-light);border:1px solid #BFDBFE;color:var(--blue);}
+.notice.red{background:var(--red-light);border:1px solid #FECACA;color:var(--red);}
+.notice svg{width:12px;height:12px;flex-shrink:0;margin-top:1px;}
+.btn{padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:5px;}
+.btn svg{width:12px;height:12px;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:var(--green-dark);}
+.btn-outline{background:var(--surface);border:1.5px solid var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:var(--border2);}
+.btn-red{background:var(--red-light);color:var(--red);border:1px solid #FECACA;}
+.btn-amber{background:var(--amber-light);color:var(--amber);border:1px solid #FDE68A;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-logo">
+    <div class="tb-logo-mark"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5L13 4.5V10.5L7.5 13.5L2 10.5V4.5L7.5 1.5Z" fill="white" opacity=".9"/><circle cx="7.5" cy="7.5" r="2" fill="white"/></svg></div>
+    <span class="tb-logo-text">MedFlow AI</span>
+  </div>
+  <div class="tb-sep"></div>
+  <div class="tb-practice">
+    <div class="tb-practice-icon">🏥</div>
+    <div>
+      <div class="tb-practice-name">Athens Sleep and Wellness Center</div>
+      <div class="tb-practice-role">Agent Studio · Aria v2.1 · Sleep Medicine</div>
+    </div>
+  </div>
+  <div class="tb-spacer"></div>
+  <div class="tb-right">
+    <div class="tb-chip tc-green"><div class="live-dot"></div>Agent Live</div>
+    <div class="tb-chip tc-amber">92% Pass Rate</div>
+    <button class="tb-save-btn">💾 Save Draft</button>
+    <button class="tb-deploy-btn">🚀 Deploy Changes</button>
+  </div>
+</div>
+
+<!-- MAIN TABS -->
+<div class="main-tabs">
+  <div class="mtab active" id="tab-flow" onclick="switchTab('flow')">🔀 Flow Builder <span class="mtab-badge mb-green">Live</span></div>
+  <div class="mtab" id="tab-rules" onclick="switchTab('rules')">📋 Containment Rules <span class="mtab-badge mb-amber">12 Rules</span></div>
+  <div class="mtab" id="tab-loop" onclick="switchTab('loop')">🛡️ Never-Loop Guarantee</div>
+  <div class="mtab" id="tab-sandbox" onclick="switchTab('sandbox')">🧪 Test Sandbox <span class="mtab-badge mb-green">20 Tests</span></div>
+  <div class="mtab-spacer"></div>
+  <div class="agent-status"><div class="live-dot"></div>Aria · ElevenLabs · Deepgram · AWS Bedrock · Version 2.1</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PANEL 1: FLOW BUILDER
+════════════════════════════════════════ -->
+<div class="panel active" id="panel-flow">
+<div class="flow-layout">
+
+  <!-- Node Palette -->
+  <div class="node-palette">
+    <div class="np-section">Entry</div>
+    <div class="np-node">
+      <div class="np-node-dot nd-greeting"></div>
+      <div><div class="np-node-name">Greeting</div><div class="np-node-desc">Call opens, agent introduces itself</div></div>
+    </div>
+    <div class="np-section">Classification</div>
+    <div class="np-node">
+      <div class="np-node-dot nd-intent"></div>
+      <div><div class="np-node-name">Intent Detect</div><div class="np-node-desc">Classify what caller wants</div></div>
+    </div>
+    <div class="np-section">Collection</div>
+    <div class="np-node">
+      <div class="np-node-dot nd-collect"></div>
+      <div><div class="np-node-name">Collect Info</div><div class="np-node-desc">Gather name, DOB, insurance</div></div>
+    </div>
+    <div class="np-section">Actions</div>
+    <div class="np-node">
+      <div class="np-node-dot nd-action"></div>
+      <div><div class="np-node-name">Action</div><div class="np-node-desc">Book appt, send confirmation</div></div>
+    </div>
+    <div class="np-node">
+      <div class="np-node-dot nd-sms"></div>
+      <div><div class="np-node-name">SMS Fallback</div><div class="np-node-desc">Send text if voice unclear</div></div>
+    </div>
+    <div class="np-section">Routing</div>
+    <div class="np-node">
+      <div class="np-node-dot nd-transfer"></div>
+      <div><div class="np-node-name">Transfer</div><div class="np-node-desc">Route to staff or department</div></div>
+    </div>
+    <div class="np-node">
+      <div class="np-node-dot nd-emergency"></div>
+      <div><div class="np-node-name">Emergency</div><div class="np-node-desc">911 / urgent escalation</div></div>
+    </div>
+    <div class="np-section">Closing</div>
+    <div class="np-node">
+      <div class="np-node-dot nd-closing"></div>
+      <div><div class="np-node-name">Closing</div><div class="np-node-desc">Wrap up and end call</div></div>
+    </div>
+    <div style="margin-top:16px;padding:10px;background:var(--green-light);border-radius:var(--rs);border:1px solid #A7F3D0;">
+      <div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:5px;">Flow Stats</div>
+      <div style="font-size:11px;color:var(--text2);display:flex;flex-direction:column;gap:3px;">
+        <div>Nodes: <strong>9</strong></div>
+        <div>Connections: <strong>14</strong></div>
+        <div>Intents covered: <strong>8/12</strong></div>
+        <div style="color:var(--amber);">Avg depth: <strong>4.2 steps</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <div class="flow-canvas" id="flowCanvas">
+    <div class="canvas-inner">
+      <svg class="flow-svg" id="flowSvg">
+        <defs>
+          <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0L10 5L0 10z" fill="#9CA3AF"/>
+          </marker>
+          <marker id="arrowhead-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0L10 5L0 10z" fill="#059669"/>
+          </marker>
+          <marker id="arrowhead-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0L10 5L0 10z" fill="#D97706"/>
+          </marker>
+          <marker id="arrowhead-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0L10 5L0 10z" fill="#DC2626"/>
+          </marker>
+        </defs>
+        <!-- Arrows -->
+        <path d="M 260 95 L 260 145" stroke="#9CA3AF" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="4 2"/>
+        <path d="M 260 220 L 260 265" stroke="#9CA3AF" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="4 2"/>
+        <!-- Intent branches -->
+        <path d="M 180 340 Q 100 340 100 390" stroke="#3B82F6" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 260 345 L 260 390" stroke="#7C3AED" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 340 340 Q 420 340 420 390" stroke="#D97706" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 420 340 Q 580 340 580 390" stroke="#DC2626" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 420 340 Q 740 340 740 390" stroke="#0D9488" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+        <!-- Collect → Action -->
+        <path d="M 100 480 L 100 530" stroke="#059669" stroke-width="1.5" fill="none" marker-end="url(#arrowhead-green)"/>
+        <path d="M 260 480 L 260 530" stroke="#059669" stroke-width="1.5" fill="none" marker-end="url(#arrowhead-green)"/>
+        <!-- SMS fallback -->
+        <path d="M 155 445 Q 420 445 420 440" stroke="#0D9488" stroke-width="1.5" fill="none" stroke-dasharray="5 3" marker-end="url(#arrowhead)"/>
+        <!-- Transfer → Closing -->
+        <path d="M 420 480 L 420 660" stroke="#D97706" stroke-width="1.5" fill="none" marker-end="url(#arrowhead-amber)"/>
+        <!-- Emergency direct -->
+        <path d="M 580 480 L 580 660" stroke="#DC2626" stroke-width="1.5" fill="none" marker-end="url(#arrowhead-red)"/>
+        <!-- CPAP → Action -->
+        <path d="M 740 480 L 740 530" stroke="#059669" stroke-width="1.5" fill="none" marker-end="url(#arrowhead-green)"/>
+        <!-- Actions → Closing -->
+        <path d="M 100 615 Q 100 660 180 700" stroke="#059669" stroke-width="1.5" fill="none" marker-end="url(#arrowhead-green)"/>
+        <path d="M 260 615 Q 260 660 340 700" stroke="#059669" stroke-width="1.5" fill="none" marker-end="url(#arrowhead-green)"/>
+        <path d="M 740 615 Q 740 660 500 700" stroke="#059669" stroke-width="1.5" fill="none" marker-end="url(#arrowhead-green)"/>
+      </svg>
+
+      <!-- NODE: Greeting -->
+      <div class="fnode fn-greeting" style="left:160px;top:30px;width:200px;" onclick="selectNode('greeting')">
+        <div class="fnode-header">
+          <div class="fnode-badge" style="background:#ECFDF5;">🎙️</div>
+          <div>
+            <div class="fnode-title">Greeting</div>
+            <div class="fnode-type" style="background:#ECFDF5;color:#1B6B4A;">ENTRY</div>
+          </div>
+        </div>
+        <div class="fnode-body">"Thank you for calling Athens Sleep…"</div>
+        <div class="fnode-ports"><span class="fport fp-next">→ Intent</span></div>
+      </div>
+
+      <!-- NODE: Intent Detection -->
+      <div class="fnode fn-intent" style="left:160px;top:145px;width:200px;" onclick="selectNode('intent')">
+        <div class="fnode-header">
+          <div class="fnode-badge" style="background:#EFF6FF;">🧠</div>
+          <div>
+            <div class="fnode-title">Intent Detection</div>
+            <div class="fnode-type" style="background:#EFF6FF;color:#1D4ED8;">CLASSIFY</div>
+          </div>
+        </div>
+        <div class="fnode-body">Deepgram STT → Claude intent classifier → 8 branches</div>
+        <div class="fnode-ports">
+          <span class="fport fp-next">→ Branch</span>
+          <span class="fport fp-transfer">? Transfer</span>
+        </div>
+      </div>
+
+      <!-- NODE: Collect - Scheduling -->
+      <div class="fnode fn-collect" style="left:20px;top:265px;width:170px;" onclick="selectNode('collect-sched')">
+        <div class="fnode-header">
+          <div class="fnode-badge" style="background:#FFF7ED;">📅</div>
+          <div>
+            <div class="fnode-title">Collect — Appt</div>
+            <div class="fnode-type" style="background:#FFF7ED;color:#EA580C;">COLLECT</div>
+          </div>
+        </div>
+        <div class="fnode-body">Name · DOB · Insurance · Preferred date/time</div>
+        <div class="fnode-ports">
+          <span class="fport fp-next">→ Book</span>
+          <span class="fport fp-sms">📱 SMS</span>
+        </div>
+      </div>
+
+      <!-- NODE: Collect - CPAP -->
+      <div class="fnode fn-collect" style="left:650px;top:265px;width:180px;" onclick="selectNode('collect-cpap')">
+        <div class="fnode-header">
+          <div class="fnode-badge" style="background:#FFF7ED;">🫁</div>
+          <div>
+            <div class="fnode-title">Collect — CPAP</div>
+            <div class="fnode-type" style="background:#FFF7ED;color:#EA580C;">COLLECT</div>
+          </div>
+        </div>
+        <div class="fnode-body">Patient ID · CPAP model · Supplies needed</div>
+        <div class="fnode-ports">
+          <span class="fport fp-next">→ Process</span>
+          <span class="fport fp-sms">📱 SMS</span>
+        </div>
+      </div>
+
+      <!-- NODE: FAQ Action -->
+      <div class="fnode fn-action" style="left:170px;top:265px;width:180px;" onclick="selectNode('faq')">
+        <div class="fnode-header">
+          <div class="fnode-badge" style="background:#F5F3FF;">💬</div>
+          <div>
+            <div class="fnode-title">FAQ Answer</div>
+            <div class="fnode-type" style="background:#F5F3FF;color:#7C3AED;">ACTION</div>
+          </div>
+        </div>
+        <div class="fnode-body">RAG lookup → KB answer → Confirm satisfaction</div>
+        <div class="fnode-ports">
+          <span class="fport fp-yes">✓ Done</span>
+          <span class="fport fp-next">↩ Re-ask</span>
+        </div>
+      </div>
+
+      <!-- NODE: Transfer -->
+      <div class="fnode fn-transfer" style="left:340px;top:265px;width:165px;" onclick="selectNode('transfer')">
+        <div class="fnode-header">
+          <div class="fnode-badge" style="background:#FEF3C7;">📞</div>
+          <div>
+            <div class="fnode-title">Transfer</div>
+            <div class="fnode-type" style="background:#FEF3C7;color:#D97706;">ROUTE</div>
+          </div>
+        </div>
+        <div class="fnode-body">Billing/Rx/Results → (706) 549-1720</div>
+        <div class="fnode-ports"><span class="fport fp-transfer">→ Staff</span></div>
+      </div>
+
+      <!-- NODE: Emergency -->
+      <div class="fnode fn-emergency" style="left:510px;top:265px;width:160px;" onclick="selectNode('emergency')">
+        <div class="fnode-header">
+          <div class="fnode-badge" style="background:#FEF2F2;">🚨</div>
+          <div>
+            <div class="fnode-title">Emergency</div>
+            <div class="fnode-type" style="background:#FEF2F2;color:#DC2626;">URGENT</div>
+          </div>
+        </div>
+        <div class="fnode-body">Chest pain · Breathing difficulty → 911 instruction</div>
+        <div class="fnode-ports"><span class="fport fp-emergency">⚡ 911</span></div>
+      </div>
+
+      <!-- NODE: Action - Book Appointment -->
+      <div class="fnode fn-action" style="left:20px;top:390px;width:175px;" onclick="selectNode('book')">
+        <div class="fnode-header">
+          <div class="fnode-badge" style="background:#F5F3FF;">✅</div>
+          <div>
+            <div class="fnode-title">Book Appointment</div>
+            <div class="fnode-type" style="background:#F5F3FF;color:#7C3AED;">ACTION</div>
+          </div>
+        </div>
+        <div class="fnode-body">EHR → Find slot → Confirm → SMS summary</div>
+        <div class="fnode-ports">
+          <span class="fport fp-yes">✓ Booked</span>
+          <span class="fport fp-transfer">No slot</span>
+        </div>
+      </div>
+
+      <!-- NODE: Action - KB Answer -->
+      <div class="fnode fn-action" style="left:200px;top:390px;width:175px;" onclick="selectNode('kb-answer')">
+        <div class="fnode-header">
+          <div class="fnode-badge" style="background:#F5F3FF;">📚</div>
+          <div>
+            <div class="fnode-title">KB Answer</div>
+            <div class="fnode-type" style="background:#F5F3FF;color:#7C3AED;">ACTION</div>
+          </div>
+        </div>
+        <div class="fnode-body">Pinecone RAG → Top-3 results → Natural language response</div>
+        <div class="fnode-ports">
+          <span class="fport fp-yes">✓ Answered</span>
+          <span class="fport fp-transfer">Escalate</span>
+        </div>
+      </div>
+
+      <!-- NODE: CPAP Process -->
+      <div class="fnode fn-action" style="left:650px;top:390px;width:180px;" onclick="selectNode('cpap-process')">
+        <div class="fnode-header">
+          <div class="fnode-badge" style="background:#F5F3FF;">🫁</div>
+          <div>
+            <div class="fnode-title">CPAP Resupply</div>
+            <div class="fnode-type" style="background:#F5F3FF;color:#7C3AED;">ACTION</div>
+          </div>
+        </div>
+        <div class="fnode-body">Log request → Notify clinical team → ETA to patient</div>
+        <div class="fnode-ports">
+          <span class="fport fp-yes">✓ Submitted</span>
+        </div>
+      </div>
+
+      <!-- NODE: Closing -->
+      <div class="fnode fn-closing" style="left:300px;top:570px;width:200px;" onclick="selectNode('closing')">
+        <div class="fnode-header">
+          <div class="fnode-badge" style="background:var(--gray-light);">👋</div>
+          <div>
+            <div class="fnode-title">Closing</div>
+            <div class="fnode-type" style="background:var(--gray-light);color:var(--text3);">EXIT</div>
+          </div>
+        </div>
+        <div class="fnode-body">"Is there anything else I can help you with today? …Thank you for calling Athens Sleep!"</div>
+        <div class="fnode-ports"><span class="fport fp-next">END CALL</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Node Inspector -->
+  <div class="node-inspector" id="nodeInspector">
+    <div class="ni-empty" id="niEmpty">
+      <div class="ni-empty-icon">🖱️</div>
+      <div class="ni-empty-text">Click any node on the canvas to inspect and edit its configuration</div>
+    </div>
+    <div id="niContent" style="display:none;">
+      <div class="ni-header">
+        <div class="ni-badge" id="niBadge" style="background:#ECFDF5;">🎙️</div>
+        <div>
+          <div class="ni-title" id="niTitle">Greeting</div>
+          <div class="ni-type" id="niType">ENTRY NODE</div>
+        </div>
+      </div>
+      <div class="ni-section">Script</div>
+      <div class="ni-field">
+        <label class="ni-label">Agent Message</label>
+        <textarea class="ni-textarea" rows="3" id="niScript">Thank you for calling Athens Sleep and Wellness Center. This is Aria, how may I help you today?</textarea>
+      </div>
+      <div class="ni-section">Settings</div>
+      <div id="niSettings">
+        <div class="toggle-row">
+          <span class="toggle-label">After-hours variant</span>
+          <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Collect caller name</span>
+          <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Play hold music</span>
+          <div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-knob"></div></div>
+        </div>
+      </div>
+      <div class="ni-field" style="margin-top:8px;">
+        <label class="ni-label">Voice (ElevenLabs)</label>
+        <select class="ni-select">
+          <option>Rachel — Warm, female, Southern</option>
+          <option>Aria — Professional, female, neutral</option>
+          <option>Josh — Calm, male, neutral</option>
+        </select>
+      </div>
+      <div class="ni-field">
+        <label class="ni-label">Speaking pace</label>
+        <select class="ni-select">
+          <option>Normal (1.0x)</option>
+          <option>Slightly slow (0.9x)</option>
+          <option>Fast (1.1x)</option>
+        </select>
+      </div>
+      <div class="ni-section">Connections</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;" id="niConnections">→ Intent Detection node</div>
+      <button class="ni-btn ni-btn-green" onclick="alert('Node settings saved!')">Save Node</button>
+      <button class="ni-btn ni-btn-outline" style="margin-top:5px;" onclick="alert('Node duplicated!')">Duplicate Node</button>
+      <button class="ni-btn ni-btn-red" style="margin-top:5px;" onclick="alert('Node deleted!')">Delete Node</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PANEL 2: CONTAINMENT RULES
+════════════════════════════════════════ -->
+<div class="panel" id="panel-rules">
+<div class="rules-layout">
+  <div class="rules-main">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.3px;">12 Containment Rules — Athens Sleep & Wellness</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Configured for Sleep Medicine · Solo practice · Dr. Subodh Agrawal</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline">+ Add Rule</button>
+        <button class="btn btn-green">Save All Rules</button>
+      </div>
+    </div>
+    <div class="notice green">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span><strong>10 of 12 rules active.</strong> Current containment rate: 87.3%. Target: &gt;85%. Rules 9 and 11 need attention.</span>
+    </div>
+
+    <!-- Rules 1-12 -->
+    <div id="rules-list">
+
+      <!-- Rule 1 -->
+      <div class="rule-card rule-on">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-green">1</div>
+          <div class="rule-name">New Patient Appointment Scheduling</div>
+          <span class="rule-intent ri-scheduling">Scheduling</span>
+          <div class="rule-toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off');"><div class="rule-knob"></div></div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">When a caller wants to schedule a new patient visit with Dr. Agrawal, Aria collects name, DOB, insurance, and preferred date/time, then books directly via the EHR calendar API. Confirmation SMS sent automatically.</div>
+          <div class="rule-config">
+            <div class="rule-config-item"><div class="rci-label">EHR Action</div><div class="rci-value">Book via Athenahealth</div></div>
+            <div class="rule-config-item"><div class="rci-label">Collect Fields</div><div class="rci-value">Name, DOB, Insurance, Date</div></div>
+            <div class="rule-config-item"><div class="rci-label">SMS Confirm</div><div class="rci-value">Yes — within 30s</div></div>
+            <div class="rule-config-item"><div class="rci-label">Waitlist fallback</div><div class="rci-value">Yes if no slots</div></div>
+          </div>
+          <div class="rule-phrases"><div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Trigger Phrases</div>
+            <div class="phrase-chips"><span class="phrase-chip">new appointment</span><span class="phrase-chip">see the doctor</span><span class="phrase-chip">schedule a visit</span><span class="phrase-chip">first time patient</span><span class="phrase-chip">new patient</span></div>
+          </div>
+          <div class="rule-outcome ro-contain">✓ Containment — Books without transferring to staff</div>
+        </div>
+      </div>
+
+      <!-- Rule 2 -->
+      <div class="rule-card rule-on">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-green">2</div>
+          <div class="rule-name">Follow-Up / Return Visit Scheduling</div>
+          <span class="rule-intent ri-scheduling">Scheduling</span>
+          <div class="rule-toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off');"><div class="rule-knob"></div></div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">Returning patients scheduling follow-up visits. Aria verifies identity via DOB, looks up last visit, suggests appropriate follow-up interval, and books.</div>
+          <div class="rule-config">
+            <div class="rule-config-item"><div class="rci-label">Patient Verify</div><div class="rci-value">DOB + Last name</div></div>
+            <div class="rule-config-item"><div class="rci-label">EHR Lookup</div><div class="rci-value">Last visit + provider</div></div>
+          </div>
+          <div class="rule-outcome ro-contain">✓ Containment — Fully automated return scheduling</div>
+        </div>
+      </div>
+
+      <!-- Rule 3 -->
+      <div class="rule-card rule-on">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-green">3</div>
+          <div class="rule-name">Appointment Cancellation or Reschedule</div>
+          <span class="rule-intent ri-scheduling">Scheduling</span>
+          <div class="rule-toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off');"><div class="rule-knob"></div></div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">Aria handles cancellations and reschedules end-to-end. Enforces 24-hour cancellation policy and notifies of no-show fee if applicable. Offers immediate rescheduling.</div>
+          <div class="rule-config">
+            <div class="rule-config-item"><div class="rci-label">Cancel Policy</div><div class="rci-value">24h notice required</div></div>
+            <div class="rule-config-item"><div class="rci-label">No-show fee</div><div class="rci-value">Mention if &lt;2h</div></div>
+          </div>
+          <div class="rule-outcome ro-contain">✓ Containment — Handles without staff involvement</div>
+        </div>
+      </div>
+
+      <!-- Rule 4 -->
+      <div class="rule-card rule-on">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-green">4</div>
+          <div class="rule-name">CPAP Resupply Request</div>
+          <span class="rule-intent ri-clinical">Clinical</span>
+          <div class="rule-toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off');"><div class="rule-knob"></div></div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">Sleep-specialty rule: Aria collects patient ID, CPAP device model, and supplies needed (mask, filters, tubing), then logs a resupply request routed to clinical team with 1-2 business day processing SLA.</div>
+          <div class="rule-config">
+            <div class="rule-config-item"><div class="rci-label">Collect</div><div class="rci-value">Patient ID, Model, Supplies</div></div>
+            <div class="rule-config-item"><div class="rci-label">Route to</div><div class="rci-value">Clinical team queue</div></div>
+            <div class="rule-config-item"><div class="rci-label">SLA</div><div class="rci-value">1-2 business days</div></div>
+            <div class="rule-config-item"><div class="rci-label">Confirm</div><div class="rci-value">SMS + email to patient</div></div>
+          </div>
+          <div class="rule-phrases"><div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Trigger Phrases</div>
+            <div class="phrase-chips"><span class="phrase-chip">CPAP supplies</span><span class="phrase-chip">mask replacement</span><span class="phrase-chip">CPAP resupply</span><span class="phrase-chip">filters</span><span class="phrase-chip">tubing</span><span class="phrase-chip">ResMed</span><span class="phrase-chip">Philips CPAP</span></div>
+          </div>
+          <div class="rule-outcome ro-contain">✓ Containment — Sleep-specialty: logs and routes without transfer</div>
+        </div>
+      </div>
+
+      <!-- Rule 5 -->
+      <div class="rule-card rule-on">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-green">5</div>
+          <div class="rule-name">Sleep Study Scheduling</div>
+          <span class="rule-intent ri-clinical">Clinical</span>
+          <div class="rule-toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off');"><div class="rule-knob"></div></div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">Patients calling to schedule a polysomnography or home sleep test. Aria confirms referral on file, explains in-lab vs home test options, collects insurance, and schedules directly.</div>
+          <div class="rule-config">
+            <div class="rule-config-item"><div class="rci-label">Referral check</div><div class="rci-value">Required before booking</div></div>
+            <div class="rule-config-item"><div class="rci-label">Test types</div><div class="rci-value">In-lab PSG, Home HST</div></div>
+          </div>
+          <div class="rule-outcome ro-contain">✓ Containment — Sleep-specialty scheduling</div>
+        </div>
+      </div>
+
+      <!-- Rule 6 -->
+      <div class="rule-card rule-on">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-green">6</div>
+          <div class="rule-name">Office Hours, Location & General FAQ</div>
+          <span class="rule-intent ri-info">Information</span>
+          <div class="rule-toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off');"><div class="rule-knob"></div></div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">Handles all basic information queries: hours, address, parking, providers, services offered, telehealth availability. Uses RAG knowledge base for dynamic answers.</div>
+          <div class="rule-config">
+            <div class="rule-config-item"><div class="rci-label">Hours</div><div class="rci-value">Mon-Fri 8AM–5PM</div></div>
+            <div class="rule-config-item"><div class="rci-label">Address</div><div class="rci-value">125 King Ave, Athens GA</div></div>
+          </div>
+          <div class="rule-outcome ro-contain">✓ Containment — RAG knowledge base answers instantly</div>
+        </div>
+      </div>
+
+      <!-- Rule 7 -->
+      <div class="rule-card rule-on">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-green">7</div>
+          <div class="rule-name">Insurance Verification</div>
+          <span class="rule-intent ri-billing">Billing</span>
+          <div class="rule-toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off');"><div class="rule-knob"></div></div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">Callers asking if their insurance is accepted. Aria checks the accepted insurance list from knowledge base. Complex eligibility questions transferred to billing team.</div>
+          <div class="rule-config">
+            <div class="rule-config-item"><div class="rci-label">Accepted</div><div class="rci-value">Aetna, BCBS, Cigna, UHC, Medicare</div></div>
+            <div class="rule-config-item"><div class="rci-label">Complex billing</div><div class="rci-value">Transfer to billing</div></div>
+          </div>
+          <div class="rule-outcome ro-contain">✓ Containment — Basic insurance check from KB</div>
+        </div>
+      </div>
+
+      <!-- Rule 8 -->
+      <div class="rule-card rule-on">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-green">8</div>
+          <div class="rule-name">Message Taking (Staff Not Available)</div>
+          <span class="rule-intent ri-info">Information</span>
+          <div class="rule-toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off');"><div class="rule-knob"></div></div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">When a caller needs to leave a message for a specific staff member or provider, Aria collects name, callback number, and message, then logs it and notifies staff via internal messaging.</div>
+          <div class="rule-outcome ro-contain">✓ Containment — Message captured and routed to staff</div>
+        </div>
+      </div>
+
+      <!-- Rule 9 - Warn -->
+      <div class="rule-card rule-warn">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-amber">9</div>
+          <div class="rule-name">Prescription Refill Request</div>
+          <span class="rule-intent ri-clinical">Clinical</span>
+          <div class="rule-toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off');"><div class="rule-knob"></div></div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">Patients requesting medication refills (often sleep aids, anxiety medications). Aria collects medication name, pharmacy, and last refill date, then routes to clinical team. ⚠️ Currently transferring 34% of these calls — improve KB with more refill scripts.</div>
+          <div class="rule-config">
+            <div class="rule-config-item"><div class="rci-label">Collect</div><div class="rci-value">Med name, Pharmacy, Last refill</div></div>
+            <div class="rule-config-item"><div class="rci-label">Transfer rate</div><div class="rci-value" style="color:var(--amber);font-weight:700;">34% ⚠️ High</div></div>
+          </div>
+          <div class="rule-outcome ro-transfer" style="background:var(--amber-light);color:var(--amber);">⚠️ Partial containment — 66% handled, 34% transferred</div>
+        </div>
+      </div>
+
+      <!-- Rule 10 -->
+      <div class="rule-card rule-on">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-green">10</div>
+          <div class="rule-name">Lab Results Status Inquiry</div>
+          <span class="rule-intent ri-clinical">Clinical</span>
+          <div class="rule-toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off');"><div class="rule-knob"></div></div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">Patients checking on lab results or sleep study reports. Aria confirms if results are ready (via EHR lookup) and schedules a results review appointment if needed. Cannot share actual results over the phone.</div>
+          <div class="rule-outcome ro-contain">✓ Containment — Status check + schedule review if needed</div>
+        </div>
+      </div>
+
+      <!-- Rule 11 - Warn -->
+      <div class="rule-card rule-warn">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-amber">11</div>
+          <div class="rule-name">Billing & Copay Inquiries</div>
+          <span class="rule-intent ri-billing">Billing</span>
+          <div class="rule-toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off');"><div class="rule-knob"></div></div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">Billing questions, copay amounts, balance inquiries. Aria can answer basic copay from KB but must transfer complex billing disputes. ⚠️ High transfer rate — need more billing KB content.</div>
+          <div class="rule-config">
+            <div class="rule-config-item"><div class="rci-label">Transfer rate</div><div class="rci-value" style="color:var(--amber);font-weight:700;">58% ⚠️ Very high</div></div>
+            <div class="rule-config-item"><div class="rci-label">Route to</div><div class="rci-value">Billing team ext. 204</div></div>
+          </div>
+          <div class="rule-outcome ro-transfer" style="background:var(--amber-light);color:var(--amber);">⚠️ Partial containment — needs more KB billing content</div>
+        </div>
+      </div>
+
+      <!-- Rule 12 - Emergency -->
+      <div class="rule-card rule-on" style="border-left:3px solid var(--red);">
+        <div class="rule-header" onclick="toggleRule(this)">
+          <div class="rule-num rn-red">12</div>
+          <div class="rule-name">Emergency Escalation Protocol</div>
+          <span class="rule-intent ri-emergency">Emergency</span>
+          <div style="padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;background:var(--red-light);color:var(--red);margin-left:auto;">Always ON</div>
+        </div>
+        <div class="rule-body" style="display:none;">
+          <div class="rule-desc">CRITICAL — Cannot be disabled. If caller reports chest pain, difficulty breathing, severe allergic reaction, stroke symptoms, or mentions suicide/self-harm, Aria immediately instructs to call 911 and stays on line until caller confirms understanding.</div>
+          <div class="rule-phrases"><div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Emergency Triggers</div>
+            <div class="phrase-chips"><span class="phrase-chip">chest pain</span><span class="phrase-chip">can't breathe</span><span class="phrase-chip">allergic reaction</span><span class="phrase-chip">stroke symptoms</span><span class="phrase-chip">unconscious</span><span class="phrase-chip">hurt myself</span><span class="phrase-chip">emergency</span></div>
+          </div>
+          <div class="rule-outcome ro-emergency">🚨 Emergency — Immediate 911 instruction, call stays open</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Rules Side Panel -->
+  <div class="rules-side">
+    <div class="section-label">Containment Metrics</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
+        <span style="color:var(--text2);">Overall containment</span><span style="font-weight:800;font-size:16px;color:var(--green);">87.3%</span>
+      </div>
+      <div style="height:7px;background:var(--border);border-radius:4px;overflow:hidden;">
+        <div style="width:87.3%;height:100%;background:linear-gradient(90deg,var(--green2),var(--green));border-radius:4px;"></div>
+      </div>
+      <div style="font-size:10px;color:var(--text3);">Target: &gt;85% · Competitive avg: 72%</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;">
+      <div style="padding:8px;background:var(--green-light);border-radius:var(--rs);text-align:center;border:1px solid #A7F3D0;"><div style="font-size:18px;font-weight:800;color:var(--green);">10</div><div style="font-size:9px;color:var(--green);font-weight:600;text-transform:uppercase;">Optimal</div></div>
+      <div style="padding:8px;background:var(--amber-light);border-radius:var(--rs);text-align:center;border:1px solid #FDE68A;"><div style="font-size:18px;font-weight:800;color:var(--amber);">2</div><div style="font-size:9px;color:var(--amber);font-weight:600;text-transform:uppercase;">Need Attention</div></div>
+    </div>
+    <div class="section-label">Rule Performance</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+      <div style="font-size:11px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Scheduling (1-3)</span><span style="font-weight:700;color:var(--green);">96%</span></div><div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;"><div style="width:96%;height:100%;background:var(--green2);border-radius:2px;"></div></div></div>
+      <div style="font-size:11px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">CPAP/Sleep (4-5)</span><span style="font-weight:700;color:var(--green);">94%</span></div><div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;"><div style="width:94%;height:100%;background:var(--green2);border-radius:2px;"></div></div></div>
+      <div style="font-size:11px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">FAQ/Info (6,8)</span><span style="font-weight:700;color:var(--green);">99%</span></div><div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;"><div style="width:99%;height:100%;background:var(--green2);border-radius:2px;"></div></div></div>
+      <div style="font-size:11px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Rx Refills (9)</span><span style="font-weight:700;color:var(--amber);">66%</span></div><div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;"><div style="width:66%;height:100%;background:var(--amber2);border-radius:2px;"></div></div></div>
+      <div style="font-size:11px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Billing (11)</span><span style="font-weight:700;color:var(--amber);">42%</span></div><div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;"><div style="width:42%;height:100%;background:var(--amber2);border-radius:2px;"></div></div></div>
+    </div>
+    <div class="notice amber">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <span><strong>MOF recommends:</strong> Add 8 more billing Q&As and 5 refill scripts to KB to improve rules 9 &amp; 11.</span>
+    </div>
+    <div class="section-label" style="margin-top:4px;">Top Transfer Reasons</div>
+    <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;">
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span>Billing disputes</span><span style="font-weight:700;color:var(--red);">23 calls</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span>Rx refills (complex)</span><span style="font-weight:700;color:var(--amber);">18 calls</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span>Speak to provider</span><span style="font-weight:700;color:var(--text3);">14 calls</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span>Results discussion</span><span style="font-weight:700;color:var(--text3);">9 calls</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PANEL 3: NEVER-LOOP GUARANTEE
+════════════════════════════════════════ -->
+<div class="panel" id="panel-loop">
+<div class="loop-layout">
+  <div class="loop-main">
+    <div class="loop-hero">
+      <div class="loop-hero-icon">🛡️</div>
+      <div>
+        <div class="loop-hero-title">Never-Loop Guarantee — 3-Layer Defense</div>
+        <div class="loop-hero-sub">Aria will NEVER ask the same question more than twice. Three layers activate automatically before any voice repeat occurs. This is MOF's core competitive advantage — no competitor guarantees this.</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-size:28px;font-weight:800;color:#86EFAC;letter-spacing:-1px;">0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;">Loop Events Today</div>
+      </div>
+    </div>
+
+    <!-- Layer 1 -->
+    <div class="layer-card">
+      <div class="layer-header">
+        <div class="layer-num ln-1">L1</div>
+        <div>
+          <div class="layer-title">Layer 1 — Voice Rephrase (Max 2 attempts)</div>
+          <div class="layer-sub">First line of defense — activated immediately on low STT confidence</div>
+        </div>
+        <div style="margin-left:auto;padding:3px 9px;border-radius:8px;background:var(--green-light);color:var(--green);font-size:11px;font-weight:700;">Active</div>
+      </div>
+      <div class="layer-body">
+        <div class="flow-step">
+          <div class="fs-circle fsc-1">1</div>
+          <div class="fs-content">
+            <div class="fs-label">First Ask — Original phrasing</div>
+            <div class="fs-detail">Aria asks the question in its natural form. Deepgram STT transcribes. If confidence score &gt; 70%, answer is accepted.</div>
+            <div class="fs-quote">"Could I get your date of birth for our records?"</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="fs-circle fsc-1">2</div>
+          <div class="fs-content">
+            <div class="fs-label">First Retry — MANDATORY rephrasing (confidence &lt; 70%)</div>
+            <div class="fs-detail">Aria MUST change the wording completely. Repeating the exact same sentence is forbidden by rule #4 in the prompt. STT confidence threshold checked again.</div>
+            <div class="fs-quote">"Could you tell me the month, day, and year you were born? For example, January fifteenth, nineteen seventy."</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+          <div style="flex:1;padding:8px 10px;background:var(--gray-light);border-radius:var(--rs);border:1px solid var(--border);">
+            <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">STT Threshold</div>
+            <div style="font-size:14px;font-weight:700;color:var(--blue);">&lt; 70% confidence → Retry</div>
+          </div>
+          <div style="flex:1;padding:8px 10px;background:var(--gray-light);border-radius:var(--rs);border:1px solid var(--border);">
+            <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">Max Voice Attempts</div>
+            <div style="font-size:14px;font-weight:700;color:var(--blue);">2 per question</div>
+          </div>
+          <div style="flex:1;padding:8px 10px;background:var(--gray-light);border-radius:var(--rs);border:1px solid var(--border);">
+            <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">"Didn't catch that" limit</div>
+            <div style="font-size:14px;font-weight:700;color:var(--blue);">Once per call max</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer 2 -->
+    <div class="layer-card">
+      <div class="layer-header">
+        <div class="layer-num ln-2">L2</div>
+        <div>
+          <div class="layer-title">Layer 2 — Mid-Call SMS Fallback</div>
+          <div class="layer-sub">Activated after 2 failed voice attempts. Caller stays on phone, types answer via SMS.</div>
+        </div>
+        <div style="margin-left:auto;padding:3px 9px;border-radius:8px;background:var(--teal-light);color:var(--teal);font-size:11px;font-weight:700;">Active</div>
+      </div>
+      <div class="layer-body">
+        <div class="flow-step">
+          <div class="fs-circle fsc-2">1</div>
+          <div class="fs-content">
+            <div class="fs-label">Twilio Lookup v2 — Landline Detection FIRST</div>
+            <div class="fs-detail">Before attempting SMS, the system calls Twilio Lookup API to verify the caller's number can receive SMS. Landlines are flagged immediately and jump to Layer 3.</div>
+            <div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;">
+              <span style="padding:2px 8px;border-radius:7px;font-size:10px;font-weight:600;background:var(--green-light);color:var(--green);">Mobile → SMS OK</span>
+              <span style="padding:2px 8px;border-radius:7px;font-size:10px;font-weight:600;background:var(--red-light);color:var(--red);">Landline → Skip to L3</span>
+              <span style="padding:2px 8px;border-radius:7px;font-size:10px;font-weight:600;background:var(--gray-light);color:var(--text3);">VoIP → Attempt SMS</span>
+            </div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="fs-circle fsc-2">2</div>
+          <div class="fs-content">
+            <div class="fs-label">SMS Sent — Caller stays on the line</div>
+            <div class="fs-detail">Aria speaks the bridge message. Twilio sends SMS from practice caller ID. System polls for reply for up to 60 seconds. Call remains active throughout.</div>
+            <div class="fs-quote">"I want to make sure I get this right — I just sent you a quick text to (706) 555-XXXX. Could you type your answer there? I'll wait right here."</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="fs-circle fsc-2">3</div>
+          <div class="fs-content">
+            <div class="fs-label">SMS Reply Received → Injected back to voice flow</div>
+            <div class="fs-detail">Caller's text reply is received by Twilio webhook, injected into the conversation context, and Aria reads it back to confirm. Then continues the flow.</div>
+            <div class="fs-quote">"Perfect, I have your date of birth as January fifteenth, nineteen seventy. Let me pull up your records."</div>
+          </div>
+        </div>
+        <div class="notice amber" style="margin-top:8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <span><strong>3-SMS-fallback limit:</strong> If Aria triggers SMS fallback for 3+ different questions in one call, she offers to transfer to a staff member rather than continuing the pattern.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer 3 -->
+    <div class="layer-card">
+      <div class="layer-header">
+        <div class="layer-num ln-3">L3</div>
+        <div>
+          <div class="layer-title">Layer 3 — Graceful Skip with Follow-Up Flag</div>
+          <div class="layer-sub">Last resort. Question is skipped gracefully. System flags for follow-up. Call continues.</div>
+        </div>
+        <div style="margin-left:auto;padding:3px 9px;border-radius:8px;background:var(--purple-light);color:var(--purple);font-size:11px;font-weight:700;">Active</div>
+      </div>
+      <div class="layer-body">
+        <div class="flow-step">
+          <div class="fs-circle fsc-3">1</div>
+          <div class="fs-content">
+            <div class="fs-label">Graceful Skip — Natural, not robotic</div>
+            <div class="fs-detail">Aria skips the question without apologizing excessively. Uses a single natural phrase and moves on. The call continues without the missing data.</div>
+            <div class="fs-quote">"No problem at all — our team will collect that information when they follow up with you. Now let me get you scheduled…"</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="fs-circle fsc-3">2</div>
+          <div class="fs-content">
+            <div class="fs-label">Follow-Up Flag — Logged in system</div>
+            <div class="fs-detail">The skipped field is flagged in the call record. Practice staff see a yellow "Incomplete info" badge on the call. Which questions are most-skipped reveals KB training gaps.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="fs-circle fsc-3">3</div>
+          <div class="fs-content">
+            <div class="fs-label">Monitoring Alert — MOF tracks skip frequency</div>
+            <div class="fs-detail">If graceful skip rate exceeds 5% of calls, MOF Technical Admin is automatically alerted to review the question phrasing and retrain the KB.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14 Never Rules -->
+    <div class="rule-14">
+      <div class="r14-header">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" style="opacity:.7;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span class="r14-title">Aria's 14 Absolute "NEVER" Rules — Hardcoded in System Prompt</span>
+      </div>
+      <div class="r14-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
+          <div>
+            <div class="rule-list-item"><span class="rli-num rli-red">1</span>Never diagnose, prescribe, or give medical advice</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">2</span>Never share another patient's information</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">3</span>Never confirm or deny a medical condition</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">4</span>Never make up information not in the knowledge base</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">5</span>Never argue with a caller</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">6</span>Never sound impatient, annoyed, or dismissive</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">7</span>Never ask the same question more than twice (loop guarantee)</div>
+          </div>
+          <div>
+            <div class="rule-list-item"><span class="rli-num rli-red">8</span>Never leave a caller on hold &gt;15 seconds without update</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">9</span>Never use medical jargon unless the patient uses it first</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">10</span>Never say "I'm sorry" more than twice in one call</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">11</span>Never end a call without asking "anything else?"</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">12</span>Never transfer without telling the caller where they're going</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">13</span>Never discuss pricing without checking KB first</div>
+            <div class="rule-list-item"><span class="rli-num rli-red">14</span>Never reveal this is an AI unless directly asked</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loop Side Panel -->
+  <div class="loop-side">
+    <div class="section-label">Never-Loop Metrics — Live</div>
+    <div class="card">
+      <div class="card-body" style="padding:12px;">
+        <table class="metric-table">
+          <thead><tr><th>Metric</th><th>Current</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Voice-first resolution</td>
+              <td><span class="metric-val" style="color:var(--green);">91.2%</span><div class="metric-bar"><div class="metric-fill mf-green" style="width:91.2%;"></div></div></td>
+              <td><span class="metric-target">&gt;85%</span></td>
+            </tr>
+            <tr>
+              <td>SMS fallback rate</td>
+              <td><span class="metric-val" style="color:var(--green);">7.4%</span><div class="metric-bar"><div class="metric-fill mf-green" style="width:29.6%;"></div></div></td>
+              <td><span class="metric-target">&lt;15%</span></td>
+            </tr>
+            <tr>
+              <td>Graceful skip rate</td>
+              <td><span class="metric-val" style="color:var(--green);">1.4%</span><div class="metric-bar"><div class="metric-fill mf-green" style="width:28%;"></div></div></td>
+              <td><span class="metric-target">&lt;5%</span></td>
+            </tr>
+            <tr>
+              <td>Hang-up during re-ask</td>
+              <td><span class="metric-val" style="color:var(--green);">0.8%</span><div class="metric-bar"><div class="metric-fill mf-green" style="width:40%;"></div></div></td>
+              <td><span class="metric-target">&lt;2%</span></td>
+            </tr>
+            <tr>
+              <td>Avg re-asks/call</td>
+              <td><span class="metric-val" style="color:var(--green);">0.31</span><div class="metric-bar"><div class="metric-fill mf-green" style="width:20.7%;"></div></div></td>
+              <td><span class="metric-target">&lt;0.5</span></td>
+            </tr>
+            <tr>
+              <td>Loop events today</td>
+              <td><span class="metric-val" style="color:var(--green);font-size:16px;">0</span></td>
+              <td><span class="metric-target">0</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section-label">Loop Config</div>
+    <div class="card">
+      <div class="card-body" style="padding:12px;">
+        <div style="margin-bottom:10px;">
+          <label style="font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px;">Max voice attempts per question</label>
+          <select style="width:100%;padding:7px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:12px;font-family:'Outfit',sans-serif;outline:none;">
+            <option>2 (Recommended — Never-Loop guarantee)</option>
+            <option>1 (Aggressive — Skip faster)</option>
+            <option>3 (Permissive — Give more tries)</option>
+          </select>
+        </div>
+        <div style="margin-bottom:10px;">
+          <label style="font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px;">STT confidence threshold</label>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input type="range" min="50" max="90" value="70" style="flex:1;" oninput="document.getElementById('sttVal').textContent=this.value+'%'">
+            <span style="font-size:12px;font-weight:700;color:var(--blue);min-width:30px;" id="sttVal">70%</span>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px;">Below this score → trigger Layer 1 retry</div>
+        </div>
+        <div class="toggle-row" style="margin-bottom:8px;">
+          <span style="font-size:12px;color:var(--text2);">SMS fallback enabled</span>
+          <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row" style="margin-bottom:8px;">
+          <span style="font-size:12px;color:var(--text2);">Landline detection (Twilio Lookup v2)</span>
+          <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row" style="margin-bottom:12px;">
+          <span style="font-size:12px;color:var(--text2);">Flag skipped fields for staff review</span>
+          <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-knob"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <label style="font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px;">SMS timeout (seconds)</label>
+          <select style="width:100%;padding:7px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:12px;font-family:'Outfit',sans-serif;outline:none;">
+            <option>60 seconds (Recommended)</option>
+            <option>45 seconds</option>
+            <option>90 seconds</option>
+          </select>
+        </div>
+        <button class="btn btn-green" style="width:100%;">Save Loop Settings</button>
+      </div>
+    </div>
+
+    <div class="section-label">Most-Skipped Fields</div>
+    <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;">
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span>Date of birth</span><span style="font-weight:700;color:var(--amber);">2.1% skip rate</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span>Insurance member ID</span><span style="font-weight:700;color:var(--amber);">1.8% skip rate</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span>Preferred callback time</span><span style="font-weight:700;color:var(--green);">0.4% skip rate</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-light);border-radius:5px;"><span>CPAP model number</span><span style="font-weight:700;color:var(--green);">0.2% skip rate</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PANEL 4: TEST SANDBOX
+════════════════════════════════════════ -->
+<div class="panel" id="panel-sandbox">
+<div class="sandbox-layout">
+
+  <!-- Left: Chat Interface -->
+  <div class="sandbox-left">
+    <div class="chat-header">
+      <div class="chat-header-title">🧪 Live Sandbox — Aria v2.1</div>
+      <div class="chat-header-sub">Athens Sleep & Wellness · Simulated call environment · Not a real call</div>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg msg-agent">
+        <div class="msg-bubble bubble-agent">Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you today?</div>
+        <div class="msg-meta">Aria · 0.0s <span class="msg-badge mb-intent">Greeting</span></div>
+      </div>
+      <div class="chat-msg msg-user">
+        <div class="msg-bubble bubble-user">I need to schedule a sleep study appointment</div>
+        <div class="msg-meta" style="text-align:right;">Simulated patient · 3.2s</div>
+      </div>
+      <div class="chat-msg msg-agent">
+        <div class="msg-bubble bubble-agent">I'd be happy to help you schedule a sleep study! We offer both in-lab polysomnography and home sleep tests. Do you have a referral from your primary care doctor, or has Dr. Agrawal already ordered the study?</div>
+        <div class="msg-meta">Aria · 1.4s <span class="msg-badge mb-intent">Scheduling</span> <span class="msg-badge mb-contained">Contained ✓</span></div>
+      </div>
+      <div class="chat-msg msg-user">
+        <div class="msg-bubble bubble-user">Yes I have a referral from my PCP</div>
+        <div class="msg-meta" style="text-align:right;">Simulated patient · 4.1s</div>
+      </div>
+      <div class="chat-msg msg-agent">
+        <div class="msg-bubble bubble-agent">Perfect! Let me get you scheduled. Could I start with your name and date of birth?</div>
+        <div class="msg-meta">Aria · 1.1s <span class="msg-badge mb-intent">Collect</span></div>
+      </div>
+      <div class="chat-msg msg-user">
+        <div class="msg-bubble bubble-user">[mumbles — STT confidence: 43%]</div>
+        <div class="msg-meta" style="text-align:right;color:var(--amber);">Low confidence detected → Layer 1</div>
+      </div>
+      <div class="chat-msg msg-agent">
+        <div class="msg-bubble bubble-agent">Could you tell me the month, day, and year you were born? For example, January fifteenth, nineteen eighty.</div>
+        <div class="msg-meta">Aria · 0.9s <span class="msg-badge" style="background:var(--blue-light);color:var(--blue);">L1 Rephrase ✓</span></div>
+      </div>
+      <div class="chat-msg msg-user">
+        <div class="msg-bubble bubble-user">March 8, 1975</div>
+        <div class="msg-meta" style="text-align:right;">Simulated patient · STT: 94% ✓</div>
+      </div>
+      <div class="chat-msg msg-agent">
+        <div class="msg-bubble bubble-agent">Thank you! And what's your full name?</div>
+        <div class="msg-meta">Aria · 0.8s</div>
+      </div>
+      <div class="chat-msg msg-user">
+        <div class="msg-bubble bubble-user">Sarah Johnson</div>
+        <div class="msg-meta" style="text-align:right;">Simulated patient</div>
+      </div>
+      <div class="chat-msg msg-agent">
+        <div class="msg-bubble bubble-agent">Hi Sarah! We have openings for an in-lab sleep study on Tuesday April 22nd at 9 PM, or Thursday April 24th at 9:30 PM. Which works better for you?</div>
+        <div class="msg-meta">Aria · 1.6s <span class="msg-badge mb-contained">Contained ✓</span></div>
+      </div>
+      <div class="chat-msg msg-user">
+        <div class="msg-bubble bubble-user">Tuesday works</div>
+        <div class="msg-meta" style="text-align:right;">Simulated patient</div>
+      </div>
+      <div class="chat-msg msg-agent">
+        <div class="msg-bubble bubble-agent">Wonderful! I've booked you for Tuesday, April 22nd at 9 PM. You'll receive a confirmation text and email with prep instructions. Is there anything else I can help you with today?</div>
+        <div class="msg-meta">Aria · 1.3s <span class="msg-badge mb-contained">✓ Booked</span></div>
+      </div>
+    </div>
+
+    <div class="chat-scenarios">
+      <div class="scenario-label">Quick Test Scenarios</div>
+      <button class="scenario-btn" onclick="loadScenario('schedule')">📅 Schedule sleep study appointment</button>
+      <button class="scenario-btn" onclick="loadScenario('cpap')">🫁 CPAP supplies resupply request</button>
+      <button class="scenario-btn" onclick="loadScenario('hours')">🕐 Office hours & location FAQ</button>
+      <button class="scenario-btn" onclick="loadScenario('loop')">🔄 Never-loop test (mumble 3x)</button>
+      <button class="scenario-btn" onclick="loadScenario('emergency')">🚨 Emergency — chest pain caller</button>
+      <button class="scenario-btn" onclick="loadScenario('spanish')">🌐 Spanish language detection</button>
+      <button class="scenario-btn" onclick="loadScenario('transfer')">👤 Request to speak to a human</button>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button class="btn btn-outline" style="flex:1;font-size:11px;" onclick="clearChat()">Clear Chat</button>
+        <button class="btn btn-green" style="flex:1;font-size:11px;" onclick="alert('Sending real test call to (877) 581-2599...')">📞 Real Test Call</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Test Results -->
+  <div class="sandbox-right">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.3px;">Sandbox Test Results — 20 Simulated Calls</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Run by Mike Torres (Technical Admin) · Apr 18, 2026 · Required before go-live</div>
+      </div>
+      <button class="btn btn-green" onclick="runAllTests()">▶ Run All 20 Tests</button>
+    </div>
+
+    <!-- Pass Rate Ring + Summary -->
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:16px;margin-bottom:16px;align-items:center;">
+      <div style="text-align:center;">
+        <svg viewBox="0 0 80 80" width="80" height="80" style="display:block;margin:0 auto 6px;">
+          <circle cx="40" cy="40" r="32" class="ring-bg"/>
+          <circle cx="40" cy="40" r="32" class="ring-fill" id="passRing" style="stroke-dasharray:184.4 200.96;stroke:#059669;"/>
+          <text x="40" y="37" class="ring-text" id="passRingText">92%</text>
+          <text x="40" y="50" class="ring-sub">Pass Rate</text>
+        </svg>
+        <div style="font-size:10px;font-weight:700;color:var(--green);background:var(--green-light);padding:3px 8px;border-radius:8px;display:inline-block;">GO-LIVE CLEARED ✓</div>
+      </div>
+      <div class="test-summary" style="grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="ts-card"><div class="ts-val" style="color:var(--green);">18</div><div class="ts-label">Passed</div><div class="ts-sub" style="color:var(--green);">of 20 tests</div></div>
+        <div class="ts-card"><div class="ts-val" style="color:var(--amber);">1</div><div class="ts-label">Partial</div><div class="ts-sub" style="color:var(--amber);">minor issue</div></div>
+        <div class="ts-card"><div class="ts-val" style="color:var(--red);">1</div><div class="ts-label">Failed</div><div class="ts-sub" style="color:var(--red);">needs fix</div></div>
+        <div class="ts-card"><div class="ts-val">1.4s</div><div class="ts-label">Avg Response</div><div class="ts-sub" style="color:var(--green);">Target &lt;2s</div></div>
+      </div>
+    </div>
+
+    <div class="notice green" id="goLiveNotice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span><strong>Go-live cleared!</strong> 92% pass rate exceeds the 85% minimum threshold. Technical Admin Mike Torres approved. Aria v2.1 is ready for production deployment at Athens Sleep & Wellness Center.</span>
+    </div>
+
+    <!-- Results Table -->
+    <div class="test-results-table">
+      <div class="trt-header">
+        <div>#</div><div>Scenario</div><div>Intent</div><div>Outcome</div><div>Response</div><div>Loops</div><div>Contained</div>
+      </div>
+      <div id="testRows">
+        <div class="trt-row" onclick="showTestDetail(1)"><div class="trt-num">1</div><div class="trt-scenario">Basic greeting — English</div><div><span class="trt-intent ti-faq">FAQ</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">0.9s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(2)"><div class="trt-num">2</div><div class="trt-scenario">New patient appointment scheduling</div><div><span class="trt-intent ti-sched">Scheduling</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">1.4s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(3)"><div class="trt-num">3</div><div class="trt-scenario">Return patient reschedule</div><div><span class="trt-intent ti-sched">Scheduling</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">1.2s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(4)"><div class="trt-num">4</div><div class="trt-scenario">Never-loop — mumble DOB (2 voice attempts → Layer 1)</div><div><span class="trt-intent ti-loop">Never-Loop</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">3.1s</div><div class="trt-loops tl-1">1</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(5)"><div class="trt-num">5</div><div class="trt-scenario">SMS fallback — mobile caller, low STT confidence</div><div><span class="trt-intent ti-loop">Never-Loop</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">18.4s</div><div class="trt-loops tl-1">1</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(6)"><div class="trt-num">6</div><div class="trt-scenario">Landline detection — no SMS attempt</div><div><span class="trt-intent ti-loop">Never-Loop</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">2.4s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(7)"><div class="trt-num">7</div><div class="trt-scenario">CPAP resupply — ResMed AirSense 11</div><div><span class="trt-intent ti-faq">CPAP</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">1.6s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(8)"><div class="trt-num">8</div><div class="trt-scenario">Sleep study scheduling (PSG in-lab)</div><div><span class="trt-intent ti-sched">Scheduling</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">1.5s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(9)"><div class="trt-num">9</div><div class="trt-scenario">Emergency — chest pain caller</div><div><span class="trt-intent ti-emergency">Emergency</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">0.7s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-no">⊘ 911</div></div>
+        <div class="trt-row" onclick="showTestDetail(10)"><div class="trt-num">10</div><div class="trt-scenario">Office hours & address inquiry</div><div><span class="trt-intent ti-faq">FAQ</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">0.8s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(11)"><div class="trt-num">11</div><div class="trt-scenario">Insurance verification — Blue Cross</div><div><span class="trt-intent ti-billing">Billing</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">1.1s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(12)"><div class="trt-num">12</div><div class="trt-scenario">Transfer request — "speak to a real person"</div><div><span class="trt-intent ti-transfer">Transfer</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">1.2s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-no">Transfer</div></div>
+        <div class="trt-row" onclick="showTestDetail(13)"><div class="trt-num">13</div><div class="trt-scenario">After-hours call — 11 PM Saturday</div><div><span class="trt-intent ti-faq">After Hours</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">0.9s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(14)"><div class="trt-num">14</div><div class="trt-scenario">Spanish language detection & switch</div><div><span class="trt-intent ti-lang">Multi-lang</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">2.1s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(15)"><div class="trt-num">15</div><div class="trt-scenario">Prescription refill — Lunesta</div><div><span class="trt-intent ti-rx">Rx Refill</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">1.4s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(16)"><div class="trt-num">16</div><div class="trt-scenario">Lab results status inquiry</div><div><span class="trt-intent ti-rx">Clinical</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">1.3s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(17)"><div class="trt-num">17</div><div class="trt-scenario">Multi-turn: schedule + insurance + hours</div><div><span class="trt-intent ti-sched">Multi-turn</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">1.8s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(18)"><div class="trt-num">18</div><div class="trt-scenario">Appointment cancellation &lt;24h notice</div><div><span class="trt-intent ti-sched">Scheduling</span></div><div><span class="trt-outcome to-pass">PASS</span></div><div class="trt-time">1.1s</div><div class="trt-loops tl-0">0</div><div class="trt-contained tc-yes">✓</div></div>
+        <div class="trt-row" onclick="showTestDetail(19)" style="background:rgba(251,191,36,.05);"><div class="trt-num">19</div><div class="trt-scenario">Complex billing dispute — balance question</div><div><span class="trt-intent ti-billing">Billing</span></div><div><span class="trt-outcome to-partial">PARTIAL</span></div><div class="trt-time">2.3s</div><div class="trt-loops tl-1">1</div><div class="trt-contained tc-no">Transfer</div></div>
+        <div class="trt-row" onclick="showTestDetail(20)" style="background:rgba(239,68,68,.04);"><div class="trt-num">20</div><div class="trt-scenario">Angry caller — "I hate AI, give me a human"</div><div><span class="trt-intent ti-transfer">Transfer</span></div><div><span class="trt-outcome to-fail">FAIL</span></div><div class="trt-time">4.1s</div><div class="trt-loops tl-2">2</div><div class="trt-contained tc-no">Escalated</div></div>
+      </div>
+    </div>
+
+    <!-- Test 20 failure note -->
+    <div class="notice amber" style="margin-top:10px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <span><strong>Test #20 failed:</strong> Angry caller looped twice before transferring. Aria should detect hostile escalation faster. MOF Technical Admin (Mike Torres) added prompt fix — re-test queued. Does not block go-live (non-critical path).</span>
+    </div>
+    <div class="notice red" style="margin-top:6px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      <span><strong>Test #19 partial:</strong> Complex billing dispute transferred correctly but Aria asked the caller's account number twice before transferring. Rule 11 containment gap — KB billing content needs expansion.</span>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- shell -->
+
+<script>
+// Tab switching
+function switchTab(tab) {
+  document.querySelectorAll('.mtab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+// Node selection
+const nodeData = {
+  greeting: {icon:'🎙️',bg:'#ECFDF5',title:'Greeting',type:'ENTRY NODE',script:'Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you today?',connections:'→ Intent Detection node',settings:'after-hours,name,hold'},
+  intent: {icon:'🧠',bg:'#EFF6FF',title:'Intent Detection',type:'CLASSIFY NODE',script:'Deepgram STT transcribes caller speech → Claude classifies intent into 8 categories → routes to appropriate branch',connections:'→ 8 branches: Scheduling, FAQ, CPAP, Sleep Study, Rx, Results, Billing, Emergency',settings:'language,confidence'},
+  'collect-sched': {icon:'📅',bg:'#FFF7ED',title:'Collect — Appointment',type:'COLLECT NODE',script:'I need to gather a few details. Could I get your name, date of birth, and insurance provider?',connections:'→ Book Appointment · 📱 SMS Fallback',settings:'dob,insurance,date'},
+  'collect-cpap': {icon:'🫁',bg:'#FFF7ED',title:'Collect — CPAP',type:'COLLECT NODE',script:'I can get that CPAP resupply started for you. Could I get your patient ID and the supplies you need?',connections:'→ CPAP Process action',settings:'patient-id,supplies'},
+  faq: {icon:'💬',bg:'#F5F3FF',title:'FAQ Answer',type:'ACTION NODE',script:'Let me check on that for you… [RAG lookup from Pinecone KB → natural language response]',connections:'→ Closing · ↩ Re-ask if unsatisfied',settings:'rag,kb'},
+  transfer: {icon:'📞',bg:'#FEF3C7',title:'Transfer',type:'ROUTE NODE',script:'Let me transfer you to our team who can help with that. One moment please.',connections:'→ Staff line (706) 549-1720',settings:'announce,number'},
+  emergency: {icon:'🚨',bg:'#FEF2F2',title:'Emergency',type:'URGENT NODE',script:'This sounds like a medical emergency. Please hang up and call 911 immediately. I\'ll stay on the line with you.',connections:'→ 911 instruction → Follow-up flag',settings:'immediate'},
+  book: {icon:'✅',bg:'#F5F3FF',title:'Book Appointment',type:'ACTION NODE',script:'I\'ve found availability for you. [EHR lookup → offer slots → confirm → send SMS confirmation]',connections:'→ Closing · Transfer if no slots',settings:'ehr,sms,waitlist'},
+  'kb-answer': {icon:'📚',bg:'#F5F3FF',title:'KB Answer',type:'ACTION NODE',script:'[Pinecone RAG query → top-3 relevant Q&As → generate natural language answer → ask if satisfied]',connections:'→ Closing · Escalate if not satisfied',settings:'rag,confidence'},
+  'cpap-process': {icon:'🫁',bg:'#F5F3FF',title:'CPAP Resupply',type:'ACTION NODE',script:'I\'ve submitted your CPAP resupply request. Our clinical team will process it within 1-2 business days.',connections:'→ Closing',settings:'notify,sms,timeline'},
+  closing: {icon:'👋',bg:'#F9FAFB',title:'Closing',type:'EXIT NODE',script:'Is there anything else I can help you with today? …Thank you for calling Athens Sleep and Wellness Center. Have a wonderful day!',connections:'→ END CALL',settings:'anything-else,goodbye'}
+};
+
+function selectNode(id) {
+  const data = nodeData[id];
+  if (!data) return;
+  document.getElementById('niEmpty').style.display = 'none';
+  document.getElementById('niContent').style.display = 'block';
+  document.getElementById('niBadge').textContent = data.icon;
+  document.getElementById('niBadge').style.background = data.bg;
+  document.getElementById('niTitle').textContent = data.title;
+  document.getElementById('niType').textContent = data.type;
+  document.getElementById('niScript').value = data.script;
+  document.getElementById('niConnections').textContent = data.connections;
+  document.querySelectorAll('.fnode').forEach(n => n.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+// Rule toggle expand/collapse
+function toggleRule(header) {
+  const body = header.nextElementSibling;
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+}
+
+// Scenario chat loading
+const scenarios = {
+  schedule: [
+    {role:'agent',text:'Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you?',meta:'Aria · 0.9s',intent:'Greeting'},
+    {role:'user',text:'I need to make an appointment with Dr. Agrawal'},
+    {role:'agent',text:'Of course! Are you a new patient, or have you been seen here before?',meta:'Aria · 1.1s',intent:'Scheduling',contained:true},
+    {role:'user',text:'New patient'},
+    {role:'agent',text:'Welcome! I\'d love to get you scheduled. Could I start with your name and date of birth?',meta:'Aria · 0.9s',intent:'Collect'},
+    {role:'user',text:'John Smith, born July 12, 1968'},
+    {role:'agent',text:'Thanks John! And do you have insurance we\'d be billing — like Blue Cross, Aetna, or Medicare?',meta:'Aria · 1.0s'},
+    {role:'user',text:'Aetna'},
+    {role:'agent',text:'Perfect, we do accept Aetna. Dr. Agrawal has openings this Thursday at 10 AM or Friday at 2 PM — any preference?',meta:'Aria · 1.4s',contained:true},
+    {role:'user',text:'Thursday at 10 please'},
+    {role:'agent',text:'You\'re all set, John! Thursday April 24th at 10:00 AM with Dr. Agrawal. A confirmation text is on its way. Is there anything else I can help you with?',meta:'Aria · 1.2s',contained:true}
+  ],
+  cpap: [
+    {role:'agent',text:'Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you?',meta:'Aria · 0.9s',intent:'Greeting'},
+    {role:'user',text:'I need to order new CPAP supplies — my mask is falling apart'},
+    {role:'agent',text:'I can absolutely help you with that CPAP resupply! Could I get your patient ID or date of birth to pull up your account?',meta:'Aria · 1.1s',intent:'CPAP',contained:true},
+    {role:'user',text:'My DOB is April 3rd, 1952'},
+    {role:'agent',text:'Got it! And what type of supplies do you need — is it the full face mask, nasal mask, filters, or tubing?',meta:'Aria · 1.0s'},
+    {role:'user',text:'Full face mask and filters, I have a ResMed AirSense 11'},
+    {role:'agent',text:'Perfect. I\'ve submitted your resupply request for a ResMed AirSense 11 full face mask and filters. Our clinical team will process this within 1-2 business days and contact you. Anything else?',meta:'Aria · 1.3s',contained:true}
+  ],
+  hours: [
+    {role:'agent',text:'Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you?',meta:'Aria · 0.9s',intent:'Greeting'},
+    {role:'user',text:'What are your hours and where are you located?'},
+    {role:'agent',text:'We\'re open Monday through Friday, 8 AM to 5 PM. We\'re located at 125 King Avenue, Suite 200, in Athens, Georgia — just off the bypass. Free parking is available in the lot. Would you like to schedule an appointment?',meta:'Aria · 0.8s',intent:'FAQ',contained:true}
+  ],
+  loop: [
+    {role:'agent',text:'Could I get your date of birth for our records?',meta:'Aria · 0.9s',intent:'Collect'},
+    {role:'user',text:'[mumbles — STT: 31%]',style:'warning'},
+    {role:'agent',text:'Could you tell me the month, day, and year you were born? Like March fifteenth, nineteen seventy.',meta:'Aria · 0.9s · Layer 1 Rephrase',badge:'L1 Rephrase'},
+    {role:'user',text:'[mumbles again — STT: 28%]',style:'warning'},
+    {role:'agent',text:'I want to make sure I get this right — I just sent you a quick text. Could you type your date of birth there? I\'ll wait right here on the line.',meta:'Aria · 1.0s · Layer 2 SMS',badge:'L2 SMS'},
+    {role:'user',text:'[types via SMS: "March 15, 1970"]',style:'sms'},
+    {role:'agent',text:'Perfect! I have your date of birth as March 15th, 1970. Let me pull up your account.',meta:'Aria · 0.8s · SMS Confirmed',badge:'✓ Resolved'}
+  ],
+  emergency: [
+    {role:'agent',text:'Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you?',meta:'Aria · 0.9s'},
+    {role:'user',text:'I have really bad chest pain and I can\'t breathe right'},
+    {role:'agent',text:'This sounds like a medical emergency. Please hang up right now and call 911 immediately, or have someone drive you to the nearest emergency room. Do not wait. Are you able to call 911?',meta:'Aria · 0.7s · EMERGENCY',badge:'🚨 Emergency',style:'emergency'}
+  ],
+  spanish: [
+    {role:'agent',text:'Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you?',meta:'Aria · 0.9s'},
+    {role:'user',text:'Hola, necesito hacer una cita con el doctor'},
+    {role:'agent',text:'¡Hola! Con gusto le ayudo a hacer una cita. ¿Es usted paciente nuevo o ya ha visitado nuestra clínica antes?',meta:'Aria · 2.1s · Language: Spanish detected',badge:'🌐 Spanish'}
+  ],
+  transfer: [
+    {role:'agent',text:'Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you?',meta:'Aria · 0.9s'},
+    {role:'user',text:'I want to speak to a real person, not a computer'},
+    {role:'agent',text:'Absolutely, I completely understand! Let me connect you with one of our team members right now. I\'m transferring you to our front desk at extension 201 — please hold for just a moment.',meta:'Aria · 1.2s · Transfer initiated',badge:'Transfer'}
+  ]
+};
+
+function loadScenario(key) {
+  const msgs = scenarios[key];
+  if (!msgs) return;
+  const container = document.getElementById('chatMessages');
+  container.innerHTML = '';
+  msgs.forEach(msg => {
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + (msg.role === 'agent' ? 'msg-agent' : 'msg-user');
+    let bubbleClass = msg.role === 'agent' ? 'bubble-agent' : 'bubble-user';
+    let extraStyle = '';
+    if (msg.style === 'warning') { bubbleClass = ''; extraStyle = 'background:var(--amber-light);border:1px solid #FDE68A;color:var(--amber-dark);border-radius:8px;'; }
+    if (msg.style === 'emergency') { bubbleClass = ''; extraStyle = 'background:var(--red-light);border:1px solid #FECACA;color:var(--red);border-radius:8px;font-weight:600;'; }
+    if (msg.style === 'sms') { bubbleClass = ''; extraStyle = 'background:var(--teal-light);border:1px solid #99F6E4;color:var(--teal);border-radius:8px;'; }
+    let badges = '';
+    if (msg.intent) badges += `<span class="msg-badge mb-intent">${msg.intent}</span>`;
+    if (msg.contained) badges += `<span class="msg-badge mb-contained">Contained ✓</span>`;
+    if (msg.badge) badges += `<span class="msg-badge" style="background:var(--blue-light);color:var(--blue);">${msg.badge}</span>`;
+    const metaAlign = msg.role === 'user' ? 'text-align:right;' : '';
+    div.innerHTML = `<div class="msg-bubble ${bubbleClass}" style="${extraStyle}">${msg.text}</div>${msg.meta ? `<div class="msg-meta" style="${metaAlign}">${msg.meta} ${badges}</div>` : ''}`;
+    container.appendChild(div);
+  });
+  container.scrollTop = container.scrollHeight;
+}
+
+function clearChat() {
+  document.getElementById('chatMessages').innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px;">Select a scenario below or type a message to start testing</div>';
+}
+
+function showTestDetail(n) {
+  const details = {
+    19: 'Test #19 — Complex billing dispute: Aria asked for account number twice (loop detected). Transferred correctly on 3rd ask. Issue: Rule 11 KB gap — insufficient billing script coverage. Fix: Add 6 billing Q&As to KB.',
+    20: 'Test #20 — Angry caller: Aria looped twice on "speak to a real person" before detecting hostile escalation. Should have transferred immediately on first anger signal. Fix: Add "angry caller" intent detection to prompt.',
+    4: 'Test #4 — Never-loop mumble test: Patient mumbled DOB. Aria rephrased correctly (Layer 1). Second attempt succeeded with 89% confidence. Zero voice repeats. PASS.',
+    5: 'Test #5 — SMS fallback: Twilio Lookup confirmed mobile number. SMS sent at 2.1s. Patient replied via text at 18.4s. Aria injected reply and confirmed. Excellent Layer 2 performance.',
+    9: 'Test #9 — Emergency: Patient said "chest pain can\'t breathe". Aria triggered emergency protocol in 0.7s. Instructed 911 call. Stayed on line. Correct — does not try to contain emergencies.'
+  };
+  const msg = details[n] || `Test #${n} — Full details: see audit log for complete transcript, STT confidence scores, intent classification trace, and response timing breakdown.`;
+  alert(msg);
+}
+
+function runAllTests() {
+  const btn = event.target;
+  btn.textContent = '⏳ Running 20 tests...';
+  btn.disabled = true;
+  let i = 0;
+  const rows = document.querySelectorAll('.trt-row');
+  const interval = setInterval(() => {
+    if (i < rows.length) {
+      rows[i].style.background = 'rgba(5,150,105,.05)';
+      i++;
+    } else {
+      clearInterval(interval);
+      btn.textContent = '✓ All 20 Tests Complete — 92% Pass Rate';
+      btn.style.background = 'var(--green2)';
+      setTimeout(() => {
+        btn.textContent = '▶ Run All 20 Tests';
+        btn.style.background = '';
+        btn.disabled = false;
+        rows.forEach(r => r.style.background = '');
+        document.getElementById('goLiveNotice').style.display = 'flex';
+      }, 3000);
+    }
+  }, 80);
+}
+</script>
+</body>
+</html>
