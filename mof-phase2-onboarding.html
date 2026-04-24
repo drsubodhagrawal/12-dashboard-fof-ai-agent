@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedFlow AI — Practice Onboarding Wizard</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1B6B4A;--green-dark:#14533A;--green-light:#E8F5EE;--green-mid:#2D8A61;
+  --amber:#D97706;--amber-light:#FEF3C7;
+  --blue:#1D4ED8;--blue-light:#EFF6FF;
+  --red:#DC2626;--red-light:#FEF2F2;
+  --purple:#7C3AED;--purple-light:#F5F3FF;
+  --gray:#6B7280;--gray-light:#F9FAFB;--gray-border:#E5E7EB;
+  --text:#111827;--text2:#374151;--text3:#6B7280;
+  --white:#FFFFFF;
+  --radius:10px;--radius-sm:6px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08);
+}
+html,body{height:100%;font-family:'Outfit',system-ui,sans-serif;background:#F3F4F6;color:var(--text);font-size:14px;}
+
+/* LAYOUT */
+.shell{display:grid;grid-template-rows:64px 1fr;height:100vh;overflow:hidden;}
+.topbar{background:var(--white);border-bottom:1px solid var(--gray-border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:50;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:34px;height:34px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:20px;height:20px;}
+.logo-name{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-0.3px;}
+.logo-tag{font-size:11px;color:var(--text3);font-weight:400;}
+.autosave{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green);font-weight:500;}
+.autosave-dot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.btn-exit{padding:7px 16px;border:1px solid var(--gray-border);border-radius:var(--radius-sm);background:var(--white);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;font-family:'Outfit',sans-serif;}
+
+.body{display:grid;grid-template-columns:260px 1fr;height:100%;overflow:hidden;}
+
+/* SIDEBAR STEPPER */
+.sidebar{background:var(--white);border-right:1px solid var(--gray-border);overflow-y:auto;padding:24px 0;}
+.sidebar-header{padding:0 20px 20px;border-bottom:1px solid var(--gray-border);margin-bottom:16px;}
+.sidebar-title{font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;}
+.progress-wrap{margin-top:10px;}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:5px;}
+.progress-track{height:5px;background:#E5E7EB;border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .4s ease;}
+
+.step-item{display:flex;align-items:flex-start;gap:12px;padding:10px 20px;cursor:pointer;transition:background .15s;border-left:3px solid transparent;}
+.step-item:hover{background:var(--gray-light);}
+.step-item.active{background:var(--green-light);border-left-color:var(--green);}
+.step-item.done{opacity:.75;}
+.step-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--gray-border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--text3);flex-shrink:0;background:var(--white);transition:all .2s;}
+.step-item.active .step-circle{background:var(--green);border-color:var(--green);color:var(--white);}
+.step-item.done .step-circle{background:var(--green-light);border-color:var(--green);color:var(--green);}
+.step-info{flex:1;}
+.step-name{font-size:13px;font-weight:600;color:var(--text2);}
+.step-item.active .step-name{color:var(--green);}
+.step-desc{font-size:11px;color:var(--text3);margin-top:1px;line-height:1.4;}
+.step-badge{display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;margin-top:3px;}
+.badge-done{background:var(--green-light);color:var(--green);}
+.badge-active{background:var(--amber-light);color:var(--amber);}
+.badge-locked{background:#F3F4F6;color:var(--text3);}
+
+/* MOF NOTIFICATION PANEL */
+.mof-notify{background:linear-gradient(135deg,#14533A,#1B6B4A);color:#fff;margin:16px 20px 0;border-radius:10px;padding:14px 16px;}
+.mof-notify-title{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;opacity:.75;margin-bottom:8px;}
+.mof-notify-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.mof-dot{width:6px;height:6px;border-radius:50%;background:#6EE7B7;flex-shrink:0;}
+.mof-notify-text{font-size:11px;opacity:.9;line-height:1.4;}
+
+/* MAIN CONTENT */
+.content{overflow-y:auto;background:#F3F4F6;}
+.page{display:none;}
+.page.active{display:block;}
+
+.page-wrap{max-width:820px;margin:0 auto;padding:28px 24px;}
+.page-head{margin-bottom:24px;}
+.page-head h1{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.4px;}
+.page-head p{font-size:14px;color:var(--text3);margin-top:4px;line-height:1.6;}
+.page-step-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;background:var(--green-light);color:var(--green);font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:10px;}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--gray-border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--gray-border);display:flex;align-items:center;gap:10px;}
+.card-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-icon.blue{background:var(--blue-light);color:var(--blue);}
+.card-icon.green{background:var(--green-light);color:var(--green);}
+.card-icon.purple{background:var(--purple-light);color:var(--purple);}
+.card-icon.amber{background:var(--amber-light);color:var(--amber);}
+.card-icon.red{background:var(--red-light);color:var(--red);}
+.card-icon svg{width:17px;height:17px;}
+.card-title{font-size:14px;font-weight:700;color:var(--text);}
+.card-subtitle{font-size:12px;color:var(--text3);margin-top:1px;}
+.card-body{padding:20px;}
+
+/* FORMS */
+.form-grid{display:grid;gap:14px;}
+.form-grid-2{grid-template-columns:1fr 1fr;}
+.form-grid-3{grid-template-columns:120px 1fr 1fr;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);}
+.req{color:var(--red);}
+.opt{font-weight:400;color:var(--text3);}
+.form-input{padding:9px 12px;border:1.5px solid var(--gray-border);border-radius:var(--radius-sm);font-size:13px;font-family:'Outfit',sans-serif;color:var(--text);background:var(--white);outline:none;transition:border .15s;}
+.form-input:focus{border-color:var(--green);}
+.form-input.filled{border-color:var(--green);background:#FAFFFE;}
+.form-hint{font-size:11px;color:var(--text3);line-height:1.4;}
+
+.input-row{display:flex;gap:8px;align-items:flex-start;}
+.input-row .form-input{flex:1;}
+.inline-btn{padding:9px 14px;border:1.5px solid var(--green);border-radius:var(--radius-sm);background:var(--white);color:var(--green);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.inline-btn:hover{background:var(--green);color:#fff;}
+.inline-btn.verified{background:var(--green-light);border-color:var(--green);color:var(--green);}
+.inline-btn svg{width:13px;height:13px;}
+
+.npi-result{display:none;align-items:center;gap:8px;padding:10px 14px;background:var(--green-light);border:1px solid #A7F3D0;border-radius:var(--radius-sm);margin-top:4px;}
+.npi-result.show{display:flex;}
+.npi-result svg{width:14px;height:14px;color:var(--green);flex-shrink:0;}
+.npi-result-text{font-size:12px;color:var(--green);font-weight:500;}
+
+.pw-strength{height:4px;border-radius:2px;margin-top:5px;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;}
+.pw-strength span{height:100%;border-radius:2px;background:#E5E7EB;transition:background .3s;}
+.pw-strength span.active{background:var(--green);}
+
+/* OTP BOX */
+.otp-row{display:flex;gap:8px;margin-top:6px;}
+.otp-input{width:44px;height:48px;text-align:center;font-size:20px;font-weight:700;border:2px solid var(--gray-border);border-radius:var(--radius-sm);outline:none;font-family:'Outfit',sans-serif;color:var(--text);transition:border .15s;}
+.otp-input:focus{border-color:var(--green);}
+.otp-input.filled{border-color:var(--green);background:var(--green-light);}
+
+/* PLAN CARDS */
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.plan-card{border:2px solid var(--gray-border);border-radius:12px;padding:20px;cursor:pointer;transition:all .2s;position:relative;}
+.plan-card:hover{border-color:#9CA3AF;box-shadow:var(--shadow-md);}
+.plan-card.selected{border-color:var(--green);box-shadow:0 0 0 1px var(--green);}
+.plan-card.popular::before{content:'Most Popular';position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:3px 12px;border-radius:10px;letter-spacing:.5px;white-space:nowrap;}
+.plan-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.plan-price{font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;}
+.plan-price span{font-size:13px;font-weight:400;color:var(--text3);}
+.plan-mins{font-size:12px;color:var(--text3);margin:4px 0 12px;}
+.plan-features{display:flex;flex-direction:column;gap:6px;}
+.plan-feat{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--text2);}
+.plan-feat svg{width:13px;height:13px;color:var(--green);flex-shrink:0;margin-top:1px;}
+.plan-toggle{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px;}
+.toggle-label{font-size:13px;font-weight:500;color:var(--text2);}
+.toggle-switch{width:40px;height:22px;border-radius:11px;background:#D1D5DB;cursor:pointer;position:relative;transition:background .2s;}
+.toggle-switch.on{background:var(--green);}
+.toggle-knob{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle-switch.on .toggle-knob{left:20px;}
+.save-badge{padding:2px 8px;border-radius:10px;background:var(--amber-light);color:var(--amber);font-size:10px;font-weight:700;}
+.calc-box{background:var(--gray-light);border:1px solid var(--gray-border);border-radius:var(--radius);padding:16px;margin-top:16px;}
+.calc-title{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;}
+.calc-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:5px;}
+.calc-total{display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--text);border-top:1px solid var(--gray-border);padding-top:8px;margin-top:5px;}
+.roi-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;background:var(--green-light);color:var(--green);font-size:11px;font-weight:600;margin-top:10px;}
+
+/* PAYMENT */
+.card-preview{background:linear-gradient(135deg,#1B6B4A,#2D8A61);border-radius:14px;padding:20px;color:#fff;margin-bottom:20px;}
+.card-preview-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.card-chip{width:32px;height:22px;background:rgba(255,255,255,.3);border-radius:4px;}
+.card-number{font-size:15px;font-weight:600;letter-spacing:2px;margin-bottom:12px;}
+.card-bottom{display:flex;justify-content:space-between;font-size:11px;opacity:.8;}
+.card-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.card-full{grid-column:1/-1;}
+
+/* LEGAL DOCS */
+.doc-tabs{display:flex;gap:0;border-bottom:2px solid var(--gray-border);margin-bottom:20px;}
+.doc-tab{padding:10px 18px;font-size:13px;font-weight:500;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.doc-tab:hover{color:var(--text2);}
+.doc-tab.active{color:var(--green);border-bottom-color:var(--green);}
+.doc-tab .check{width:14px;height:14px;border-radius:50%;background:var(--green);display:none;align-items:center;justify-content:center;}
+.doc-tab.signed .check{display:flex;}
+.doc-tab.signed svg{width:8px;height:8px;color:#fff;}
+.doc-content{background:var(--gray-light);border:1px solid var(--gray-border);border-radius:var(--radius);padding:16px;max-height:220px;overflow-y:auto;font-size:12px;line-height:1.7;color:var(--text2);margin-bottom:14px;}
+.doc-sign-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--green-light);border:1px solid #A7F3D0;border-radius:var(--radius-sm);}
+.sign-info{font-size:12px;color:var(--green);font-weight:500;}
+.sign-btn{padding:8px 20px;background:var(--green);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:background .15s;}
+.sign-btn:hover{background:var(--green-dark);}
+.sign-btn:disabled{background:#9CA3AF;cursor:not-allowed;}
+.signed-stamp{display:none;align-items:center;gap:8px;padding:8px 16px;background:var(--green-light);border:1px solid var(--green);border-radius:var(--radius-sm);}
+.signed-stamp.show{display:flex;}
+.legal-progress{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.legal-prog-item{padding:8px;border-radius:var(--radius-sm);text-align:center;border:1px solid var(--gray-border);}
+.legal-prog-item.done{background:var(--green-light);border-color:var(--green);}
+.legal-prog-num{font-size:10px;color:var(--text3);margin-bottom:2px;}
+.legal-prog-name{font-size:11px;font-weight:600;color:var(--text2);}
+.legal-prog-item.done .legal-prog-name{color:var(--green);}
+
+/* KB */
+.kb-qa-list{display:flex;flex-direction:column;gap:8px;}
+.kb-qa-item{background:var(--gray-light);border:1px solid var(--gray-border);border-radius:var(--radius-sm);overflow:hidden;}
+.kb-qa-q{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.kb-qa-q-text{font-size:13px;font-weight:500;color:var(--text2);}
+.kb-qa-badge{font-size:10px;padding:2px 8px;border-radius:10px;}
+.kb-qa-a{padding:10px 14px 14px;font-size:12px;color:var(--text3);border-top:1px solid var(--gray-border);line-height:1.6;}
+.import-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.import-opt{border:1.5px dashed var(--gray-border);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer;transition:all .15s;}
+.import-opt:hover{border-color:var(--green);background:var(--green-light);}
+.import-opt svg{width:22px;height:22px;color:var(--text3);margin-bottom:6px;}
+.import-opt:hover svg{color:var(--green);}
+.import-opt-name{font-size:12px;font-weight:600;color:var(--text2);}
+.import-opt-desc{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* PHONE */
+.phone-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.phone-type-card{border:2px solid var(--gray-border);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;text-align:center;}
+.phone-type-card:hover{border-color:#9CA3AF;}
+.phone-type-card.selected{border-color:var(--green);background:var(--green-light);}
+.phone-type-icon{font-size:24px;margin-bottom:8px;}
+.phone-type-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.phone-type-desc{font-size:11px;color:var(--text3);}
+.number-results{display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;}
+.number-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--white);border:1.5px solid var(--gray-border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;}
+.number-item:hover{border-color:var(--green);}
+.number-item.selected{border-color:var(--green);background:var(--green-light);}
+.number-text{font-size:14px;font-weight:600;color:var(--text);font-family:'Outfit',monospace;}
+.number-location{font-size:11px;color:var(--text3);}
+.caller-preview{background:linear-gradient(135deg,#1B6B4A,#2D8A61);border-radius:10px;padding:14px 16px;color:#fff;margin-top:12px;}
+.caller-preview-label{font-size:10px;opacity:.7;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;}
+.caller-preview-name{font-size:16px;font-weight:700;}
+.caller-preview-num{font-size:13px;opacity:.85;margin-top:2px;}
+
+/* REVIEW */
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.review-section{background:var(--white);border:1px solid var(--gray-border);border-radius:10px;padding:16px;}
+.review-section-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.edit-link{font-size:11px;color:var(--green);cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500;}
+.review-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--gray-border);font-size:12px;}
+.review-row:last-child{border:none;}
+.review-label{color:var(--text3);}
+.review-value{font-weight:600;color:var(--text2);text-align:right;}
+.checklist{display:flex;flex-direction:column;gap:8px;}
+.check-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--gray-border);}
+.check-item.ok{background:var(--green-light);border-color:#A7F3D0;}
+.check-item.warn{background:var(--amber-light);border-color:#FCD34D;}
+.check-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;}
+.check-item.ok .check-icon{background:var(--green);}
+.check-item.warn .check-icon{background:var(--amber);}
+.check-text{font-size:12px;font-weight:500;color:var(--text2);}
+
+/* SUCCESS */
+.success-hero{text-align:center;padding:30px 20px 20px;}
+.success-icon{width:64px;height:64px;border-radius:50%;background:var(--green-light);border:3px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.success-icon svg{width:30px;height:30px;color:var(--green);}
+.success-title{font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.5px;margin-bottom:6px;}
+.success-subtitle{font-size:14px;color:var(--text3);line-height:1.6;}
+.next-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px;}
+.next-step{background:var(--white);border:1px solid var(--gray-border);border-radius:10px;padding:16px;text-align:center;}
+.next-step-num{width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
+.next-step-title{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px;}
+.next-step-desc{font-size:11px;color:var(--text3);line-height:1.4;}
+.mof-alert-box{background:linear-gradient(135deg,#14533A,#1B6B4A);border-radius:10px;padding:14px 16px;color:#fff;margin-top:14px;display:flex;align-items:center;gap:12px;}
+.mof-alert-icon{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mof-alert-icon svg{width:18px;height:18px;}
+.mof-alert-text{font-size:12px;opacity:.9;line-height:1.5;}
+.mof-alert-bold{font-weight:700;font-size:13px;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:sticky;bottom:0;background:var(--white);border-top:1px solid var(--gray-border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;z-index:40;}
+.btn-back{padding:9px 20px;border:1.5px solid var(--gray-border);border-radius:var(--radius-sm);background:var(--white);font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
+.btn-back:hover{background:var(--gray-light);}
+.btn-next{padding:9px 28px;border:none;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:background .15s;display:flex;align-items:center;gap:6px;}
+.btn-next:hover{background:var(--green-dark);}
+.btn-next svg{width:14px;height:14px;}
+.btn-golive{padding:10px 32px;border:none;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;}
+.btn-golive:hover{background:var(--green-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(27,107,74,.3);}
+.step-indicator{font-size:12px;color:var(--text3);}
+
+/* NOTICE BOX */
+.notice{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--radius-sm);margin-bottom:16px;}
+.notice.blue{background:var(--blue-light);border:1px solid #BFDBFE;}
+.notice.amber{background:var(--amber-light);border:1px solid #FCD34D;}
+.notice.green{background:var(--green-light);border:1px solid #A7F3D0;}
+.notice svg{width:14px;height:14px;flex-shrink:0;margin-top:1px;}
+.notice.blue svg{color:var(--blue);}
+.notice.amber svg{color:var(--amber);}
+.notice.green svg{color:var(--green);}
+.notice-text{font-size:12px;line-height:1.5;color:var(--text2);}
+.notice-text strong{font-weight:600;}
+
+@media(max-width:700px){
+  .body{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .plan-grid,.phone-type-grid,.next-steps,.review-grid{grid-template-columns:1fr;}
+  .form-grid-2,.form-grid-3,.card-fields{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L17 6V14L10 18L3 14V6L10 2Z" fill="white" opacity=".9"/><circle cx="10" cy="10" r="2.5" fill="white"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">MedFlow AI</div>
+      <div class="logo-tag">Medical Office Force · Practice Onboarding</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="autosave"><div class="autosave-dot"></div> Auto-saved</div>
+    <button class="btn-exit">Save & Exit</button>
+  </div>
+</div>
+
+<div class="body">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">Setup Progress</div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span id="progressText">Step 1 of 9</span><span id="progressPct">11%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressBar" style="width:11%"></div></div>
+    </div>
+  </div>
+
+  <div id="stepList"></div>
+
+  <div class="mof-notify" id="mofNotify">
+    <div class="mof-notify-title">MOF Admin Activity</div>
+    <div class="mof-notify-item"><div class="mof-dot"></div><div class="mof-notify-text" id="mofMsg">Awaiting your practice registration...</div></div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content" id="mainContent">
+
+<!-- ═══ STEP 1: WELCOME ═══ -->
+<div class="page active" id="page-1">
+<div class="page-wrap">
+  <div class="page-head">
+    <div class="page-step-tag">Step 1 of 9 · Welcome</div>
+    <h1>The Smartest Front Desk You'll Ever Hire</h1>
+    <p>MedFlow AI answers every call, books appointments, handles refills, and never calls in sick. Setup takes under 10 minutes.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+    <div class="card" style="margin:0;text-align:center;padding:20px 16px;">
+      <div style="font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;">87%</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px;font-weight:500;">Call containment rate</div>
+    </div>
+    <div class="card" style="margin:0;text-align:center;padding:20px 16px;">
+      <div style="font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;">24/7</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px;font-weight:500;">Always answering</div>
+    </div>
+    <div class="card" style="margin:0;text-align:center;padding:20px 16px;">
+      <div style="font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;">&lt;3s</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px;font-weight:500;">Average response time</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <div><div class="card-title">What you'll set up in the next 8 steps</div><div class="card-subtitle">All auto-saved · Resume anytime</div></div>
+    </div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;border:1px solid var(--gray-border);"><span style="font-size:14px;">🏥</span><div><div style="font-size:12px;font-weight:600;color:var(--text2);">Practice Profile</div><div style="font-size:10px;color:var(--text3);">NPI auto-fill</div></div></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;border:1px solid var(--gray-border);"><span style="font-size:14px;">💳</span><div><div style="font-size:12px;font-weight:600;color:var(--text2);">Plan & Payment</div><div style="font-size:10px;color:var(--text3);">Starting at $30/mo</div></div></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;border:1px solid var(--gray-border);"><span style="font-size:14px;">🛡️</span><div><div style="font-size:12px;font-weight:600;color:var(--text2);">HIPAA BAA</div><div style="font-size:10px;color:var(--text3);">E-signature, 30 sec</div></div></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;border:1px solid var(--gray-border);"><span style="font-size:14px;">🧠</span><div><div style="font-size:12px;font-weight:600;color:var(--text2);">Knowledge Base</div><div style="font-size:10px;color:var(--text3);">AI-suggested Q&As</div></div></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;border:1px solid var(--gray-border);"><span style="font-size:14px;">📞</span><div><div style="font-size:12px;font-weight:600;color:var(--text2);">AI Phone Number</div><div style="font-size:10px;color:var(--text3);">Local, toll-free, vanity</div></div></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;border:1px solid var(--gray-border);"><span style="font-size:14px;">🚀</span><div><div style="font-size:12px;font-weight:600;color:var(--text2);">Go Live</div><div style="font-size:10px;color:var(--text3);">1-click activation</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice green">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <div class="notice-text"><strong>Free 30-day trial.</strong> No charge until Day 31. Cancel anytime. Your dedicated Customer Success Admin will reach out within 2 hours of setup.</div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ STEP 2: PRACTICE SETUP ═══ -->
+<div class="page" id="page-2">
+<div class="page-wrap">
+  <div class="page-head">
+    <div class="page-step-tag">Step 2 of 9 · Practice Setup</div>
+    <h1>Create Your Account</h1>
+    <p>Enter your NPI to auto-fill most fields. You'll be the practice admin for this account.</p>
+  </div>
+
+  <!-- Account Credentials -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <div><div class="card-title">Account Credentials</div><div class="card-subtitle">Your login for the MedFlow AI dashboard</div></div>
+    </div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Email Address <span class="req">*</span> <span class="opt">(your username)</span></label>
+          <div class="input-row">
+            <input type="email" class="form-input filled" id="emailInput" value="subodh@athenssleepcenter.com">
+            <button class="inline-btn verified" id="verifyBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Verified
+            </button>
+          </div>
+          <div class="form-hint">We sent a 6-digit code to confirm your email</div>
+        </div>
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Password <span class="req">*</span></label>
+            <input type="password" class="form-input filled" value="••••••••••">
+            <div class="pw-strength"><span class="active"></span><span class="active"></span><span class="active"></span><span class="active"></span></div>
+            <div class="form-hint" style="color:var(--green);font-weight:500;">Strong password</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password <span class="req">*</span></label>
+            <input type="password" class="form-input filled" value="••••••••••">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Recovery Phone <span class="req">*</span></label>
+          <div class="input-row">
+            <select class="form-input" style="max-width:120px;"><option>🇺🇸 +1</option></select>
+            <input type="tel" class="form-input filled" value="(706) 555-0142">
+            <button class="inline-btn verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Verified</button>
+          </div>
+          <div class="form-hint">Used for 2FA, password recovery, and urgent alerts</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Practice Information -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M9 8h6M9 12h6M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg></div>
+      <div><div class="card-title">Practice Information</div><div class="card-subtitle">Enter your NPI to auto-fill practice details</div></div>
+    </div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">NPI Number <span class="opt">(auto-fills fields below)</span></label>
+          <div class="input-row">
+            <input type="text" class="form-input filled" id="npiInput" value="1689977761" maxlength="10">
+            <button class="inline-btn verified" onclick="lookupNPI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Look Up</button>
+          </div>
+        </div>
+        <div class="npi-result show" id="npiResult">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+          <div class="npi-result-text">NPI verified · Athens Sleep and Wellness Center · Dr. Subodh Agrawal MD · Athens, GA 30606</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Practice Name <span class="req">*</span></label>
+          <input type="text" class="form-input filled" value="Athens Sleep and Wellness Center">
+        </div>
+        <div class="form-grid form-grid-3">
+          <div class="form-group">
+            <label class="form-label">Prefix</label>
+            <select class="form-input filled"><option>Dr.</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">First Name <span class="req">*</span></label>
+            <input type="text" class="form-input filled" value="Subodh">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name <span class="req">*</span></label>
+            <input type="text" class="form-input filled" value="Agrawal">
+          </div>
+        </div>
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Specialty <span class="req">*</span></label>
+            <select class="form-input filled"><option>Sleep Medicine</option><option>Internal Medicine</option><option>Neurology</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Practice Phone <span class="req">*</span></label>
+            <input type="tel" class="form-input filled" value="(706) 549-1720">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Practice Address <span class="req">*</span></label>
+          <input type="text" class="form-input filled" value="125 King Ave, Suite 200, Athens, GA 30606">
+        </div>
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Practice Size</label>
+            <select class="form-input filled"><option>Solo (1 provider)</option><option>Small Group (2-5)</option><option>Large Group (6-20)</option><option>Enterprise (20+)</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">EHR System</label>
+            <select class="form-input"><option>-- Select EHR --</option><option>Epic</option><option>Athenahealth</option><option>eClinicalWorks</option><option>Kareo</option><option>None / Paper</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice blue">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <div class="notice-text"><strong>MOF Admin Notified:</strong> The moment you verify your email, a Customer Success Admin is assigned to your account and begins monitoring your setup progress.</div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ STEP 3: PLAN SELECTION ═══ -->
+<div class="page" id="page-3">
+<div class="page-wrap">
+  <div class="page-head">
+    <div class="page-step-tag">Step 3 of 9 · Plan Selection</div>
+    <h1>Choose Your Plan</h1>
+    <p>All plans include a 30-day free trial. Upgrade or downgrade anytime.</p>
+  </div>
+
+  <div class="plan-toggle">
+    <span class="toggle-label">Monthly</span>
+    <div class="toggle-switch" id="billingToggle" onclick="toggleBilling()"><div class="toggle-knob"></div></div>
+    <span class="toggle-label">Annual</span>
+    <span class="save-badge">Save 20%</span>
+  </div>
+
+  <div class="plan-grid">
+    <div class="plan-card" onclick="selectPlan(this,'lite')" id="plan-lite">
+      <div class="plan-name">Lite</div>
+      <div class="plan-price">$30<span>/mo</span></div>
+      <div class="plan-mins">Includes 200 min/mo · $0.50/min overage</div>
+      <div class="plan-features">
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>AI voice receptionist 24/7</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Call transcripts (email)</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Basic knowledge base</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>English only</div>
+        <div class="plan-feat" style="color:var(--text3);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>No EHR integration</div>
+        <div class="plan-feat" style="color:var(--text3);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>No outbound campaigns</div>
+      </div>
+    </div>
+
+    <div class="plan-card popular" onclick="selectPlan(this,'pro')" id="plan-pro" style="border-color:var(--green);box-shadow:0 0 0 1px var(--green);">
+      <div class="plan-name">Professional</div>
+      <div class="plan-price">$79<span>/mo</span></div>
+      <div class="plan-mins">Includes 500 min/mo · $0.50/min overage</div>
+      <div class="plan-features">
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Everything in Lite</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Multi-language (6 languages)</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>EHR integration (FHIR R4)</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>SMS fallback (mid-call)</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Priority support</div>
+        <div class="plan-feat" style="color:var(--text3);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>No outbound campaigns</div>
+      </div>
+    </div>
+
+    <div class="plan-card" onclick="selectPlan(this,'enterprise')" id="plan-enterprise">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price">$149<span>/mo</span></div>
+      <div class="plan-mins">Includes 1,500 min/mo · $0.40/min overage</div>
+      <div class="plan-features">
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Everything in Professional</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Outbound AI call campaigns</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Multi-location management</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Custom prompt engineering</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Dedicated account manager</div>
+        <div class="plan-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>White-label option</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <div class="calc-title">ROI Calculator — Athens Sleep and Wellness Center</div>
+    <div class="calc-row"><span>Front desk staff cost (1 FTE at $18/hr)</span><span>$2,880/mo</span></div>
+    <div class="calc-row"><span>MedFlow AI Professional plan</span><span>$79/mo</span></div>
+    <div class="calc-row"><span>Estimated overage (0 min)</span><span>$0</span></div>
+    <div class="calc-total"><span>Monthly Savings</span><span style="color:var(--green);">$2,801/mo</span></div>
+    <div class="roi-chip">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      3,447% annual ROI at Professional plan
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ STEP 4: PAYMENT ═══ -->
+<div class="page" id="page-4">
+<div class="page-wrap">
+  <div class="page-head">
+    <div class="page-step-tag">Step 4 of 9 · Payment</div>
+    <h1>Payment Information</h1>
+    <p>Secured by Stripe. Your card won't be charged until Day 31 of your free trial.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg></div>
+      <div><div class="card-title">Credit / Debit Card</div><div class="card-subtitle">Visa, Mastercard, Amex, Discover accepted</div></div>
+    </div>
+    <div class="card-body">
+      <div class="card-preview">
+        <div class="card-preview-top">
+          <div class="card-chip"></div>
+          <div style="font-size:11px;opacity:.75;font-weight:600;letter-spacing:.5px;">MEDFLOW AI</div>
+        </div>
+        <div class="card-number">•••• •••• •••• 6411</div>
+        <div class="card-bottom">
+          <div><div style="opacity:.6;margin-bottom:2px;">Cardholder</div><div style="font-weight:600;">Subodh Agrawal</div></div>
+          <div><div style="opacity:.6;margin-bottom:2px;">Expires</div><div style="font-weight:600;">09/28</div></div>
+          <div style="font-size:20px;font-weight:800;letter-spacing:2px;">VISA</div>
+        </div>
+      </div>
+      <div class="form-grid card-fields">
+        <div class="form-group card-full">
+          <label class="form-label">Cardholder Name <span class="req">*</span></label>
+          <input type="text" class="form-input filled" value="Subodh Agrawal">
+        </div>
+        <div class="form-group card-full">
+          <label class="form-label">Card Number <span class="req">*</span></label>
+          <input type="text" class="form-input filled" value="•••• •••• •••• 6411" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Expiry Date <span class="req">*</span></label>
+          <input type="text" class="form-input filled" value="09 / 28">
+        </div>
+        <div class="form-group">
+          <label class="form-label">CVV <span class="req">*</span></label>
+          <input type="password" class="form-input filled" value="•••">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ZIP Code <span class="req">*</span></label>
+          <input type="text" class="form-input filled" value="30606">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg></div>
+      <div><div class="card-title">Invoice Preview — First Bill (Day 31)</div><div class="card-subtitle">INV-2026-001 · Athens Sleep and Wellness Center</div></div>
+    </div>
+    <div class="card-body">
+      <div style="border:1px solid var(--gray-border);border-radius:var(--radius);overflow:hidden;">
+        <div style="background:var(--gray-light);padding:10px 16px;font-size:11px;font-weight:600;color:var(--text3);display:grid;grid-template-columns:1fr auto;">
+          <span>Description</span><span>Amount</span>
+        </div>
+        <div style="padding:10px 16px;font-size:12px;display:grid;grid-template-columns:1fr auto;border-top:1px solid var(--gray-border);">
+          <span>Professional Plan (May 18 – Jun 17, 2026)</span><span style="font-weight:600;">$79.00</span>
+        </div>
+        <div style="padding:10px 16px;font-size:12px;display:grid;grid-template-columns:1fr auto;border-top:1px solid var(--gray-border);">
+          <span>Usage: 0 min @ included (500 min/mo)</span><span style="font-weight:600;color:var(--green);">$0.00</span>
+        </div>
+        <div style="padding:10px 16px;font-size:12px;display:grid;grid-template-columns:1fr auto;border-top:1px solid var(--gray-border);background:var(--gray-light);">
+          <span style="font-weight:700;">Total Due (after 30-day trial)</span><span style="font-weight:700;font-size:14px;color:var(--green);">$79.00</span>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--text3);">Auto-charged to Visa •••• 6411 on Jun 17, 2026. Cancel before then for no charge.</div>
+    </div>
+  </div>
+
+  <div class="notice green">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <div class="notice-text"><strong>Secured by Stripe.</strong> PCI-DSS Level 1 compliant. MOF never stores your full card number. Auto-deduction runs on your billing anniversary each month.</div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ STEP 5: LEGAL / HIPAA ═══ -->
+<div class="page" id="page-5">
+<div class="page-wrap">
+  <div class="page-head">
+    <div class="page-step-tag">Step 5 of 9 · Legal & HIPAA</div>
+    <h1>Review & Sign Legal Documents</h1>
+    <p>Four documents required. All stored securely in your dashboard and MOF's compliance vault.</p>
+  </div>
+
+  <div class="legal-progress">
+    <div class="legal-prog-item done" id="lp-1"><div class="legal-prog-num">1 of 4</div><div class="legal-prog-name">BAA ✓</div></div>
+    <div class="legal-prog-item done" id="lp-2"><div class="legal-prog-num">2 of 4</div><div class="legal-prog-name">Terms ✓</div></div>
+    <div class="legal-prog-item" id="lp-3"><div class="legal-prog-num">3 of 4</div><div class="legal-prog-name">Privacy</div></div>
+    <div class="legal-prog-item" id="lp-4"><div class="legal-prog-num">4 of 4</div><div class="legal-prog-name">SLA</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div><div class="card-title">Legal Documents</div><div class="card-subtitle">Read each document, then sign. All 4 required to continue.</div></div>
+    </div>
+    <div class="card-body">
+      <div class="doc-tabs">
+        <div class="doc-tab signed active" id="tab-baa" onclick="switchDoc('baa')"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>HIPAA BAA</div>
+        <div class="doc-tab signed" id="tab-tos" onclick="switchDoc('tos')"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>Terms of Service</div>
+        <div class="doc-tab" id="tab-priv" onclick="switchDoc('priv')">Privacy Policy</div>
+        <div class="doc-tab" id="tab-sla" onclick="switchDoc('sla')">SLA Agreement</div>
+      </div>
+
+      <div class="doc-content" id="docContent">
+        <strong>BUSINESS ASSOCIATE AGREEMENT (BAA)</strong><br><br>
+        This Business Associate Agreement ("Agreement") is entered into between Medical Office Force LLC ("Covered Entity / Business Associate") and Athens Sleep and Wellness Center ("Practice") as of April 18, 2026.<br><br>
+        <strong>1. DEFINITIONS.</strong> "Protected Health Information" or "PHI" has the meaning given to such term in 45 C.F.R. § 160.103, limited to the information created, received, maintained, or transmitted by Business Associate on behalf of Covered Entity.<br><br>
+        <strong>2. OBLIGATIONS OF BUSINESS ASSOCIATE.</strong> Business Associate agrees to: (a) not use or disclose PHI other than as permitted or required by this Agreement or as required by law; (b) use appropriate safeguards, and comply with Subpart C of 45 CFR Part 164 with respect to electronic PHI, to prevent use or disclosure of PHI other than as provided for by this Agreement; (c) report to Covered Entity any use or disclosure of PHI not provided for by this Agreement including breaches of unsecured PHI as required at 45 CFR 164.410;<br><br>
+        <strong>3. PERMITTED USES AND DISCLOSURES.</strong> Business Associate may use or disclose PHI as necessary to perform the Services set forth in the Underlying Agreement, provided that such use or disclosure would not violate the Privacy Rule if done by Covered Entity...<br><br>
+        <strong>4. TERM AND TERMINATION.</strong> This Agreement shall be effective as of the Effective Date and shall terminate when all of the PHI provided by, or created or received by Business Associate on behalf of, Covered Entity is destroyed or returned to Covered Entity...<br><br>
+        <em>✓ Signed electronically by Dr. Subodh Agrawal on April 18, 2026 at 10:42 AM EDT · IP: 72.45.xxx.xxx</em>
+      </div>
+
+      <div class="signed-stamp show" id="stampBaa">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        <span style="font-size:12px;color:var(--green);font-weight:600;">Signed by Dr. Subodh Agrawal · April 18, 2026 10:42 AM EDT</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:auto;">Copy stored in MOF vault + your dashboard</span>
+      </div>
+
+      <div class="doc-sign-row" id="signRow" style="display:none;">
+        <div class="sign-info">By clicking "I Accept", you are signing electronically as Dr. Subodh Agrawal</div>
+        <button class="sign-btn" onclick="signDoc()">I Accept & Sign</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice amber">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+    <div class="notice-text"><strong>MOF countersigns all BAAs within 2 hours.</strong> The signed BAA is stored encrypted in MOF's compliance vault and accessible from your Practice Admin dashboard anytime.</div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ STEP 6: KNOWLEDGE BASE ═══ -->
+<div class="page" id="page-6">
+<div class="page-wrap">
+  <div class="page-head">
+    <div class="page-step-tag">Step 6 of 9 · Knowledge Base</div>
+    <h1>Train Your AI Agent</h1>
+    <p>Upload your FAQ, office hours, provider list, and insurance info. The AI learns instantly.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+      <div><div class="card-title">Import Methods</div><div class="card-subtitle">Choose how to add your practice information</div></div>
+    </div>
+    <div class="card-body">
+      <div class="import-options">
+        <div class="import-opt" onclick="this.style.borderColor='var(--green)';this.style.background='var(--green-light)';">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="import-opt-name">Upload PDF/DOCX</div>
+          <div class="import-opt-desc">Patient handbook, FAQ doc</div>
+        </div>
+        <div class="import-opt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <div class="import-opt-name">Import Website</div>
+          <div class="import-opt-desc">Scrape your practice site</div>
+        </div>
+        <div class="import-opt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <div class="import-opt-name">Manual Q&A Entry</div>
+          <div class="import-opt-desc">Type questions & answers</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);">Knowledge Base — Athens Sleep and Wellness Center</div>
+        <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--green-light);color:var(--green);font-weight:600;">12 Q&As</span>
+      </div>
+
+      <div class="kb-qa-list">
+        <div class="kb-qa-item">
+          <div class="kb-qa-q"><span class="kb-qa-q-text">What are your office hours?</span><span class="kb-qa-badge" style="background:var(--green-light);color:var(--green);font-size:10px;padding:2px 8px;border-radius:10px;">Auto-generated ✓</span></div>
+          <div class="kb-qa-a">Monday–Friday 8:00 AM – 5:00 PM. We are closed on weekends and major holidays. After-hours calls are handled by our AI agent which can schedule appointments and take messages.</div>
+        </div>
+        <div class="kb-qa-item">
+          <div class="kb-qa-q"><span class="kb-qa-q-text">Do you accept new patients?</span><span class="kb-qa-badge" style="background:var(--green-light);color:var(--green);font-size:10px;padding:2px 8px;border-radius:10px;">Auto-generated ✓</span></div>
+          <div class="kb-qa-a">Yes, Athens Sleep and Wellness Center is currently accepting new patients. Dr. Subodh Agrawal specializes in sleep disorders including sleep apnea, insomnia, and restless legs syndrome.</div>
+        </div>
+        <div class="kb-qa-item">
+          <div class="kb-qa-q"><span class="kb-qa-q-text">What insurances do you accept?</span><span class="kb-qa-badge" style="background:var(--blue-light);color:var(--blue);font-size:10px;padding:2px 8px;border-radius:10px;">From your upload</span></div>
+          <div class="kb-qa-a">We accept most major insurances including Aetna, Blue Cross Blue Shield, Cigna, United Healthcare, Medicare, and Medicaid. Please call to verify your specific plan.</div>
+        </div>
+        <div class="kb-qa-item">
+          <div class="kb-qa-q"><span class="kb-qa-q-text">How do I get my CPAP resupply?</span><span class="kb-qa-badge" style="background:var(--green-light);color:var(--green);font-size:10px;padding:2px 8px;border-radius:10px;">Auto-generated ✓</span></div>
+          <div class="kb-qa-a">CPAP resupply requests can be submitted by calling this number. Our AI will collect your information and send a message to our clinical team for processing within 1-2 business days.</div>
+        </div>
+        <div class="kb-qa-item">
+          <div class="kb-qa-q"><span class="kb-qa-q-text">How do I schedule a sleep study?</span><span class="kb-qa-badge" style="background:var(--green-light);color:var(--green);font-size:10px;padding:2px 8px;border-radius:10px;">Auto-generated ✓</span></div>
+          <div class="kb-qa-a">Sleep studies require a referral from your primary care physician. Once we receive the referral, we'll contact you to schedule your in-lab or home sleep test. Our AI can collect your availability.</div>
+        </div>
+      </div>
+      <button style="margin-top:10px;width:100%;padding:9px;border:1.5px dashed var(--green);border-radius:var(--radius-sm);background:transparent;color:var(--green);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;">+ Add Q&A Manually</button>
+    </div>
+  </div>
+
+  <div class="notice blue">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <div class="notice-text"><strong>AI auto-suggested 8 of your 12 Q&As</strong> based on your specialty (Sleep Medicine) and NPI data. Your Technical Admin will review the KB before your agent goes live.</div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ STEP 7: PHONE NUMBER ═══ -->
+<div class="page" id="page-7">
+<div class="page-wrap">
+  <div class="page-head">
+    <div class="page-step-tag">Step 7 of 9 · Phone Number</div>
+    <h1>Choose Your AI Phone Number</h1>
+    <p>This is the number patients will call to reach your AI receptionist, Aria.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.48 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+      <div><div class="card-title">Number Type</div><div class="card-subtitle">Powered by Twilio · Landline detection included</div></div>
+    </div>
+    <div class="card-body">
+      <div class="phone-type-grid">
+        <div class="phone-type-card" onclick="selectPhoneType(this,'local')">
+          <div class="phone-type-icon">📍</div>
+          <div class="phone-type-name">Local Number</div>
+          <div class="phone-type-desc">Athens (706) area code<br>Familiar to your patients</div>
+        </div>
+        <div class="phone-type-card selected" id="phonetype-tollfree" onclick="selectPhoneType(this,'tollfree')">
+          <div class="phone-type-icon">📞</div>
+          <div class="phone-type-name">Toll-Free</div>
+          <div class="phone-type-desc">1-800 / 1-877 prefix<br>Professional, no long distance</div>
+        </div>
+        <div class="phone-type-card" onclick="selectPhoneType(this,'vanity')">
+          <div class="phone-type-icon">✨</div>
+          <div class="phone-type-name">Vanity Number</div>
+          <div class="phone-type-desc">Custom memorable number<br>e.g. 1-877-MY-SLEEP</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;">Available Toll-Free Numbers</div>
+      <div class="number-results">
+        <div class="number-item selected" onclick="selectNum(this)">
+          <div><div class="number-text">+1 (877) 581-2599</div><div class="number-location">Toll-free · Currently your demo number</div></div>
+          <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--green-light);color:var(--green);font-weight:600;">Selected</span>
+        </div>
+        <div class="number-item" onclick="selectNum(this)">
+          <div><div class="number-text">+1 (800) 442-7566</div><div class="number-location">Toll-free · Available</div></div>
+          <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--gray-light);color:var(--gray);font-weight:500;">Select</span>
+        </div>
+        <div class="number-item" onclick="selectNum(this)">
+          <div><div class="number-text">+1 (877) 663-5433</div><div class="number-location">Toll-free · 1-877-SLEEP-DD</div></div>
+          <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--gray-light);color:var(--gray);font-weight:500;">Select</span>
+        </div>
+        <div class="number-item" onclick="selectNum(this)">
+          <div><div class="number-text">+1 (888) 753-3377</div><div class="number-location">Toll-free · Available</div></div>
+          <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--gray-light);color:var(--gray);font-weight:500;">Select</span>
+        </div>
+      </div>
+
+      <div class="caller-preview">
+        <div class="caller-preview-label">Caller ID Preview — What patients see when AI calls them</div>
+        <div class="caller-preview-name">Athens Sleep and Wellness Center</div>
+        <div class="caller-preview-num">+1 (877) 581-2599</div>
+      </div>
+
+      <div style="margin-top:14px;padding:12px;background:var(--gray-light);border-radius:var(--radius-sm);border:1px solid var(--gray-border);">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;">Call Forwarding Rules</div>
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label">During Office Hours</label>
+            <select class="form-input"><option>AI Agent answers</option><option>Forward to front desk first, AI if no answer</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">After Hours</label>
+            <select class="form-input"><option>AI Agent answers 24/7</option><option>Voicemail</option><option>Answering service</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ STEP 8: REVIEW & GO-LIVE ═══ -->
+<div class="page" id="page-8">
+<div class="page-wrap">
+  <div class="page-head">
+    <div class="page-step-tag">Step 8 of 9 · Review & Go-Live Checklist</div>
+    <h1>Almost There — Final Review</h1>
+    <p>Verify everything looks right before activating your AI agent.</p>
+  </div>
+
+  <div class="review-grid">
+    <div class="review-section">
+      <div class="review-section-title">Practice Profile <span class="edit-link" onclick="goToStep(2)">Edit</span></div>
+      <div class="review-row"><span class="review-label">Practice</span><span class="review-value">Athens Sleep and Wellness Center</span></div>
+      <div class="review-row"><span class="review-label">Provider</span><span class="review-value">Dr. Subodh Agrawal</span></div>
+      <div class="review-row"><span class="review-label">NPI</span><span class="review-value">1689977761</span></div>
+      <div class="review-row"><span class="review-label">Specialty</span><span class="review-value">Sleep Medicine</span></div>
+      <div class="review-row"><span class="review-label">Address</span><span class="review-value">125 King Ave, Athens GA</span></div>
+    </div>
+    <div class="review-section">
+      <div class="review-section-title">Plan & Billing <span class="edit-link" onclick="goToStep(3)">Edit</span></div>
+      <div class="review-row"><span class="review-label">Plan</span><span class="review-value" style="color:var(--green);">Professional · $79/mo</span></div>
+      <div class="review-row"><span class="review-label">Included minutes</span><span class="review-value">500 min/mo</span></div>
+      <div class="review-row"><span class="review-label">Overage rate</span><span class="review-value">$0.50/min</span></div>
+      <div class="review-row"><span class="review-label">Card on file</span><span class="review-value">Visa •••• 6411</span></div>
+      <div class="review-row"><span class="review-label">Trial ends</span><span class="review-value">May 18, 2026</span></div>
+    </div>
+    <div class="review-section">
+      <div class="review-section-title">Legal Docs <span class="edit-link" onclick="goToStep(5)">Edit</span></div>
+      <div class="review-row"><span class="review-label">HIPAA BAA</span><span class="review-value" style="color:var(--green);">Signed ✓</span></div>
+      <div class="review-row"><span class="review-label">Terms of Service</span><span class="review-value" style="color:var(--green);">Signed ✓</span></div>
+      <div class="review-row"><span class="review-label">Privacy Policy</span><span class="review-value" style="color:var(--green);">Signed ✓</span></div>
+      <div class="review-row"><span class="review-label">SLA Agreement</span><span class="review-value" style="color:var(--green);">Signed ✓</span></div>
+    </div>
+    <div class="review-section">
+      <div class="review-section-title">AI Phone Number <span class="edit-link" onclick="goToStep(7)">Edit</span></div>
+      <div class="review-row"><span class="review-label">AI number</span><span class="review-value">+1 (877) 581-2599</span></div>
+      <div class="review-row"><span class="review-label">Type</span><span class="review-value">Toll-Free</span></div>
+      <div class="review-row"><span class="review-label">Caller ID</span><span class="review-value">Athens Sleep & Wellness</span></div>
+      <div class="review-row"><span class="review-label">After hours</span><span class="review-value">AI answers 24/7</span></div>
+      <div class="review-row"><span class="review-label">Languages</span><span class="review-value">English, Spanish</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <div class="card-head">
+      <div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+      <div><div class="card-title">Pre-Launch Checklist</div><div class="card-subtitle">All items must pass before go-live</div></div>
+    </div>
+    <div class="card-body">
+      <div class="checklist">
+        <div class="check-item ok"><div class="check-icon" style="background:var(--green);"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="check-text">Practice profile complete (NPI verified)</div></div>
+        <div class="check-item ok"><div class="check-icon" style="background:var(--green);"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="check-text">Payment method on file (Visa •••• 6411)</div></div>
+        <div class="check-item ok"><div class="check-icon" style="background:var(--green);"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="check-text">All 4 legal documents signed</div></div>
+        <div class="check-item ok"><div class="check-icon" style="background:var(--green);"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="check-text">Knowledge base trained (12 Q&As)</div></div>
+        <div class="check-item ok"><div class="check-icon" style="background:var(--green);"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="check-text">AI phone number provisioned (+1 877-581-2599)</div></div>
+        <div class="check-item warn"><div class="check-icon" style="background:var(--amber);"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/></svg></div><div class="check-text" style="color:var(--amber);">EHR integration pending — optional, can connect after go-live</div></div>
+        <div class="check-item ok"><div class="check-icon" style="background:var(--green);"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="check-text">MOF Technical Admin sandbox test passed (92% pass rate)</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ STEP 9: SUCCESS ═══ -->
+<div class="page" id="page-9">
+<div class="page-wrap">
+  <div class="success-hero">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <div class="success-title">Aria is Live! 🎉</div>
+    <div class="success-subtitle">Athens Sleep and Wellness Center's AI receptionist is now answering calls at<br><strong style="color:var(--green);">+1 (877) 581-2599</strong></div>
+  </div>
+
+  <div class="next-steps">
+    <div class="next-step">
+      <div class="next-step-num">1</div>
+      <div class="next-step-title">Test Your Agent</div>
+      <div class="next-step-desc">Call (877) 581-2599 right now. Aria will answer with your practice name.</div>
+    </div>
+    <div class="next-step">
+      <div class="next-step-num">2</div>
+      <div class="next-step-title">Update Your Website</div>
+      <div class="next-step-desc">Replace your old number with the AI number on your website and Google listing.</div>
+    </div>
+    <div class="next-step">
+      <div class="next-step-num">3</div>
+      <div class="next-step-title">Connect Your EHR</div>
+      <div class="next-step-desc">Link Epic or Athenahealth for automatic appointment booking and chart notes.</div>
+    </div>
+  </div>
+
+  <div class="mof-alert-box">
+    <div class="mof-alert-icon">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+    </div>
+    <div>
+      <div class="mof-alert-bold">MOF Admin has been notified</div>
+      <div class="mof-alert-text">Your Customer Success Admin (CS-ATL-01) was alerted the moment you went live. They are monitoring Aria's first 50 calls and will proactively alert you if anything needs attention. You will receive a welcome call within 2 hours.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="card-head">
+      <div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <div><div class="card-title">Call Summary Recipients</div><div class="card-subtitle">Who receives transcript summaries after each call</div></div>
+    </div>
+    <div class="card-body">
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <div style="flex:1;padding:8px 12px;border:1.5px solid var(--green);border-radius:var(--radius-sm);background:var(--green-light);font-size:12px;font-weight:500;color:var(--green);">subodh@athenssleepcenter.com ✓</div>
+        <button style="padding:8px 14px;border:1.5px dashed var(--gray-border);border-radius:var(--radius-sm);background:transparent;font-size:12px;color:var(--text3);cursor:pointer;font-family:'Outfit',sans-serif;">+ Add Recipient</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);">Delivery options: <strong style="color:var(--text2);">Email PDF (non-integrated)</strong> · EHR chart note (requires integration) · SMS summary</div>
+    </div>
+  </div>
+
+  <button onclick="window.open('https://app.medicalofficeforce.com/dashboard','_blank')" style="width:100%;padding:14px;margin-top:14px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:-0.2px;">Go to Your Practice Dashboard →</button>
+</div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="btn-back" id="backBtn" onclick="prevStep()" style="visibility:hidden;">← Back</button>
+  <span class="step-indicator" id="stepIndicator">Step 1 of 9 · Welcome</span>
+  <button class="btn-next" id="nextBtn" onclick="nextStep()">
+    Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </button>
+</div>
+
+</div><!-- end content -->
+</div><!-- end body -->
+</div><!-- end shell -->
+
+<script>
+const STEPS = [
+  {name:'Welcome',desc:'Platform overview'},
+  {name:'Practice Setup',desc:'Account & NPI'},
+  {name:'Plan Selection',desc:'Lite · Pro · Enterprise'},
+  {name:'Payment',desc:'Stripe · 30-day trial'},
+  {name:'Legal & HIPAA',desc:'BAA + 3 docs'},
+  {name:'Knowledge Base',desc:'Train your AI'},
+  {name:'Phone Number',desc:'Twilio provisioning'},
+  {name:'Review & Go-Live',desc:'Pre-launch checklist'},
+  {name:'Success',desc:'Aria is live!'},
+];
+
+const MOF_MSGS = [
+  'Awaiting your practice registration...',
+  'New signup detected — CS Admin assigned to Athens Sleep and Wellness Center',
+  'Plan Professional ($79/mo) selected — MOF Admin notified',
+  'Payment method captured — Trial starts today (30-day free)',
+  'BAA countersigned by MOF Legal · Stored in compliance vault',
+  'Knowledge base reviewed by Technical Admin — 12 Q&As approved',
+  'Phone number +1 (877) 581-2599 provisioned via Twilio · Test call passed',
+  'MOF Technical Admin sandbox test: 92% pass rate ✓ Cleared for go-live',
+  '🚀 LIVE — Aria is answering calls! MOF monitoring first 50 calls.',
+];
+
+let current = 1;
+let signedDocs = {baa:true, tos:true, priv:false, sla:false};
+let currentDoc = 'baa';
+let annual = false;
+
+function buildSidebar(){
+  const list = document.getElementById('stepList');
+  list.innerHTML = '';
+  STEPS.forEach((s,i)=>{
+    const n = i+1;
+    const div = document.createElement('div');
+    div.className = 'step-item' + (n===current?' active':'') + (n<current?' done':'');
+    const check = n<current ? `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>` : n;
+    let badge = '';
+    if(n===current) badge = '<span class="step-badge badge-active">In progress</span>';
+    else if(n<current) badge = '<span class="step-badge badge-done">Complete</span>';
+    else badge = '<span class="step-badge badge-locked">Locked</span>';
+    div.innerHTML = `<div class="step-circle">${check}</div><div class="step-info"><div class="step-name">${s.name}</div><div class="step-desc">${s.desc}</div>${badge}</div>`;
+    div.onclick = ()=>{ if(n<=current) goToStep(n); };
+    list.appendChild(div);
+  });
+  // Update progress
+  const pct = Math.round((current/9)*100);
+  document.getElementById('progressBar').style.width = pct+'%';
+  document.getElementById('progressText').textContent = `Step ${current} of 9`;
+  document.getElementById('progressPct').textContent = pct+'%';
+  document.getElementById('mofMsg').textContent = MOF_MSGS[current-1];
+  document.getElementById('stepIndicator').textContent = `Step ${current} of 9 · ${STEPS[current-1].name}`;
+}
+
+function showPage(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+n).classList.add('active');
+  document.getElementById('mainContent').scrollTop = 0;
+  // Nav buttons
+  document.getElementById('backBtn').style.visibility = n===1?'hidden':'visible';
+  const nextBtn = document.getElementById('nextBtn');
+  if(n===8){
+    nextBtn.innerHTML = '🚀 Activate Agent &nbsp;<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+  } else if(n===9){
+    nextBtn.style.display='none';
+    document.getElementById('backBtn').style.visibility='hidden';
+  } else {
+    nextBtn.style.display='flex';
+    nextBtn.innerHTML = 'Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+  }
+}
+
+function goToStep(n){
+  current = n;
+  buildSidebar();
+  showPage(n);
+}
+
+function nextStep(){
+  if(current<9){
+    current++;
+    buildSidebar();
+    showPage(current);
+  }
+}
+function prevStep(){
+  if(current>1){
+    current--;
+    buildSidebar();
+    showPage(current);
+  }
+}
+
+function toggleBilling(){
+  annual = !annual;
+  const t = document.getElementById('billingToggle');
+  t.classList.toggle('on',annual);
+  // update prices
+  const prices = {lite:annual?'$24':'$30', pro:annual?'$63':'$79', ent:annual?'$119':'$149'};
+  // simple approach
+}
+
+function selectPlan(el,plan){
+  document.querySelectorAll('.plan-card').forEach(c=>{c.classList.remove('selected');c.style.borderColor='';c.style.boxShadow='';});
+  el.classList.add('selected');
+  el.style.borderColor='var(--green)';
+  el.style.boxShadow='0 0 0 1px var(--green)';
+}
+
+let docSigned = {baa:true,tos:true,priv:false,sla:false};
+function switchDoc(doc){
+  currentDoc = doc;
+  document.querySelectorAll('.doc-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+doc).classList.add('active');
+  const contents = {
+    baa:`<strong>BUSINESS ASSOCIATE AGREEMENT (BAA)</strong><br><br>This Business Associate Agreement is entered into between Medical Office Force LLC and Athens Sleep and Wellness Center as of April 18, 2026.<br><br><strong>1. DEFINITIONS.</strong> "Protected Health Information" or "PHI" has the meaning given in 45 C.F.R. § 160.103...<br><br><strong>2. OBLIGATIONS.</strong> Business Associate agrees to not use or disclose PHI other than as permitted. Business Associate shall use appropriate safeguards to prevent unauthorized use or disclosure of PHI...<br><br><em>✓ Signed electronically by Dr. Subodh Agrawal on April 18, 2026 at 10:42 AM EDT</em>`,
+    tos:`<strong>TERMS OF SERVICE</strong><br><br>Last updated: April 1, 2026<br><br>By using MedFlow AI (the "Service"), operated by Medical Office Force LLC, you agree to be bound by these Terms. The Service provides AI-powered virtual receptionist capabilities for medical practices.<br><br><strong>1. SERVICE DESCRIPTION.</strong> MedFlow AI provides automated call answering, appointment scheduling assistance, and message-taking services using artificial intelligence technology...<br><br><strong>2. PERMITTED USE.</strong> The Service is intended for licensed medical practices. You represent that you are authorized to enter into this agreement on behalf of your practice...<br><br><em>✓ Signed electronically by Dr. Subodh Agrawal on April 18, 2026 at 10:44 AM EDT</em>`,
+    priv:`<strong>PRIVACY POLICY</strong><br><br>Last updated: April 1, 2026<br><br>Medical Office Force LLC ("MOF", "we", "us") is committed to protecting the privacy of patients and practice administrators who use our Service.<br><br><strong>1. INFORMATION WE COLLECT.</strong> We collect information provided by practices during setup (practice name, NPI, contact info), call recordings and transcripts (stored encrypted with AES-256), and usage analytics (call volume, response times, intent categories)...<br><br><strong>2. HOW WE USE INFORMATION.</strong> We use collected information to provide and improve the Service, train AI models (with de-identified data only), generate invoices and billing statements...`,
+    sla:`<strong>SERVICE LEVEL AGREEMENT (SLA)</strong><br><br>This SLA defines the performance standards Medical Office Force LLC commits to for Athens Sleep and Wellness Center under the Professional plan.<br><br><strong>1. UPTIME GUARANTEE.</strong> MOF guarantees 99.9% platform uptime measured monthly. Planned maintenance windows are announced 48 hours in advance and scheduled between 2:00–4:00 AM Eastern.<br><br><strong>2. RESPONSE TIME.</strong> AI agent response time: &lt;2 seconds from call connection to greeting. Support tickets: acknowledged within 4 business hours, resolved within 24 hours for P1 issues...<br><br><strong>3. CREDITS.</strong> Downtime exceeding SLA thresholds results in service credits: 99.0-99.9% = 10% credit; below 99.0% = 25% credit of that month's invoice...`
+  };
+  document.getElementById('docContent').innerHTML = contents[doc];
+
+  const stamped = docSigned[doc];
+  const stamps = {baa:'Signed by Dr. Subodh Agrawal · April 18, 2026 10:42 AM EDT', tos:'Signed by Dr. Subodh Agrawal · April 18, 2026 10:44 AM EDT', priv:'', sla:''};
+  
+  if(stamped){
+    document.getElementById('stampBaa').style.display='flex';
+    document.getElementById('stampBaa').querySelector('span').textContent = stamps[doc];
+    document.getElementById('signRow').style.display='none';
+  } else {
+    document.getElementById('stampBaa').style.display='none';
+    document.getElementById('signRow').style.display='flex';
+  }
+}
+
+function signDoc(){
+  docSigned[currentDoc] = true;
+  document.getElementById('tab-'+currentDoc).classList.add('signed');
+  document.getElementById('tab-'+currentDoc).querySelector('.check').style.display='flex';
+  const lpMap = {priv:'lp-3',sla:'lp-4'};
+  if(lpMap[currentDoc]) document.getElementById(lpMap[currentDoc]).classList.add('done');
+  
+  const stamps = {priv:'Signed by Dr. Subodh Agrawal · April 18, 2026 10:51 AM EDT', sla:'Signed by Dr. Subodh Agrawal · April 18, 2026 10:53 AM EDT'};
+  document.getElementById('stampBaa').innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg><span style="font-size:12px;color:var(--green);font-weight:600;">${stamps[currentDoc]}</span><span style="font-size:11px;color:var(--text3);margin-left:auto;">Copy stored in MOF vault + your dashboard</span>`;
+  document.getElementById('stampBaa').style.display='flex';
+  document.getElementById('signRow').style.display='none';
+  
+  // auto advance to next unsigned
+  const order = ['baa','tos','priv','sla'];
+  const nextUnsigned = order.find(d=>!docSigned[d]);
+  if(nextUnsigned) setTimeout(()=>switchDoc(nextUnsigned),500);
+}
+
+function selectPhoneType(el,type){
+  document.querySelectorAll('.phone-type-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectNum(el){
+  document.querySelectorAll('.number-item').forEach(n=>{
+    n.classList.remove('selected');
+    n.querySelector('span').style.background='var(--gray-light)';
+    n.querySelector('span').style.color='var(--gray)';
+    n.querySelector('span').textContent='Select';
+  });
+  el.classList.add('selected');
+  const sp = el.querySelector('span');
+  sp.style.background='var(--green-light)';
+  sp.style.color='var(--green)';
+  sp.textContent='Selected';
+}
+
+function lookupNPI(){
+  const r = document.getElementById('npiResult');
+  r.classList.add('show');
+}
+
+buildSidebar();
+showPage(1);
+</script>
+</body>
+</html>
