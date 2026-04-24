@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedFlow AI — Financial Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1B6B4A;--g2:#059669;--gl:#ECFDF5;--gd:#14533A;
+  --amber:#D97706;--a2:#F59E0B;--al:#FEF3C7;--ad:#92400E;
+  --blue:#1D4ED8;--b2:#3B82F6;--bl:#EFF6FF;
+  --red:#DC2626;--rl:#FEF2F2;
+  --purple:#7C3AED;--pl:#F5F3FF;
+  --teal:#0D9488;--tl:#F0FDFA;
+  --navy:#0F2A4A;--navy2:#1A3A5C;
+  --grl:#F9FAFB;--bdr:#E5E7EB;--bdr2:#D1D5DB;
+  --tx:#111827;--tx2:#374151;--tx3:#6B7280;
+  --bg:#F1F5F9;--sur:#FFFFFF;
+  --r:10px;--rs:6px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.05);
+}
+html,body{height:100%;font-family:"Outfit",system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;overflow:hidden;}
+.shell{display:grid;grid-template-rows:52px 48px 1fr;height:100vh;overflow:hidden;}
+
+/* TOPBAR */
+.topbar{background:var(--navy);display:flex;align-items:center;padding:0 16px;gap:0;}
+.tmark{width:28px;height:28px;background:linear-gradient(135deg,#4ADE80,#1B6B4A);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:8px;}
+.tmark svg{width:15px;height:15px;}
+.tname{font-size:14px;font-weight:700;color:#fff;margin-right:12px;white-space:nowrap;}
+.tsep{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 10px;flex-shrink:0;}
+.tbread{font-size:11px;color:rgba(255,255,255,.45);white-space:nowrap;}
+.tsp{flex:1;}
+
+/* PRACTICE CHOOSER */
+.pc-wrap{display:flex;align-items:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:8px;overflow:hidden;height:32px;margin-right:8px;}
+.pc-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.38);padding:0 8px;text-transform:uppercase;letter-spacing:.6px;border-right:1px solid rgba(255,255,255,.1);height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;}
+.pc-select{background:transparent;border:none;color:#fff;font-size:11.5px;font-weight:600;font-family:"Outfit",sans-serif;padding:0 8px;cursor:pointer;outline:none;height:100%;min-width:200px;appearance:none;-webkit-appearance:none;}
+.pc-select option{background:#1A3A5C;color:#fff;font-size:13px;}
+.pc-arrow{padding:0 8px;color:rgba(255,255,255,.38);font-size:9px;flex-shrink:0;pointer-events:none;}
+
+.tchip{padding:3px 9px;border-radius:10px;font-size:10.5px;font-weight:600;display:flex;align-items:center;gap:4px;margin-right:6px;white-space:nowrap;}
+.tcg{background:rgba(74,222,128,.15);color:#86EFAC;}
+.tca{background:rgba(251,191,36,.18);color:#FCD34D;}
+.tce{background:rgba(248,113,113,.15);color:#FCA5A5;}
+.ldot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tbtn{padding:4px 12px;border-radius:var(--rs);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;margin-right:5px;white-space:nowrap;}
+.tbtnp{border:none;background:linear-gradient(135deg,#4ADE80,#1B6B4A);margin-right:0;}
+
+/* TABS */
+.tabs{background:var(--sur);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 18px;overflow-x:auto;}
+.tab{padding:12px 14px;font-size:12px;font-weight:500;color:var(--tx3);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.tab:hover{color:var(--tx2);}
+.tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600;}
+.tbadge{padding:1px 5px;border-radius:7px;font-size:10px;font-weight:700;}
+.tbg{background:var(--gl);color:var(--green);}
+.tba{background:var(--al);color:var(--amber);}
+.tabs-sp{flex:1;}
+.stripe-badge{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--rs);background:rgba(99,91,255,.08);border:1px solid rgba(99,91,255,.25);font-size:10.5px;font-weight:700;color:#635BFF;white-space:nowrap;}
+
+/* LAYOUT */
+.panel{display:none;height:calc(100vh - 100px);overflow:hidden;}
+.panel.active{display:flex;}
+.twoc{display:grid;grid-template-columns:1fr 290px;height:100%;overflow:hidden;}
+.scr{overflow-y:auto;}
+.pad{padding:18px 20px;}
+.sp{background:var(--sur);border-left:1px solid var(--bdr);overflow-y:auto;padding:14px;}
+
+/* CARD */
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.chead{padding:11px 15px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;}
+.cicon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.icg{background:var(--gl);}
+.icb{background:var(--bl);}
+.ica{background:var(--al);}
+.ics{background:rgba(99,91,255,.1);}
+.ict{background:var(--tl);}
+.ctitle{font-size:12.5px;font-weight:700;color:var(--tx);}
+.csub{font-size:10.5px;color:var(--tx3);margin-top:1px;}
+.chr{margin-left:auto;display:flex;align-items:center;gap:5px;}
+.cbody{padding:13px 15px;}
+
+/* NOTICES */
+.notice{display:flex;align-items:flex-start;gap:7px;padding:9px 11px;border-radius:var(--rs);margin-bottom:11px;font-size:11px;line-height:1.55;}
+.ng{background:var(--gl);border:1px solid #A7F3D0;color:var(--green);}
+.na{background:var(--al);border:1px solid #FDE68A;color:var(--ad);}
+.nb{background:var(--bl);border:1px solid #BFDBFE;color:var(--blue);}
+.nr{background:var(--rl);border:1px solid #FECACA;color:var(--red);}
+.notice svg{width:11px;height:11px;flex-shrink:0;margin-top:1.5px;}
+.notice strong{font-weight:700;}
+
+/* BUTTONS */
+.btn{padding:6px 13px;border-radius:var(--rs);font-size:11.5px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:5px;}
+.bg{background:var(--green);color:#fff;}
+.bg:hover{background:var(--gd);}
+.bo{background:var(--sur);border:1.5px solid var(--bdr);color:var(--tx2);}
+.bo:hover{border-color:var(--bdr2);}
+.bn{background:var(--navy);color:#fff;}
+.ba{background:var(--al);color:var(--amber);border:1px solid #FDE68A;}
+.br{background:var(--rl);color:var(--red);border:1px solid #FECACA;}
+
+/* TAGS */
+.tag{padding:2px 7px;border-radius:7px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;}
+.tg{background:var(--gl);color:var(--green);}
+.ta{background:var(--al);color:var(--amber);}
+.tb{background:var(--bl);color:var(--blue);}
+.tr{background:var(--rl);color:var(--red);}
+.tp{background:var(--pl);color:var(--purple);}
+.tt{background:var(--grl);color:var(--tx3);}
+
+/* MISC */
+.slabel{font-size:9.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin-bottom:7px;}
+.spsec{font-size:9.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin:11px 0 7px;}
+.spsec:first-child{margin-top:0;}
+.mono{font-family:"JetBrains Mono",monospace;}
+.fg{margin-bottom:10px;}
+.fl{font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:3px;display:block;}
+.fi{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;transition:border .15s;}
+.fi:focus{border-color:var(--green);}
+.fs{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;background:var(--sur);}
+.trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.tgg{width:33px;height:18px;border-radius:9px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.tgg.on{background:var(--green);}
+.tgg.off{background:var(--bdr2);}
+.tggk{width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tgg.on .tggk{left:17px;}
+.tgg.off .tggk{left:2px;}
+
+/* INVOICE */
+.inv-shell{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;}
+.inv-hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:22px 26px;display:flex;justify-content:space-between;align-items:flex-start;}
+.inv-logo-mark{width:34px;height:34px;background:linear-gradient(135deg,#4ADE80,#1B6B4A);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.inv-num{font-size:20px;font-weight:800;color:#fff;font-family:"JetBrains Mono",monospace;letter-spacing:1px;}
+.inv-badge{display:inline-flex;padding:2px 9px;border-radius:7px;font-size:10px;font-weight:700;margin-top:5px;}
+.isb-paid{background:rgba(74,222,128,.2);color:#86EFAC;}
+.isb-pending{background:rgba(251,191,36,.2);color:#FCD34D;}
+.inv-addrs{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:18px 26px;border-bottom:1px solid var(--bdr);}
+.inv-al{font-size:9.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.inv-an{font-size:12.5px;font-weight:700;color:var(--tx);margin-bottom:2px;}
+.inv-ad{font-size:10.5px;color:var(--tx3);line-height:1.7;}
+.inv-period{padding:10px 26px;background:var(--grl);border-bottom:1px solid var(--bdr);display:flex;gap:24px;flex-wrap:wrap;}
+.inv-pi{font-size:10.5px;}
+.inv-pl{color:var(--tx3);font-weight:600;margin-bottom:1px;}
+.inv-pv{font-weight:700;color:var(--tx);}
+.inv-table{width:100%;border-collapse:collapse;}
+.inv-table th{padding:9px 26px;text-align:left;font-size:9.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--bdr);}
+.inv-table th:last-child{text-align:right;}
+.inv-table td{padding:10px 26px;font-size:12.5px;color:var(--tx2);border-bottom:1px solid var(--bdr);}
+.inv-table td:last-child{text-align:right;font-weight:600;font-family:"JetBrains Mono",monospace;}
+.inv-table .inv-sub td{background:var(--grl);font-weight:600;}
+.inv-table .inv-tot td{background:var(--gl);font-size:13.5px;font-weight:800;color:var(--green);}
+.inv-foot{padding:14px 26px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;background:var(--grl);}
+
+/* USAGE BAR */
+.ubar{height:13px;background:var(--bdr);border-radius:6px;overflow:hidden;margin:5px 0;}
+.ubar-fill{height:100%;border-radius:6px;transition:width .5s;}
+.ug{background:linear-gradient(90deg,var(--g2),var(--green));}
+.ua{background:linear-gradient(90deg,var(--amber),var(--a2));}
+.ur{background:linear-gradient(90deg,var(--red),#ef4444);}
+
+/* CARD PREVIEW */
+.ccard{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:11px;padding:14px 16px;color:#fff;width:190px;flex-shrink:0;}
+.cc-chip{width:32px;height:22px;background:linear-gradient(135deg,#FFD700,#FFA500);border-radius:4px;margin-bottom:10px;}
+.cc-num{font-size:13px;font-weight:600;letter-spacing:2px;font-family:"JetBrains Mono",monospace;margin-bottom:5px;}
+.cc-row{display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,.45);}
+.cc-val{font-size:11px;font-weight:700;color:#fff;}
+
+/* STRIPE TABLE */
+.ssr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr);}
+.ssr:last-child{border-bottom:none;}
+.ss-lbl{font-size:12px;font-weight:600;color:var(--tx2);}
+.ss-sub{font-size:10px;color:var(--tx3);margin-top:2px;}
+.ss-val{font-size:11.5px;font-weight:700;color:var(--tx);font-family:"JetBrains Mono",monospace;}
+
+/* KPI */
+.krow{display:grid;gap:10px;margin-bottom:14px;}
+.k4{grid-template-columns:repeat(4,1fr);}
+.k5{grid-template-columns:repeat(5,1fr);}
+.kpi{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:12px 14px;}
+.kpi-v{font-size:21px;font-weight:800;letter-spacing:-1px;line-height:1;}
+.kpi-l{font-size:9.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-top:3px;}
+.kpi-d{font-size:10px;font-weight:600;margin-top:2px;}
+.ku{color:var(--g2);}
+.kd{color:var(--red);}
+.kn{color:var(--tx3);}
+
+/* MRR CHART */
+.mrr-chart{display:flex;align-items:flex-end;gap:7px;height:110px;padding:0 2px;}
+.mrr-bar{flex:1;border-radius:4px 4px 0 0;position:relative;cursor:pointer;transition:opacity .15s;min-width:0;}
+.mrr-bar:hover{opacity:.8;}
+.mrr-bl{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--tx3);white-space:nowrap;}
+.mrr-bv{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;white-space:nowrap;}
+
+/* BREAKEVEN */
+.be-track{position:relative;height:9px;background:var(--bdr);border-radius:4px;overflow:visible;margin-bottom:7px;}
+.be-fill{position:absolute;left:0;top:0;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--b2),var(--purple));}
+.be-marker{position:absolute;top:-4px;width:17px;height:17px;border-radius:50%;border:2px solid var(--sur);background:var(--amber);transform:translateX(-50%);box-shadow:0 1px 4px rgba(0,0,0,.2);}
+
+/* REV TABLE */
+.rtbl{width:100%;border-collapse:collapse;}
+.rtbl th{padding:7px 11px;text-align:left;font-size:9.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr);background:var(--grl);}
+.rtbl td{padding:9px 11px;border-bottom:1px solid var(--bdr);font-size:11.5px;color:var(--tx2);vertical-align:middle;}
+.rtbl tr:hover td{background:var(--grl);}
+.rtbl .rtot td{background:var(--gl);font-weight:800;font-size:12.5px;}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══ TOPBAR WITH PRACTICE CHOOSER ═══ -->
+<div class="topbar">
+  <div class="tmark"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5L13 4.5V10.5L7.5 13.5L2 10.5V4.5L7.5 1.5Z" fill="white" opacity=".9"/><circle cx="7.5" cy="7.5" r="2" fill="white"/></svg></div>
+  <span class="tname">MedFlow AI</span>
+  <div class="tsep"></div>
+  <span style="font-size:11px;color:rgba(255,255,255,.45);margin-right:10px;">Financial Dashboard</span>
+  <div class="tsep"></div>
+
+  <!-- PRACTICE CHOOSER -->
+  <div class="pc-wrap">
+    <div class="pc-label">Practice</div>
+    <select class="pc-select" id="practiceSelect" onchange="switchPractice(this.value)">
+      <option value="athens">🌙  Athens Sleep &amp; Wellness · Professional $79</option>
+      <option value="valley">🏥  Valley Ridge Family Medicine · Enterprise $149</option>
+      <option value="buchanan">🌿  Buchanan Rural Clinic · Professional $79</option>
+      <option value="haralson">👶  Haralson County Pediatrics · Lite $30</option>
+      <option value="westpoint">🚨  West Point Urgent Care · Professional $79</option>
+      <option value="coweta">⚠️  Coweta Family Medicine · Pro + Overage</option>
+    </select>
+    <div class="pc-arrow">▾</div>
+  </div>
+
+  <div class="tsp"></div>
+  <div class="tchip tcg" id="statusChip"><div class="ldot"></div>Current</div>
+  <div class="tchip tcg" style="margin-right:6px" id="planChip">Professional · $79/mo</div>
+  <button class="tbtn">⬇ Export P&L</button>
+  <button class="tbtn tbtnp">📊 Full Report</button>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" id="tab-billing" onclick="ST('billing')">🏥 Practice Billing</div>
+  <div class="tab" id="tab-invoice" onclick="ST('invoice')">📄 Invoice</div>
+  <div class="tab" id="tab-receipt" onclick="ST('receipt')">✉️ Receipt Email</div>
+  <div class="tab" id="tab-stripe" onclick="ST('stripe')">💳 Stripe Auto-Deduction</div>
+  <div class="tab" id="tab-usage" onclick="ST('usage')">📊 Usage Tracker</div>
+  <div class="tab" id="tab-mof" onclick="ST('mof')">🏢 MOF Revenue <span class="tbadge tbg">Admin</span></div>
+  <div class="tab" id="tab-be" onclick="ST('be')">📈 Breakeven</div>
+  <div class="tabs-sp"></div>
+  <div class="stripe-badge">⚡ Stripe Live</div>
+</div>
+
+<!-- ═══ PANEL: PRACTICE BILLING ═══ -->
+<div class="panel active" id="panel-billing">
+<div class="twoc">
+<div class="scr pad" id="billingMain"><!-- filled by JS --></div>
+<div class="sp" id="billingSide"><!-- filled by JS --></div>
+</div>
+</div>
+
+<!-- ═══ PANEL: INVOICE ═══ -->
+<div class="panel" id="panel-invoice">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div><div style="font-size:15px;font-weight:800;letter-spacing:-.3px" id="inv-h">Invoice</div><div style="font-size:11px;color:var(--tx3);margin-top:2px" id="inv-sub">Auto-generated · Paid via Stripe</div></div>
+    <div style="display:flex;gap:6px"><button class="btn bo" style="font-size:11px" onclick="alert('Downloading invoice PDF...')">⬇ PDF</button><button class="btn bg" style="font-size:11px" onclick="ST('receipt')">✉ Receipt Email</button></div>
+  </div>
+  <div class="inv-shell">
+    <div class="inv-hdr">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="inv-logo-mark"><svg viewBox="0 0 15 15" width="17" height="17" fill="none"><path d="M7.5 1.5L13 4.5V10.5L7.5 13.5L2 10.5V4.5L7.5 1.5Z" fill="white" opacity=".9"/><circle cx="7.5" cy="7.5" r="2" fill="white"/></svg></div>
+        <div><div style="font-size:17px;font-weight:800;color:#fff">MedFlow AI</div><div style="font-size:10px;color:rgba(255,255,255,.4)">Medical Office Force · medicalofficeforce.com</div></div>
+      </div>
+      <div style="text-align:right">
+        <div class="inv-num" id="inv-num">INV-2026-001</div>
+        <div><span class="inv-badge" id="inv-status-badge" style="background:rgba(74,222,128,.2);color:#86EFAC">✓ PAID</span></div>
+        <div style="font-size:10.5px;color:rgba(255,255,255,.4);margin-top:8px" id="inv-dates">Issue: Apr 11, 2026 · Paid: Apr 11, 2026</div>
+      </div>
+    </div>
+    <div class="inv-addrs">
+      <div><div class="inv-al">Billed From</div><div class="inv-an">Medical Office Force LLC</div><div class="inv-ad">billing@medicalofficeforce.com<br>EIN: 88-1234567 · Atlanta, GA 30301</div></div>
+      <div><div class="inv-al">Billed To</div><div class="inv-an" id="inv-to-name">Athens Sleep and Wellness Center</div><div class="inv-ad" id="inv-to-detail">Dr. Subodh Agrawal · NPI 1689977761<br>125 King Ave Suite 200, Athens, GA 30606<br>subodh@athenssleepcenter.com</div></div>
+    </div>
+    <div class="inv-period">
+      <div class="inv-pi"><div class="inv-pl">Billing Period</div><div class="inv-pv" id="inv-period">Apr 11 – May 10, 2026</div></div>
+      <div class="inv-pi"><div class="inv-pl">Plan</div><div class="inv-pv" id="inv-plan-label">Professional</div></div>
+      <div class="inv-pi"><div class="inv-pl">Min Included</div><div class="inv-pv" id="inv-mins-incl">500 min</div></div>
+      <div class="inv-pi"><div class="inv-pl">Min Used</div><div class="inv-pv" id="inv-mins-used">412 min</div></div>
+      <div class="inv-pi"><div class="inv-pl">Overage Rate</div><div class="inv-pv">$0.50/min</div></div>
+    </div>
+    <table class="inv-table">
+      <thead><tr><th style="width:52%">Description</th><th>Qty</th><th>Unit</th><th>Amount</th></tr></thead>
+      <tbody id="inv-lines"><!-- filled by JS --></tbody>
+    </table>
+    <div class="inv-foot">
+      <div><div style="font-size:10.5px;color:var(--tx3)">Payment method</div><div style="font-size:12px;font-weight:700;color:var(--tx);margin-top:2px;display:flex;align-items:center;gap:5px">💳 <span id="inv-card">Visa ••••6411</span> · Auto-deducted via Stripe</div><div style="font-size:10px;color:var(--tx3);margin-top:3px" id="inv-charge">Stripe charge: ch_3QxKmL... · txn_0042917</div></div>
+      <div style="text-align:right"><div style="font-size:22px;font-weight:800;color:var(--green)" id="inv-paid-stamp">PAID</div><div style="font-size:10px;color:var(--tx3)" id="inv-paid-date">April 11, 2026</div></div>
+    </div>
+  </div>
+</div>
+<div class="sp">
+  <div class="spsec">Invoice Details</div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px;margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">Number</span><span class="mono" style="font-weight:700" id="sp-inv-num">INV-2026-001</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">Total</span><span class="mono" style="font-weight:700" id="sp-inv-total">$79.00</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">Overage</span><span class="mono" style="font-weight:700;color:var(--g2)" id="sp-overage">$0.00</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gl);border-radius:4px;border:1px solid #A7F3D0"><span style="color:var(--green)">Status</span><span style="font-weight:700;color:var(--green)">Paid ✓</span></div>
+  </div>
+  <div style="display:flex;gap:5px"><button class="btn bg" style="flex:1;justify-content:center;font-size:11px" onclick="alert('Downloading PDF...')">⬇ PDF</button><button class="btn bo" style="flex:1;justify-content:center;font-size:11px" onclick="alert('Resending receipt email...')">✉ Email</button></div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL: RECEIPT EMAIL ═══ -->
+<div class="panel" id="panel-receipt">
+<div class="twoc">
+<div class="scr pad">
+  <div style="font-size:15px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px">Receipt Email Preview</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:14px" id="receipt-sub">Auto-sent by Stripe · Athens Sleep & Wellness</div>
+  <div style="border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;background:var(--sur);">
+    <div style="background:var(--grl);border-bottom:1px solid var(--bdr);padding:9px 14px;display:flex;align-items:center;gap:8px">
+      <div style="display:flex;gap:4px"><div style="width:10px;height:10px;border-radius:50%;background:#FF5F57"></div><div style="width:10px;height:10px;border-radius:50%;background:#FEBC2E"></div><div style="width:10px;height:10px;border-radius:50%;background:#28C840"></div></div>
+      <div style="font-size:11px;color:var(--tx3);flex:1;text-align:center">Mail — <span id="receipt-to-email">subodh@athenssleepcenter.com</span></div>
+    </div>
+    <div style="background:var(--navy);padding:14px 20px;display:flex;align-items:center;gap:9px">
+      <div style="width:30px;height:30px;background:linear-gradient(135deg,#4ADE80,#1B6B4A);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 15 15" width="15" height="15" fill="none"><path d="M7.5 1.5L13 4.5V10.5L7.5 13.5L2 10.5V4.5L7.5 1.5Z" fill="white" opacity=".9"/><circle cx="7.5" cy="7.5" r="2" fill="white"/></svg></div>
+      <div><div style="font-size:13px;font-weight:700;color:#fff">MedFlow AI</div><div style="font-size:10px;color:rgba(255,255,255,.4)">billing@medicalofficeforce.com</div></div>
+    </div>
+    <div style="padding:10px 18px;border-bottom:1px solid var(--bdr);font-size:11px;color:var(--tx3)">
+      <div><strong style="color:var(--tx2)">From:</strong> MedFlow AI Billing &lt;billing@medicalofficeforce.com&gt;</div>
+      <div><strong style="color:var(--tx2)">To:</strong> <span id="receipt-to-full">Dr. Subodh Agrawal &lt;subodh@athenssleepcenter.com&gt;</span></div>
+      <div><strong style="color:var(--tx2)">Subject:</strong> ✅ Payment Receipt — <span id="receipt-subject">INV-2026-001 — $79.00 — Athens Sleep and Wellness Center</span></div>
+    </div>
+    <div style="padding:22px 26px">
+      <div style="font-size:13.5px;font-weight:600;color:var(--tx);margin-bottom:9px">Hi <span id="receipt-salute">Dr. Agrawal</span> 👋</div>
+      <div style="font-size:12px;color:var(--tx2);line-height:1.7;margin-bottom:10px">Thank you for being a MedFlow AI customer! We've successfully processed your payment. Here's your summary.</div>
+      <div style="background:var(--grl);border:1px solid var(--bdr);border-radius:var(--rs);padding:13px 15px;margin-bottom:13px;font-size:12px" id="receipt-summary"><!-- filled by JS --></div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:13px">
+        <div style="padding:9px 12px;background:var(--gl);border-radius:var(--rs);border:1px solid #A7F3D0;font-size:11px;color:var(--green)" id="receipt-aria">🤖 <strong>Aria Stats:</strong> Loading...</div>
+        <div style="font-size:11.5px;color:var(--tx2)">You can view and download all invoices in your MedFlow AI billing dashboard.</div>
+      </div>
+      <div style="display:block;background:linear-gradient(135deg,var(--green),var(--g2));color:#fff;padding:11px 22px;border-radius:var(--rs);text-align:center;font-size:12.5px;font-weight:700;cursor:pointer;margin-bottom:12px" onclick="ST('billing')">View Invoice &amp; Download PDF →</div>
+      <div style="font-size:10.5px;color:var(--tx3)">Questions? Contact billing@medicalofficeforce.com. Next invoice auto-generates on <span id="receipt-next-date">May 11, 2026</span>.</div>
+    </div>
+    <div style="padding:12px 18px;border-top:1px solid var(--bdr);background:var(--grl);font-size:10px;color:var(--tx3);text-align:center;line-height:1.8">MedFlow AI · Medical Office Force LLC · Atlanta, GA 30301<br>You're receiving this as a MedFlow AI subscriber.</div>
+  </div>
+</div>
+<div class="sp">
+  <div class="spsec">Email Status</div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px;margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gl);border-radius:4px"><span>Delivery</span><span style="font-weight:700;color:var(--green)">Sent ✓</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Template</span><span style="font-weight:700">Stripe + MOF</span></div>
+  </div>
+  <div class="spsec">Auto-Triggers</div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
+    <div style="padding:5px 8px;background:var(--gl);border-radius:4px;display:flex;gap:5px"><span style="color:var(--green)">✓</span>Payment received</div>
+    <div style="padding:5px 8px;background:var(--gl);border-radius:4px;display:flex;gap:5px"><span style="color:var(--green)">✓</span>5 days before renewal</div>
+    <div style="padding:5px 8px;background:var(--gl);border-radius:4px;display:flex;gap:5px"><span style="color:var(--green)">✓</span>Payment failed</div>
+    <div style="padding:5px 8px;background:var(--gl);border-radius:4px;display:flex;gap:5px"><span style="color:var(--green)">✓</span>90% usage reached</div>
+    <div style="padding:5px 8px;background:var(--gl);border-radius:4px;display:flex;gap:5px"><span style="color:var(--green)">✓</span>Overage started</div>
+  </div>
+  <button class="btn bo" style="width:100%;justify-content:center;font-size:11px;margin-top:12px" onclick="alert('Resending receipt email...')">Resend Receipt</button>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL: STRIPE ═══ -->
+<div class="panel" id="panel-stripe">
+<div class="twoc">
+<div class="scr pad">
+  <div style="font-size:15px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px">Stripe Auto-Deduction Settings</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:14px" id="stripe-sub-label">Athens Sleep · Stripe Customer: cus_Q7xP...</div>
+  <div class="notice ng" id="stripe-notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span><strong>Auto-deduction is active.</strong> Card on file will be charged automatically on billing date.</span></div>
+  <div class="card">
+    <div class="chead"><div class="cicon ics">💳</div><div><div class="ctitle">Payment Method</div><div class="csub">Primary card · Stripe-tokenized · PCI-DSS compliant</div></div><div class="chr"><button class="btn bo" style="font-size:10px;padding:3px 7px" onclick="alert('Update card via Stripe Customer Portal...')">Update</button></div></div>
+    <div class="cbody"><div style="display:flex;gap:14px;align-items:flex-start">
+      <div class="ccard">
+        <div class="cc-chip"></div>
+        <div class="cc-num" id="sc-num">•••• •••• •••• 6411</div>
+        <div class="cc-row"><div><div>CARD HOLDER</div><div class="cc-val" id="sc-name">Dr. Subodh Agrawal</div></div><div style="text-align:right"><div>EXPIRES</div><div class="cc-val" id="sc-exp">08/28</div></div></div>
+        <div style="margin-top:10px;text-align:right;font-size:9px;color:rgba(255,255,255,.4)" id="sc-brand">VISA</div>
+      </div>
+      <div style="flex:1">
+        <div class="ssr"><div><div class="ss-lbl">Card type</div></div><div class="ss-val" id="sc-type">Visa</div></div>
+        <div class="ssr"><div><div class="ss-lbl">Last 4</div></div><div class="ss-val" id="sc-last4">••••6411</div></div>
+        <div class="ssr"><div><div class="ss-lbl">Expiry</div></div><div class="ss-val" id="sc-expiry">08/2028</div></div>
+        <div class="ssr"><div><div class="ss-lbl">Cardholder</div></div><div style="font-size:11.5px;font-weight:700;color:var(--tx)" id="sc-holder">Dr. Subodh Agrawal</div></div>
+      </div>
+    </div></div>
+  </div>
+  <div class="card">
+    <div class="chead"><div class="cicon icg">⚙️</div><div><div class="ctitle">Auto-Deduction Configuration</div></div></div>
+    <div class="cbody">
+      <div class="ssr"><div><div class="ss-lbl">Auto-deduction</div><div class="ss-sub">Automatic charge on billing date</div></div><div style="display:flex;align-items:center;gap:7px"><span class="tag tg">Enabled</span><div class="tgg on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div></div></div>
+      <div class="ssr"><div><div class="ss-lbl">Next charge date</div></div><div class="ss-val" style="font-family:'Outfit',sans-serif;color:var(--navy)" id="sc-next-date">May 11, 2026</div></div>
+      <div class="ssr"><div><div class="ss-lbl">Next charge amount</div></div><div class="ss-val" style="font-family:'Outfit',sans-serif;color:var(--green)" id="sc-next-amt">~$79.00</div></div>
+      <div class="ssr"><div><div class="ss-lbl">Stripe Customer ID</div></div><div class="ss-val" id="sc-cust">cus_Q7xP...</div></div>
+      <div class="ssr"><div><div class="ss-lbl">Subscription ID</div></div><div class="ss-val" id="sc-sub">sub_1QxKmL...</div></div>
+      <div class="ssr"><div><div class="ss-lbl">Failed payment retry</div><div class="ss-sub">Stripe auto-retry schedule</div></div><div style="font-size:10.5px;color:var(--tx3);text-align:right">Day 1, 3, 7, 14 → suspend</div></div>
+    </div>
+  </div>
+</div>
+<div class="sp">
+  <div class="spsec">Stripe Connection</div>
+  <div style="padding:11px;background:rgba(99,91,255,.07);border-radius:var(--r);border:1px solid rgba(99,91,255,.2);margin-bottom:12px"><div style="font-size:12.5px;font-weight:700;color:#635BFF;margin-bottom:3px">⚡ Stripe Live</div><div style="font-size:10px;color:var(--tx3)">Mode: Live · API v2024-06-20<br>Webhook: api.medflow.ai/stripe/webhook</div></div>
+  <div class="spsec">PCI Security</div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px;margin-bottom:12px">
+    <div style="padding:5px 8px;background:var(--gl);border-radius:4px;display:flex;gap:5px"><span style="color:var(--green)">✓</span>PCI-DSS compliant</div>
+    <div style="padding:5px 8px;background:var(--gl);border-radius:4px;display:flex;gap:5px"><span style="color:var(--green)">✓</span>Card never stored by MOF</div>
+    <div style="padding:5px 8px;background:var(--gl);border-radius:4px;display:flex;gap:5px"><span style="color:var(--green)">✓</span>3D Secure enabled</div>
+    <div style="padding:5px 8px;background:var(--gl);border-radius:4px;display:flex;gap:5px"><span style="color:var(--green)">✓</span>Stripe Radar fraud protection</div>
+  </div>
+  <button class="btn ba" style="width:100%;justify-content:center;font-size:11px;margin-bottom:5px" onclick="alert('Cancel subscription? Access continues until end of billing cycle.')">Cancel Subscription</button>
+  <button class="btn bo" style="width:100%;justify-content:center;font-size:11px" onclick="alert('Opening Stripe Customer Portal...')">Open Stripe Portal ↗</button>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL: USAGE ═══ -->
+<div class="panel" id="panel-usage">
+<div class="twoc">
+<div class="scr pad" id="usageMain"><!-- filled by JS --></div>
+<div class="sp" id="usageSide"><!-- filled by JS --></div>
+</div>
+</div>
+
+<!-- ═══ PANEL: MOF REVENUE (Admin) ═══ -->
+<div class="panel" id="panel-mof">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div><div style="font-size:15px;font-weight:800;letter-spacing:-.3px">MOF Revenue Dashboard</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">All 6 practices · MRR/ARR · Amy Chen (Financial Admin) · April 2026</div></div>
+    <div style="display:flex;gap:5px"><button class="btn bo" style="font-size:11px">⬇ Export P&L</button><button class="btn bn" style="font-size:11px">📊 Stripe ↗</button></div>
+  </div>
+  <div class="krow k5">
+    <div class="kpi"><div class="kpi-v" style="color:var(--g2)">$634</div><div class="kpi-l">MRR</div><div class="kpi-d ku">↑ 8% vs Mar</div></div>
+    <div class="kpi"><div class="kpi-v">$7,608</div><div class="kpi-l">ARR</div><div class="kpi-d ku">Growing</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--g2)">6</div><div class="kpi-l">Practices</div><div class="kpi-d ku">All paying</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--g2)">$0</div><div class="kpi-l">Overdue</div><div class="kpi-d ku">Clean ARR</div></div>
+    <div class="kpi"><div class="kpi-v">97%</div><div class="kpi-l">Collection</div><div class="kpi-d ku">Excellent</div></div>
+  </div>
+  <div class="card">
+    <div class="chead"><div class="cicon icg">📈</div><div><div class="ctitle">MRR Growth — Jan → Apr 2026</div><div class="csub">Monthly Recurring Revenue · 6 practices · Mix of plans</div></div></div>
+    <div class="cbody">
+      <div class="mrr-chart">
+        <div class="mrr-bar" style="height:12%;background:var(--gl);border:1.5px solid #A7F3D0"><div class="mrr-bl">Jan</div><div class="mrr-bv" style="color:var(--green)">$79</div></div>
+        <div class="mrr-bar" style="height:37%;background:var(--gl);border:1.5px solid #A7F3D0"><div class="mrr-bl">Feb</div><div class="mrr-bv" style="color:var(--green)">$237</div></div>
+        <div class="mrr-bar" style="height:57%;background:linear-gradient(180deg,#ECFDF5,#D1FAE5)"><div class="mrr-bl">Mar</div><div class="mrr-bv" style="color:var(--green)">$485</div></div>
+        <div class="mrr-bar" style="height:76%;background:linear-gradient(180deg,var(--gl),#A7F3D0);border:1.5px solid #A7F3D0"><div class="mrr-bl" style="font-weight:700;color:var(--green)">Apr ✓</div><div class="mrr-bv" style="color:var(--green);font-weight:800">$634</div></div>
+        <div class="mrr-bar" style="height:88%;background:rgba(27,107,74,.06);border:1.5px dashed var(--bdr);border-radius:4px 4px 0 0"><div class="mrr-bl" style="color:var(--tx3)">May est.</div><div class="mrr-bv" style="color:var(--tx3)">$792</div></div>
+        <div class="mrr-bar" style="height:100%;background:rgba(27,107,74,.04);border:1.5px dashed var(--bdr);border-radius:4px 4px 0 0"><div class="mrr-bl" style="color:var(--tx3)">Target</div><div class="mrr-bv" style="color:var(--amber)">$1,000</div></div>
+      </div>
+      <div style="margin-top:22px;font-size:11px;font-weight:700;color:var(--green);text-align:right">↑ +$555 MRR since Jan · 703% growth in 4 months</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="chead"><div class="cicon ict">💰</div><div><div class="ctitle">Revenue by Practice — April 2026</div><div class="csub">All 6 practices · Subscription + overage · Auto-collected via Stripe</div></div></div>
+    <div class="cbody" style="padding:0">
+      <table class="rtbl">
+        <thead><tr><th>Practice</th><th>Plan</th><th>Min Used</th><th>Subscription</th><th>Overage</th><th>Total</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><div style="font-weight:600">Athens Sleep &amp; Wellness</div><div style="font-size:10px;color:var(--tx3)">Athens, GA</div></td><td><span class="tag tb">Pro</span></td><td class="mono">412/500</td><td class="mono">$79.00</td><td class="mono" style="color:var(--g2)">$0.00</td><td class="mono;font-weight:700">$79.00</td><td><span class="tag tg">Paid ✓</span></td></tr>
+          <tr><td><div style="font-weight:600">Valley Ridge FM</div><div style="font-size:10px;color:var(--tx3)">Villa Rica, GA</div></td><td><span class="tag tp">Ent</span></td><td class="mono">1280/1500</td><td class="mono">$149.00</td><td class="mono" style="color:var(--g2)">$0.00</td><td class="mono">$149.00</td><td><span class="tag tg">Paid ✓</span></td></tr>
+          <tr><td><div style="font-weight:600">Buchanan Rural Clinic</div><div style="font-size:10px;color:var(--tx3)">Buchanan, GA</div></td><td><span class="tag tb">Pro</span></td><td class="mono">278/500</td><td class="mono">$79.00</td><td class="mono" style="color:var(--g2)">$0.00</td><td class="mono">$79.00</td><td><span class="tag tg">Paid ✓</span></td></tr>
+          <tr><td><div style="font-weight:600">Haralson County Peds</div><div style="font-size:10px;color:var(--tx3)">Tallapoosa, GA</div></td><td><span class="tag tt">Lite</span></td><td class="mono">143/200</td><td class="mono">$30.00</td><td class="mono" style="color:var(--g2)">$0.00</td><td class="mono">$30.00</td><td><span class="tag tg">Paid ✓</span></td></tr>
+          <tr><td><div style="font-weight:600">West Point Urgent Care</div><div style="font-size:10px;color:var(--tx3)">West Point, GA</div></td><td><span class="tag tb">Pro</span></td><td class="mono">388/500</td><td class="mono">$79.00</td><td class="mono" style="color:var(--g2)">$0.00</td><td class="mono">$79.00</td><td><span class="tag tg">Paid ✓</span></td></tr>
+          <tr><td><div style="font-weight:600">Coweta Family Medicine</div><div style="font-size:10px;color:var(--tx3)">Newnan, GA</div></td><td><span class="tag ta">Pro+</span></td><td class="mono">779/500</td><td class="mono">$79.00</td><td class="mono" style="color:var(--amber);font-weight:700">$139.50</td><td class="mono" style="color:var(--purple);font-weight:700">$218.50</td><td><span class="tag tg">Paid ✓</span></td></tr>
+          <tr class="rtot"><td colspan="3">TOTAL — April 2026</td><td class="mono">$495.00</td><td class="mono" style="color:var(--amber)">$139.50</td><td class="mono" style="color:var(--g2)">$634.50</td><td><span class="tag tg">All collected</span></td></tr>
+        </tbody>
+      </table>
+      <div style="padding:9px 13px;background:var(--al);border-top:1px solid var(--bdr);font-size:11px;color:var(--ad);display:flex;justify-content:space-between;align-items:center">
+        <span>⚠ Coweta exceeded plan by 279 min · $139.50 overage charged</span>
+        <button class="btn ba" style="font-size:10px;padding:3px 8px" onclick="alert('Sending upgrade recommendation to Coweta: Enterprise $149/mo = 1,500 min. Saves ~$90.50/mo.')">Suggest Enterprise Upgrade</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="sp">
+  <div class="spsec">MRR Breakdown</div>
+  <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Subscription MRR</span><span class="mono;font-weight:700">$495.00</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--al);border-radius:5px;border:1px solid #FDE68A"><span style="color:var(--amber)">Overage revenue</span><span class="mono" style="font-weight:700;color:var(--amber)">$139.50</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span style="color:var(--green);font-weight:700">Total MRR</span><span class="mono" style="font-weight:800;color:var(--g2)">$634.50</span></div>
+  </div>
+  <div class="spsec">Plan Mix</div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px;margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Lite ($30)</span><span style="font-weight:700">1 practice</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Professional ($79)</span><span style="font-weight:700">4 practices</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Enterprise ($149)</span><span style="font-weight:700">1 practice</span></div>
+  </div>
+  <div class="spsec">Growth</div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>MoM growth</span><span style="font-weight:700;color:var(--g2)">+8%</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Churn this month</span><span style="font-weight:700;color:var(--g2)">0</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>New this month</span><span style="font-weight:700;color:var(--blue)">+2</span></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL: BREAKEVEN ═══ -->
+<div class="panel" id="panel-be">
+<div class="twoc">
+<div class="scr pad">
+  <div style="font-size:15px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px">Breakeven Tracker</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:14px">At 50 practices × avg $80/mo = $4,000 MRR · Infrastructure $4,000–12,000/mo · Currently 6 practices</div>
+  <div class="krow k4">
+    <div class="kpi"><div class="kpi-v" style="color:var(--g2)">$634</div><div class="kpi-l">Current MRR</div><div class="kpi-d ku">Apr 2026</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--amber)">6</div><div class="kpi-l">Active Practices</div><div class="kpi-d kn">of ~50 needed</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--red)">44</div><div class="kpi-l">Practices to BE</div><div class="kpi-d kd">avg $80/mo</div></div>
+    <div class="kpi"><div class="kpi-v">$3,366</div><div class="kpi-l">MRR Gap</div><div class="kpi-d kd">to $4,000 target</div></div>
+  </div>
+  <div class="card">
+    <div class="chead"><div class="cicon icb">📈</div><div><div class="ctitle">Progress to Breakeven — $4,000 MRR Target</div><div class="csub">Infrastructure minimum: $4,000/mo · Current: $634 (15.9%)</div></div></div>
+    <div class="cbody">
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:5px"><span>Current MRR</span><span class="mono" style="color:var(--amber);font-weight:800">$634 / $4,000 (15.9%)</span></div>
+      <div class="be-track"><div class="be-fill" style="width:15.9%"></div><div class="be-marker" style="left:15.9%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:3px;margin-bottom:18px"><span>$0</span><span style="color:var(--amber)">$634 ← here</span><span style="color:var(--green)">$4,000 breakeven</span></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px">
+        <div style="padding:11px;border-radius:var(--r);border:1.5px solid var(--amber);background:var(--al);text-align:center"><div style="font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;margin-bottom:3px">Stage 1 ✓</div><div style="font-size:15px;font-weight:800;color:var(--amber)">6</div><div style="font-size:9.5px;color:var(--tx3)">practices · Done</div><div style="font-size:10.5px;font-weight:700;color:var(--amber);margin-top:2px">$634 MRR</div></div>
+        <div style="padding:11px;border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:3px">Stage 2</div><div style="font-size:15px;font-weight:800">20</div><div style="font-size:9.5px;color:var(--tx3)">practices · Goal</div><div style="font-size:10.5px;font-weight:700;color:var(--blue);margin-top:2px">~$1,600 MRR</div></div>
+        <div style="padding:11px;border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:3px">Stage 3</div><div style="font-size:15px;font-weight:800">50</div><div style="font-size:9.5px;color:var(--tx3)">Breakeven</div><div style="font-size:10.5px;font-weight:700;color:var(--green);margin-top:2px">~$4,000 MRR</div></div>
+        <div style="padding:11px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--gl);text-align:center"><div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;margin-bottom:3px">Target</div><div style="font-size:15px;font-weight:800;color:var(--green)">100</div><div style="font-size:9.5px;color:var(--tx3)">Profitable</div><div style="font-size:10.5px;font-weight:700;color:var(--green);margin-top:2px">~$8,000 MRR</div></div>
+      </div>
+      <div class="slabel">Monthly Infrastructure Cost</div>
+      <table class="rtbl" style="margin-bottom:10px">
+        <thead><tr><th>Category</th><th>Low</th><th>High</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>AWS Infrastructure</td><td class="mono">$2,000</td><td class="mono">$5,000</td><td style="font-size:10px;color:var(--tx3)">ECS, RDS, S3, API Gateway</td></tr>
+          <tr><td>Twilio (voice + SMS)</td><td class="mono">$500</td><td class="mono">$2,000</td><td style="font-size:10px;color:var(--tx3)">Scales with call volume</td></tr>
+          <tr><td>Deepgram (STT)</td><td class="mono">$500</td><td class="mono">$1,500</td><td style="font-size:10px;color:var(--tx3)">$0.0043/min real-time</td></tr>
+          <tr><td>Anthropic/Bedrock</td><td class="mono">$500</td><td class="mono">$2,000</td><td style="font-size:10px;color:var(--tx3)">Claude Sonnet via AWS</td></tr>
+          <tr><td>ElevenLabs (TTS)</td><td class="mono">$300</td><td class="mono">$1,000</td><td style="font-size:10px;color:var(--tx3)">Natural voice synthesis</td></tr>
+          <tr><td>Pinecone + misc</td><td class="mono">$200</td><td class="mono">$500</td><td style="font-size:10px;color:var(--tx3)">Vectors, monitoring</td></tr>
+          <tr class="rtot"><td colspan="1">Total Infra</td><td class="mono" style="color:var(--blue)">$4,000</td><td class="mono" style="color:var(--amber)">$12,000</td><td style="font-size:10px;color:var(--green);font-weight:700">BE at 50 practices</td></tr>
+        </tbody>
+      </table>
+      <div class="notice nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span><strong>At +2 practices/month:</strong> breakeven Feb 2028. At +8/month: breakeven Oct 2026 (6 months away).</span></div>
+    </div>
+  </div>
+</div>
+<div class="sp">
+  <div class="spsec">Unit Economics</div>
+  <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Avg rev / practice</span><span class="mono" style="font-weight:700">$105.75/mo</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--rl);border-radius:4px"><span style="color:var(--red)">Gross margin</span><span class="mono" style="font-weight:700;color:var(--red)">Negative (pre-scale)</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>BE at</span><span class="mono" style="font-weight:700;color:var(--amber)">~50 practices</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gl);border-radius:4px"><span style="color:var(--green)">Profitable at</span><span class="mono" style="font-weight:700;color:var(--green)">100+</span></div>
+  </div>
+  <div class="spsec">Scenarios</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+    <div style="padding:7px 9px;background:var(--rl);border-radius:5px;border:1px solid #FECACA"><div style="font-weight:700;color:var(--red);margin-bottom:1px">+2/mo (slow)</div><div style="color:var(--tx3)">BE: Feb 2028</div></div>
+    <div style="padding:7px 9px;background:var(--al);border-radius:5px;border:1px solid #FDE68A"><div style="font-weight:700;color:var(--amber);margin-bottom:1px">+5/mo (target)</div><div style="color:var(--tx3)">BE: Dec 2026</div></div>
+    <div style="padding:7px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><div style="font-weight:700;color:var(--green);margin-bottom:1px">+8/mo (aggressive)</div><div style="color:var(--tx3)">BE: Oct 2026 ← 6 mo</div></div>
+  </div>
+</div>
+</div>
+</div>
+
+</div><!-- shell -->
+
+<script>
+// ─── TAB SWITCH ───────────────────────────────────────────────
+function ST(t){
+  document.querySelectorAll(".tab").forEach(e=>e.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(e=>e.classList.remove("active"));
+  document.getElementById("tab-"+t).classList.add("active");
+  document.getElementById("panel-"+t).classList.add("active");
+}
+
+// ─── PRACTICE DATA ────────────────────────────────────────────
+const P = {
+  athens:{
+    name:"Athens Sleep and Wellness Center", short:"Athens Sleep",
+    icon:"🌙", specialty:"Sleep Medicine",
+    plan:"Professional", planTag:"tb", sub:"$79/mo",
+    minsUsed:412, minsTotal:500, overageMin:0, overage:0,
+    nextInvoice:"INV-2026-002", nextDate:"May 11, 2026", nextAmt:"$79.00",
+    invoiceNum:"INV-2026-001", invoiceDate:"Apr 11, 2026", invoiceAmt:"$79.00",
+    invoicePaid:true,
+    card:"Visa ••••6411", cardBrand:"VISA", cardType:"Visa", cardLast4:"6411",
+    cardExp:"08/28", cardExpFull:"08/2028", cardHolder:"Dr. Subodh Agrawal",
+    custId:"cus_Q7xP...", subId:"sub_1QxKmL...", acctId:"acc_aswc",
+    npi:"1689977761", address:"125 King Ave Suite 200, Athens, GA 30606",
+    email:"subodh@athenssleepcenter.com", salute:"Dr. Agrawal",
+    calls:53, containment:"87.3%", appts:11,
+    accountStatus:"current",
+    statusMsg:"Account is current. Next invoice auto-generates May 11.",
+  },
+  valley:{
+    name:"Valley Ridge Family Medicine", short:"Valley Ridge",
+    icon:"🏥", specialty:"Family Medicine",
+    plan:"Enterprise", planTag:"tp", sub:"$149/mo",
+    minsUsed:1280, minsTotal:1500, overageMin:0, overage:0,
+    nextInvoice:"INV-VR-2026-002", nextDate:"May 28, 2026", nextAmt:"$149.00",
+    invoiceNum:"INV-VR-2026-001", invoiceDate:"Apr 28, 2026", invoiceAmt:"$149.00",
+    invoicePaid:true,
+    card:"Visa ••••2234", cardBrand:"VISA", cardType:"Visa", cardLast4:"2234",
+    cardExp:"11/27", cardExpFull:"11/2027", cardHolder:"Dr. Michael Williams",
+    custId:"cus_R3mT...", subId:"sub_2RyLnM...", acctId:"acc_vr001",
+    npi:"1234567890", address:"1201 Cedar Hill Rd Suite 100, Villa Rica, GA 30180",
+    email:"admin@valleyridgefm.com", salute:"Dr. Williams",
+    calls:81, containment:"83.1%", appts:22,
+    accountStatus:"current",
+    statusMsg:"Enterprise plan active. Priority support and 1,500 min included.",
+  },
+  buchanan:{
+    name:"Buchanan Rural Clinic", short:"Buchanan Rural",
+    icon:"🌿", specialty:"Primary Care",
+    plan:"Professional", planTag:"tb", sub:"$79/mo",
+    minsUsed:278, minsTotal:500, overageMin:0, overage:0,
+    nextInvoice:"INV-BC-2026-002", nextDate:"May 15, 2026", nextAmt:"$79.00",
+    invoiceNum:"INV-BC-2026-001", invoiceDate:"Apr 15, 2026", invoiceAmt:"$79.00",
+    invoicePaid:true,
+    card:"Mastercard ••••8871", cardBrand:"MC", cardType:"Mastercard", cardLast4:"8871",
+    cardExp:"03/29", cardExpFull:"03/2029", cardHolder:"Dr. Sarah Patel",
+    custId:"cus_S9kU...", subId:"sub_3SzMoN...", acctId:"acc_bc002",
+    npi:"9876543210", address:"211 Main St Suite A, Buchanan, GA 30113",
+    email:"drpatel@buchananrural.com", salute:"Dr. Patel",
+    calls:38, containment:"88.5%", appts:9,
+    accountStatus:"current",
+    statusMsg:"Usage well within plan limits (55.6% used). 222 minutes remaining.",
+  },
+  haralson:{
+    name:"Haralson County Pediatrics", short:"Haralson Peds",
+    icon:"👶", specialty:"Pediatrics",
+    plan:"Lite", planTag:"tt", sub:"$30/mo",
+    minsUsed:143, minsTotal:200, overageMin:0, overage:0,
+    nextInvoice:"INV-HC-2026-002", nextDate:"May 28, 2026", nextAmt:"$30.00",
+    invoiceNum:"INV-HC-2026-001", invoiceDate:"Apr 28, 2026", invoiceAmt:"$30.00",
+    invoicePaid:true,
+    card:"Visa ••••5590", cardBrand:"VISA", cardType:"Visa", cardLast4:"5590",
+    cardExp:"06/26", cardExpFull:"06/2026", cardHolder:"Dr. James Lee",
+    custId:"cus_T4nV...", subId:"sub_4TzNpO...", acctId:"acc_hc003",
+    npi:"1122334455", address:"88 Lakeside Dr, Tallapoosa, GA 30176",
+    email:"office@haralsopeds.com", salute:"Dr. Lee",
+    calls:24, containment:"91.2%", appts:7,
+    accountStatus:"current",
+    statusMsg:"Lite plan active. 57 minutes remaining this cycle.",
+  },
+  westpoint:{
+    name:"West Point Urgent Care", short:"West Point Urgent",
+    icon:"🚨", specialty:"Urgent Care",
+    plan:"Professional", planTag:"tb", sub:"$79/mo",
+    minsUsed:388, minsTotal:500, overageMin:0, overage:0,
+    nextInvoice:"INV-WP-2026-002", nextDate:"May 5, 2026", nextAmt:"$79.00",
+    invoiceNum:"INV-WP-2026-001", invoiceDate:"Apr 5, 2026", invoiceAmt:"$79.00",
+    invoicePaid:true,
+    card:"AmEx ••••0043", cardBrand:"AMEX", cardType:"American Express", cardLast4:"0043",
+    cardExp:"09/27", cardExpFull:"09/2027", cardHolder:"Dr. Amanda Anderson",
+    custId:"cus_U5oW...", subId:"sub_5UaOpP...", acctId:"acc_wp004",
+    npi:"5544332211", address:"320 Bradley Cir, West Point, GA 31833",
+    email:"billing@westpointurgent.com", salute:"Dr. Anderson",
+    calls:47, containment:"79.8%", appts:13,
+    accountStatus:"warn",
+    statusMsg:"⚠ Agent response latency averaging 4.8s — billing unaffected but performance alert active.",
+  },
+  coweta:{
+    name:"Coweta Family Medicine", short:"Coweta Family Med",
+    icon:"⚠️", specialty:"Family Medicine",
+    plan:"Professional + Overage", planTag:"ta", sub:"$218.50/mo",
+    minsUsed:779, minsTotal:500, overageMin:279, overage:139.50,
+    nextInvoice:"INV-CF-2026-002", nextDate:"May 1, 2026", nextAmt:"~$219.00",
+    invoiceNum:"INV-CF-2026-001", invoiceDate:"Apr 1, 2026", invoiceAmt:"$218.50",
+    invoicePaid:true,
+    card:"Visa ••••3317", cardBrand:"VISA", cardType:"Visa", cardLast4:"3317",
+    cardExp:"02/28", cardExpFull:"02/2028", cardHolder:"Dr. Rachel Torres",
+    custId:"cus_V6pX...", subId:"sub_6VbPqQ...", acctId:"acc_cf005",
+    npi:"9988776655", address:"55 Newnan Crossing Blvd, Newnan, GA 30265",
+    email:"dr.torres@cowetafamily.com", salute:"Dr. Torres",
+    calls:67, containment:"85.4%", appts:18,
+    accountStatus:"overage",
+    statusMsg:"⚠ 279 minutes over plan · $139.50 overage charged. Upgrade to Enterprise ($149/mo, 1,500 min) to save ~$90.50/mo.",
+  }
+};
+
+let cur = "athens";
+
+// ─── MAIN SWITCH ─────────────────────────────────────────────
+function switchPractice(key){
+  cur = key;
+  const p = P[key];
+
+  // Topbar chips
+  const sc = document.getElementById("statusChip");
+  const pc = document.getElementById("planChip");
+  if(sc){
+    const isOk = p.accountStatus === "current";
+    const isWarn = p.accountStatus === "warn" || p.accountStatus === "overage";
+    sc.className = "tchip " + (isOk ? "tcg" : "tca");
+    sc.innerHTML = (isOk ? '<div class="ldot"></div>Current' : '⚠ ' + (p.accountStatus === "overage" ? "Overage" : "Warning"));
+  }
+  if(pc){ pc.textContent = p.plan + " · " + p.sub; }
+
+  // Tab labels
+  const it = document.getElementById("tab-invoice");
+  if(it) it.firstChild.textContent = "📄 " + p.invoiceNum;
+
+  renderBilling(p);
+  renderUsage(p);
+  renderInvoice(p);
+  renderReceipt(p);
+  renderStripe(p);
+}
+
+// ─── BILLING PANEL ───────────────────────────────────────────
+function renderBilling(p){
+  const main = document.getElementById("billingMain");
+  const side = document.getElementById("billingSide");
+  if(!main || !side) return;
+
+  const usedPct = Math.min((p.minsUsed/p.minsTotal)*100,100);
+  const barCls = p.overageMin > 0 ? "ur" : usedPct > 88 ? "ua" : "ug";
+  const nCls = p.accountStatus === "current" ? "ng" : "na";
+  const nIcon = p.accountStatus === "current"
+    ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'
+    : '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>';
+  const remaining = p.minsTotal - p.minsUsed;
+
+  main.innerHTML = `
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px">
+  <div>
+    <div style="font-size:15px;font-weight:800;letter-spacing:-.3px">${p.icon} ${p.name}</div>
+    <div style="font-size:11px;color:var(--tx3);margin-top:2px">${p.specialty} · ${p.plan} · ${p.acctId} · Billing managed by Stripe</div>
+  </div>
+  <div style="display:flex;gap:5px">
+    <button class="btn bo" style="font-size:11px" onclick="ST('invoice')">View Invoice</button>
+    <button class="btn bg" style="font-size:11px" onclick="ST('stripe')">Manage Card</button>
+  </div>
+</div>
+
+<div class="notice ${nCls}">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${nIcon}</svg>
+  <span><strong>${p.short}:</strong> ${p.statusMsg} Next: <strong>${p.nextInvoice}</strong> on <strong>${p.nextDate}</strong> for <strong>${p.nextAmt}</strong>. ${p.card} charged automatically.</span>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;margin-bottom:14px">
+  <div style="padding:13px;border-radius:var(--r);border:2px solid var(--green);background:var(--gl)">
+    <div style="font-size:9.5px;font-weight:700;color:var(--green);text-transform:uppercase;margin-bottom:5px">${p.plan} — Current</div>
+    <div style="font-size:26px;font-weight:800;color:var(--green);letter-spacing:-.5px">$${p.plan==='Lite'?'30':p.plan==='Enterprise'?'149':'79'}</div>
+    <div style="font-size:10.5px;color:var(--tx3)">per month</div>
+    <div style="margin-top:9px;font-size:10.5px;color:var(--tx2);line-height:1.8">✓ ${p.minsTotal} min/month<br>✓ All AI features<br>✓ HIPAA-compliant</div>
+  </div>
+  <div style="padding:13px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--grl);opacity:.7;${p.plan==='Lite'?'':''}">
+    <div style="font-size:9.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:5px">Lite</div>
+    <div style="font-size:26px;font-weight:800;color:var(--tx3)">$30</div>
+    <div style="font-size:10.5px;color:var(--tx3)">per month</div>
+    <div style="margin-top:9px;font-size:10.5px;color:var(--tx3);line-height:1.8">200 min/month<br>Core AI features</div>
+    ${p.plan!=='Lite'?`<button class="btn" style="width:100%;justify-content:center;font-size:10px;margin-top:7px;background:var(--grl);border:1px solid var(--bdr);color:var(--tx3)" onclick="alert('Downgrade to Lite?')">Downgrade</button>`:`<div style="margin-top:7px;font-size:10px;color:var(--green);font-weight:700">← Current plan</div>`}
+  </div>
+  <div style="padding:13px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--grl);${p.plan==='Enterprise'?'opacity:.7':''}">
+    <div style="font-size:9.5px;font-weight:700;color:var(--purple);text-transform:uppercase;margin-bottom:5px">Enterprise</div>
+    <div style="font-size:26px;font-weight:800;color:var(--purple)">$149</div>
+    <div style="font-size:10.5px;color:var(--tx3)">per month</div>
+    <div style="margin-top:9px;font-size:10.5px;color:var(--tx2);line-height:1.8">1,500 min/month<br>Priority support<br>White-glove setup</div>
+    ${p.plan!=='Enterprise'?`<button class="btn" style="width:100%;justify-content:center;font-size:10px;margin-top:7px;background:var(--pl);border:1px solid #DDD6FE;color:var(--purple)" onclick="alert('Upgrade to Enterprise?')">Upgrade</button>`:`<div style="margin-top:7px;font-size:10px;color:var(--green);font-weight:700">← Current plan</div>`}
+  </div>
+</div>
+
+<div class="slabel">Usage This Billing Cycle</div>
+<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+  <span style="font-weight:600">Voice Minutes${p.overageMin>0?` <span class="tag tr" style="font-size:9px;margin-left:5px">${p.overageMin} min over!</span>`:''}</span>
+  <span class="mono" style="font-weight:700">${p.minsUsed} / ${p.minsTotal} min</span>
+</div>
+<div class="ubar" style="margin-bottom:4px"><div class="ubar-fill ${barCls}" style="width:${usedPct}%"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-bottom:${p.overageMin>0?8:14}px">
+  <span>${usedPct.toFixed(1)}% used${remaining>0?' · '+remaining+' min remaining':''}</span>
+  <span>Overage: $0.50/min</span>
+</div>
+${p.overageMin>0?`<div class="notice na" style="margin-bottom:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg><span><strong>${p.overageMin} overage minutes · $${p.overage.toFixed(2)} charged.</strong> Upgrading to Enterprise ($149/mo · 1,500 min) would eliminate overage. Estimated monthly savings: ~$${(p.overage-70).toFixed(2)}.</span></div>`:''}
+
+<div class="slabel">Invoice History</div>
+<table class="rtbl">
+  <thead><tr><th>Invoice</th><th>Period</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><span class="mono" style="font-weight:700">${p.invoiceNum}</span></td>
+      <td style="font-size:11px;color:var(--tx3)">Current billing period</td>
+      <td><span class="mono" style="font-weight:700">${p.invoiceAmt}</span></td>
+      <td><span class="tag tg">Paid ✓</span></td>
+      <td><div style="display:flex;gap:4px"><button class="btn bo" style="font-size:10px;padding:2px 7px" onclick="ST('invoice')">View</button><button class="btn bo" style="font-size:10px;padding:2px 7px" onclick="alert('Downloading ${p.invoiceNum}.pdf...')">PDF</button></div></td>
+    </tr>
+    <tr>
+      <td><span class="mono" style="color:var(--tx3)">${p.nextInvoice}</span></td>
+      <td style="font-size:11px;color:var(--tx3)">Next billing period</td>
+      <td><span class="mono" style="color:var(--tx3)">${p.nextAmt}</span></td>
+      <td><span class="tag tt">Upcoming</span></td>
+      <td><span style="font-size:10px;color:var(--tx3)">Auto on ${p.nextDate}</span></td>
+    </tr>
+  </tbody>
+</table>`;
+
+  side.innerHTML = `
+<div class="spsec">Billing Summary</div>
+<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px;font-size:11px">
+  <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Plan</span><span style="font-weight:700">${p.plan}</span></div>
+  <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Rate</span><span style="font-weight:700">${p.sub}</span></div>
+  <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Next charge</span><span style="font-weight:700;color:var(--navy)">${p.nextDate}</span></div>
+  <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Card</span><span style="font-weight:700">${p.card}</span></div>
+  <div style="display:flex;justify-content:space-between;padding:5px 8px;background:${p.accountStatus==='current'?'var(--gl)':'var(--al)'};border-radius:4px;border:1px solid ${p.accountStatus==='current'?'#A7F3D0':'#FDE68A'}">
+    <span>Status</span>
+    <span style="font-weight:700;color:${p.accountStatus==='current'?'var(--green)':'var(--amber)'}">
+      ${p.accountStatus==='current'?'Current ✓':p.accountStatus==='overage'?'Overage ⚠':'Warning ⚠'}
+    </span>
+  </div>
+  ${p.overage>0?`<div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--rl);border-radius:4px;border:1px solid #FECACA"><span style="color:var(--red)">Overage</span><span style="font-weight:700;color:var(--red)">$${p.overage.toFixed(2)}</span></div>`:''}
+</div>
+<div class="spsec">Minutes</div>
+<div style="padding:10px;background:${p.overageMin>0?'var(--al)':'var(--gl)'};border-radius:var(--r);border:1px solid ${p.overageMin>0?'#FDE68A':'#A7F3D0'};text-align:center;margin-bottom:10px">
+  <div style="font-size:26px;font-weight:800;color:${p.overageMin>0?'var(--amber)':'var(--green)'};letter-spacing:-1px">${p.minsUsed}</div>
+  <div style="font-size:9.5px;color:var(--tx3);font-weight:700;text-transform:uppercase">of ${p.minsTotal} included</div>
+  <div style="font-size:10px;color:var(--tx3);margin-top:3px">${p.overageMin>0?p.overageMin+' min over plan':(p.minsTotal-p.minsUsed)+' min remaining'}</div>
+</div>
+<div class="spsec">Account IDs</div>
+<div style="display:flex;flex-direction:column;gap:3px;font-size:10px;margin-bottom:10px">
+  <div style="padding:4px 7px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">Account: </span><span class="mono" style="font-weight:600">${p.acctId}</span></div>
+  <div style="padding:4px 7px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">NPI: </span><span class="mono" style="font-weight:600">${p.npi}</span></div>
+  <div style="padding:4px 7px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">Stripe: </span><span class="mono" style="font-weight:600">${p.custId}</span></div>
+</div>
+<button class="btn bo" style="width:100%;justify-content:center;font-size:11px" onclick="ST('stripe')">Manage Payment Method</button>`;
+}
+
+// ─── USAGE PANEL ─────────────────────────────────────────────
+function renderUsage(p){
+  const main = document.getElementById("usageMain");
+  const side = document.getElementById("usageSide");
+  if(!main || !side) return;
+
+  const usedPct = Math.min((p.minsUsed/p.minsTotal)*100,100);
+  const barCls = p.overageMin > 0 ? "ur" : usedPct > 88 ? "ua" : "ug";
+  const projTotal = p.overageMin > 0 ? `$${(79 + p.overage).toFixed(2)}` : `$${p.plan==='Lite'?'30':p.plan==='Enterprise'?'149':'79'}.00`;
+
+  main.innerHTML = `
+<div style="font-size:15px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px">Usage-Based Billing Tracker — ${p.short}</div>
+<div style="font-size:11px;color:var(--tx3);margin-bottom:13px">${p.plan} · ${p.minsTotal} min included · Real-time consumption</div>
+<div class="krow k4">
+  <div class="kpi"><div class="kpi-v" style="color:${p.overageMin>0?'var(--amber)':'var(--green)'}">${p.minsUsed}</div><div class="kpi-l">Min Used</div><div class="kpi-d ${p.overageMin>0?'kd':'ku'}">${usedPct.toFixed(1)}% of plan</div></div>
+  <div class="kpi"><div class="kpi-v">${Math.max(0,p.minsTotal-p.minsUsed)}</div><div class="kpi-l">Min Remaining</div><div class="kpi-d kn">${p.overageMin>0?'Over limit':((p.minsTotal-p.minsUsed)/p.minsTotal*100).toFixed(0)+'% left'}</div></div>
+  <div class="kpi"><div class="kpi-v" style="color:${p.overage>0?'var(--red)':'var(--g2)'}">$${p.overage.toFixed(2)}</div><div class="kpi-l">Overage</div><div class="kpi-d ${p.overage>0?'kd':'ku'}">${p.overageMin>0?p.overageMin+' min over':'No overage ✓'}</div></div>
+  <div class="kpi"><div class="kpi-v">${projTotal}</div><div class="kpi-l">Projected Total</div><div class="kpi-d ku">This cycle</div></div>
+</div>
+<div class="card">
+  <div class="chead"><div class="cicon icg">📊</div><div><div class="ctitle">Minute Gauge — ${p.plan} · ${p.minsTotal} min included</div></div></div>
+  <div class="cbody">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div style="font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-.5px">${p.minsUsed} <span style="font-size:13px;font-weight:500;color:var(--tx3)">/ ${p.minsTotal} min</span></div>
+      <span class="tag ${p.overageMin>0?'tr':'tg'}" style="font-size:11px">${p.overageMin>0?p.overageMin+' min over limit':usedPct.toFixed(1)+'% · No overage'}</span>
+    </div>
+    <div class="ubar"><div class="ubar-fill ${barCls}" style="width:${usedPct}%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:4px;margin-bottom:16px">
+      <span>0</span>
+      <span style="color:var(--amber)">⚠ ${Math.round(p.minsTotal*.9)} (90%)</span>
+      <span>${p.minsTotal} included</span>
+      <span style="color:${p.overageMin>0?'var(--red)':'var(--tx3)'}">${p.minsTotal+100} (+$50 ovg)</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="padding:10px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)">
+        <div style="font-size:10px;color:var(--tx3);font-weight:600;margin-bottom:5px">📞 Minutes by Type</div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Inbound calls</span><span class="mono" style="font-weight:700">${Math.round(p.minsUsed*.92)} min</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Outbound AI</span><span class="mono" style="font-weight:700">${Math.round(p.minsUsed*.08)} min</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;padding-top:5px;border-top:1px solid var(--bdr)"><span style="font-weight:600">Total</span><span class="mono" style="font-weight:700">${p.minsUsed} min</span></div>
+      </div>
+      <div style="padding:10px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)">
+        <div style="font-size:10px;color:var(--tx3);font-weight:600;margin-bottom:5px">💰 Cost Breakdown</div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>${p.plan} Plan</span><span class="mono" style="font-weight:700">$${p.plan==='Lite'?'30':p.plan==='Enterprise'?'149':'79'}.00</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Overage (${p.overageMin} min)</span><span class="mono" style="font-weight:700;color:${p.overage>0?'var(--red)':'var(--g2)'}">$${p.overage.toFixed(2)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;padding-top:5px;border-top:1px solid var(--bdr)"><span style="font-weight:600">Projected total</span><span class="mono" style="font-weight:700">${projTotal}</span></div>
+      </div>
+    </div>
+    <div class="slabel">Overage Alert Settings</div>
+    <div class="trow"><div><div style="font-size:12px;font-weight:600">Alert at 90% usage (${Math.round(p.minsTotal*.9)} min)</div><div style="font-size:10px;color:var(--tx3)">Email + in-app at 90%</div></div><div class="tgg on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div></div>
+    <div class="trow"><div><div style="font-size:12px;font-weight:600">Alert when overage starts</div><div style="font-size:10px;color:var(--tx3)">Immediate alert at minute 501</div></div><div class="tgg on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div></div>
+  </div>
+</div>`;
+
+  side.innerHTML = `
+<div class="spsec">Plan Tiers</div>
+<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:11px">
+  <div style="padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr);display:flex;justify-content:space-between"><span>Lite — 200 min</span><span style="font-weight:700">$30/mo</span></div>
+  <div style="padding:6px 9px;background:${p.plan==='Professional'||p.plan==='Professional + Overage'?'var(--gl)':'var(--grl)'};border-radius:5px;border:${p.plan==='Professional'||p.plan==='Professional + Overage'?'1.5px solid #A7F3D0':'1px solid var(--bdr)'};display:flex;justify-content:space-between"><span ${p.plan==='Professional'||p.plan==='Professional + Overage'?'style="font-weight:600;color:var(--green)"':''}>Pro — 500 min ${p.plan==='Professional'||p.plan==='Professional + Overage'?'✓':''}</span><span style="font-weight:700${p.plan==='Professional'||p.plan==='Professional + Overage'?';color:var(--green)':''}">$79/mo</span></div>
+  <div style="padding:6px 9px;background:${p.plan==='Enterprise'?'var(--gl)':'var(--grl)'};border-radius:5px;border:${p.plan==='Enterprise'?'1.5px solid #A7F3D0':'1px solid var(--bdr)'};display:flex;justify-content:space-between"><span ${p.plan==='Enterprise'?'style="font-weight:600;color:var(--green)"':''}>Enterprise — 1,500 min ${p.plan==='Enterprise'?'✓':''}</span><span style="font-weight:700${p.plan==='Enterprise'?';color:var(--green)':''}">$149/mo</span></div>
+  <div style="padding:6px 9px;background:var(--rl);border-radius:5px;border:1px solid #FECACA;display:flex;justify-content:space-between"><span style="color:var(--red)">Overage (any plan)</span><span style="font-weight:700;color:var(--red)">$0.50/min</span></div>
+</div>
+<div class="spsec">Daily Usage (Last 7d)</div>
+<div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
+  ${['Apr 18 (today)','Apr 17','Apr 16','Apr 15','Apr 14','Apr 13','Apr 12'].map((d,i)=>{
+    const c=[53,61,48,57,44,52,38][i], m=[47,55,43,51,39,47,34][i];
+    return `<div style="display:flex;justify-content:space-between;padding:4px 8px;background:var(--grl);border-radius:4px"><span>${d}</span><span class="mono" style="font-weight:700">${c} calls · ${m} min</span></div>`;
+  }).join('')}
+</div>`;
+}
+
+// ─── INVOICE PANEL ───────────────────────────────────────────
+function renderInvoice(p){
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.innerHTML = val; };
+  const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+
+  const invNum = p.invoiceNum;
+  const paid = p.invoicePaid;
+  const basePrice = p.plan==='Lite' ? 30 : p.plan==='Enterprise' ? 149 : 79;
+  const total = basePrice + p.overage;
+
+  setText("inv-h", "Invoice " + invNum);
+  setText("inv-sub", "Auto-generated · " + p.invoiceDate + " · Paid via Stripe · " + p.short);
+  setText("inv-num", invNum);
+  set("inv-status-badge", paid ? "✓ PAID" : "PENDING");
+  document.getElementById("inv-status-badge").style.cssText = paid
+    ? "background:rgba(74,222,128,.2);color:#86EFAC"
+    : "background:rgba(251,191,36,.2);color:#FCD34D";
+  setText("inv-dates", "Issue: " + p.invoiceDate + " · " + (paid ? "Paid: " + p.invoiceDate : "Due: " + p.nextDate));
+  setText("inv-to-name", p.name);
+  set("inv-to-detail", `${p.cardHolder} · NPI ${p.npi}<br>${p.address}<br>${p.email}`);
+  setText("inv-period", "Billing cycle · 30 days");
+  setText("inv-plan-label", p.plan);
+  setText("inv-mins-incl", p.minsTotal + " min");
+  setText("inv-mins-used", p.minsUsed + " min");
+  setText("inv-card", p.card);
+  setText("inv-paid-stamp", paid ? "PAID" : "PENDING");
+  setText("inv-paid-date", p.invoiceDate);
+  setText("sp-inv-num", invNum);
+  setText("sp-inv-total", "$" + total.toFixed(2));
+  set("sp-overage", `<span style="color:${p.overage>0?'var(--red)':'var(--g2)'}">$${p.overage.toFixed(2)}</span>`);
+
+  const lines = document.getElementById("inv-lines");
+  if(lines){
+    lines.innerHTML = `
+<tr><td><div style="font-weight:700">${p.plan} Plan — Monthly Subscription</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">${p.minsTotal} min included · 30-day billing cycle</div></td><td class="mono">1 month</td><td class="mono">$${basePrice}.00</td><td class="mono">$${basePrice}.00</td></tr>
+<tr><td><div style="font-weight:700">Voice Minutes — Included Allotment</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">${Math.min(p.minsUsed,p.minsTotal)} of ${p.minsTotal} minutes used</div></td><td class="mono">${Math.min(p.minsUsed,p.minsTotal)} min</td><td class="mono">$0.00</td><td class="mono" style="color:var(--g2)">$0.00</td></tr>
+<tr><td><div style="font-weight:700">Overage Minutes</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">${p.overageMin} minutes over ${p.minsTotal} min allotment</div></td><td class="mono">${p.overageMin} min</td><td class="mono">$0.50</td><td class="mono" style="color:${p.overage>0?'var(--red)':'var(--g2)'}">$${p.overage.toFixed(2)}</td></tr>
+<tr><td><div style="font-weight:700">SMS Messages — Outbound</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">Appointment reminders + fallback SMS · Included in plan</div></td><td class="mono">~23 msgs</td><td class="mono">$0.00</td><td class="mono" style="color:var(--g2)">$0.00</td></tr>
+<tr class="inv-sub"><td colspan="3" style="text-align:right;padding-right:26px;font-weight:700">Subtotal</td><td class="mono">$${total.toFixed(2)}</td></tr>
+<tr class="inv-sub"><td colspan="3" style="text-align:right;padding-right:26px;color:var(--tx3)">Tax (0% — SaaS software)</td><td class="mono" style="color:var(--tx3)">$0.00</td></tr>
+<tr class="inv-tot"><td colspan="3" style="text-align:right;padding-right:26px;font-size:15px">Total</td><td class="mono" style="font-size:16px">$${total.toFixed(2)}</td></tr>`;
+  }
+}
+
+// ─── RECEIPT ─────────────────────────────────────────────────
+function renderReceipt(p){
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.innerHTML = val; };
+  const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+
+  const basePrice = p.plan==='Lite' ? 30 : p.plan==='Enterprise' ? 149 : 79;
+  const total = basePrice + p.overage;
+
+  setText("receipt-sub", "Auto-sent by Stripe · " + p.short);
+  setText("receipt-to-email", p.email);
+  setText("receipt-to-full", p.salute + " <" + p.email + ">");
+  setText("receipt-subject", p.invoiceNum + " — $" + total.toFixed(2) + " — " + p.name);
+  setText("receipt-salute", p.salute);
+  setText("receipt-next-date", p.nextDate);
+
+  set("receipt-summary", `
+<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px solid var(--bdr)"><span style="color:var(--tx3)">Invoice</span><span class="mono" style="font-weight:700">${p.invoiceNum}</span></div>
+<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px solid var(--bdr)"><span style="color:var(--tx3)">Plan</span><span style="font-weight:600">${p.plan} (${p.minsTotal} min)</span></div>
+<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px solid var(--bdr)"><span style="color:var(--tx3)">Minutes used</span><span style="font-weight:600">${p.minsUsed} / ${p.minsTotal}</span></div>
+<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px solid var(--bdr)"><span style="color:var(--tx3)">Overage</span><span style="font-weight:600;color:${p.overage>0?'var(--red)':'var(--g2)'}">$${p.overage.toFixed(2)} ${p.overage>0?'charged':'— none 🎉'}</span></div>
+<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px solid var(--bdr)"><span style="color:var(--tx3)">Payment</span><span style="font-weight:600">${p.card}</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 0 3px;font-size:13.5px;font-weight:800"><span>Amount charged</span><span class="mono">$${total.toFixed(2)}</span></div>`);
+
+  set("receipt-aria", `🤖 <strong>Aria Stats This Period:</strong> ${p.calls} calls handled · ${p.containment} containment · ${p.appts} appointments booked · HIPAA compliant`);
+}
+
+// ─── STRIPE ──────────────────────────────────────────────────
+function renderStripe(p){
+  const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  const basePrice = p.plan==='Lite' ? 30 : p.plan==='Enterprise' ? 149 : 79;
+  const total = basePrice + p.overage;
+
+  setText("stripe-sub-label", p.short + " · Stripe Customer: " + p.custId);
+  setText("sc-num", "•••• •••• •••• " + p.cardLast4);
+  setText("sc-name", p.cardHolder);
+  setText("sc-exp", p.cardExp);
+  setText("sc-brand", p.cardBrand);
+  setText("sc-type", p.cardType);
+  setText("sc-last4", "••••" + p.cardLast4);
+  setText("sc-expiry", p.cardExpFull);
+  setText("sc-holder", p.cardHolder);
+  setText("sc-next-date", p.nextDate);
+  setText("sc-next-amt", "~$" + total.toFixed(2));
+  setText("sc-cust", p.custId);
+  setText("sc-sub", p.subId);
+
+  const notice = document.getElementById("stripe-notice");
+  if(notice){
+    notice.className = "notice " + (p.accountStatus==="current" ? "ng" : "na");
+    notice.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${p.accountStatus==="current"?'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>':'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>'}</svg><span><strong>Auto-deduction is active.</strong> ${p.card} will be charged <strong>$${total.toFixed(2)}</strong> on ${p.nextDate}.</span>`;
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+switchPractice("athens");
+</script>
+</body>
+</html>
