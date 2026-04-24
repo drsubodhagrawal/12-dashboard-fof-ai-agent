@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOF Admin — New Signup Notification Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0F2A4A;--navy2:#1A3A5C;
+  --amber:#D97706;--amber2:#F59E0B;--amber-light:#FEF3C7;--amber-dark:#92400E;
+  --green:#1B6B4A;--green-light:#ECFDF5;--green2:#059669;
+  --blue:#1D4ED8;--blue-light:#EFF6FF;
+  --red:#DC2626;--red-light:#FEF2F2;
+  --purple:#7C3AED;--purple-light:#F5F3FF;
+  --teal:#0D9488;--teal-light:#F0FDFA;
+  --orange:#EA580C;--orange-light:#FFF7ED;
+  --gray:#6B7280;--gray-light:#F9FAFB;--border:#E5E7EB;--border2:#D1D5DB;
+  --text:#111827;--text2:#374151;--text3:#6B7280;
+  --surface:#FFFFFF;--bg:#F1F5F9;
+  --radius:10px;--radius-sm:6px;--radius-lg:14px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.05);
+  --shadow-md:0 4px 16px rgba(0,0,0,.10);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.14);
+}
+html,body{height:100%;font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;}
+
+/* ─── LAYOUT ─── */
+.shell{display:grid;grid-template-columns:252px 1fr;grid-template-rows:52px 1fr;height:100vh;overflow:hidden;}
+.topbar{grid-column:1/-1;background:var(--navy);display:flex;align-items:center;padding:0 20px;gap:0;z-index:100;}
+.sidebar{background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;border-right:1px solid rgba(255,255,255,.06);}
+.main{background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
+
+/* ─── TOPBAR ─── */
+.tb-logo{display:flex;align-items:center;gap:8px;margin-right:20px;}
+.tb-logo-mark{width:28px;height:28px;background:linear-gradient(135deg,#60A5FA,#1D4ED8);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.tb-logo-mark svg{width:15px;height:15px;}
+.tb-logo-text{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.2px;}
+.tb-logo-badge{font-size:10px;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace;}
+.tb-sep{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 14px;}
+.tb-section{font-size:12px;font-weight:600;color:rgba(255,255,255,.5);}
+.tb-section span{color:#fff;margin-left:5px;}
+.tb-spacer{flex:1;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.tb-badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;}
+.tb-live{background:rgba(34,197,94,.15);color:#86EFAC;display:flex;align-items:center;gap:5px;}
+.tb-alert{background:rgba(239,68,68,.15);color:#FCA5A5;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.tb-user{display:flex;align-items:center;gap:7px;padding:4px 10px;border-radius:7px;background:rgba(255,255,255,.07);cursor:pointer;}
+.tb-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
+.tb-user-name{font-size:12px;font-weight:600;color:#fff;}
+.tb-user-role{font-size:10px;color:rgba(255,255,255,.4);}
+
+/* ─── SIDEBAR ─── */
+.sb-head{padding:16px 14px 14px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-session{padding:8px 10px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.2);border-radius:7px;}
+.sb-session-label{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#FCD34D;margin-bottom:2px;}
+.sb-session-name{font-size:12px;font-weight:600;color:#fff;}
+.sb-session-role{font-size:10px;color:rgba(255,255,255,.38);}
+.sb-nav{padding:10px 10px;flex:1;}
+.sb-section{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.28);padding:10px 8px 4px;}
+.sb-btn{display:flex;align-items:center;gap:8px;width:100%;padding:7px 8px;border:none;background:transparent;color:rgba(255,255,255,.5);font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:500;border-radius:7px;cursor:pointer;transition:all .15s;text-align:left;margin-bottom:1px;border-left:2.5px solid transparent;}
+.sb-btn:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);}
+.sb-btn.active{background:rgba(245,158,11,.12);color:#FCD34D;border-left-color:var(--amber2);}
+.sb-icon{font-size:13px;width:16px;text-align:center;flex-shrink:0;}
+.sb-badge{margin-left:auto;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;}
+.sb-badge-red{background:rgba(239,68,68,.8);color:#fff;}
+.sb-badge-amber{background:rgba(217,119,6,.85);color:#fff;}
+.sb-badge-green{background:rgba(34,197,94,.2);color:#86EFAC;}
+.sb-badge-blue{background:rgba(96,165,250,.2);color:#93C5FD;}
+.sb-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,.07);}
+.sb-user-row{display:flex;align-items:center;gap:8px;}
+.sb-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.sb-user-name{font-size:12px;font-weight:600;color:#fff;}
+.sb-user-sub{font-size:10px;color:rgba(255,255,255,.32);}
+.sb-online{width:7px;height:7px;border-radius:50%;background:#22C55E;margin-left:auto;}
+
+/* ─── MAIN CONTENT ─── */
+.content-topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:50px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.ct-bc{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:5px;}
+.ct-bc span{color:var(--text);font-weight:600;}
+.ct-spacer{flex:1;}
+.ct-actions{display:flex;align-items:center;gap:8px;}
+.cbtn{padding:6px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.cbtn svg{width:13px;height:13px;}
+.cbtn-primary{background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;border:none;}
+.cbtn-primary:hover{filter:brightness(1.08);}
+.cbtn-outline{background:var(--surface);border:1.5px solid var(--border);color:var(--text2);}
+.cbtn-outline:hover{border-color:var(--border2);}
+.cbtn-green{background:var(--green-light);border:1.5px solid #A7F3D0;color:var(--green);}
+.cbtn-green:hover{background:#D1FAE5;}
+
+.scroll-area{flex:1;overflow-y:auto;padding:20px 24px;}
+
+/* ─── SECTION TABS ─── */
+.section-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px;}
+.stab{padding:9px 18px;font-size:13px;font-weight:500;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.stab:hover{color:var(--text2);}
+.stab.active{color:var(--amber);border-bottom-color:var(--amber);}
+.stab-badge{padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;background:var(--red-light);color:var(--red);}
+.stab-badge.green{background:var(--green-light);color:var(--green);}
+.stab-badge.amber{background:var(--amber-light);color:var(--amber);}
+
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ─── CARDS ─── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.card-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-icon svg{width:15px;height:15px;}
+.ci-amber{background:var(--amber-light);color:var(--amber);}
+.ci-green{background:var(--green-light);color:var(--green);}
+.ci-blue{background:var(--blue-light);color:var(--blue);}
+.ci-red{background:var(--red-light);color:var(--red);}
+.ci-purple{background:var(--purple-light);color:var(--purple);}
+.ci-teal{background:var(--teal-light);color:var(--teal);}
+.ci-navy{background:rgba(15,42,74,.08);color:var(--navy);}
+.card-title{font-size:13px;font-weight:700;color:var(--text);}
+.card-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.card-body{padding:18px;}
+
+/* ─── GRID ─── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* ─── REAL-TIME ALERT BANNER ─── */
+.alert-banner{background:linear-gradient(135deg,#0F2A4A,#1A3A5C);border:1px solid rgba(245,158,11,.3);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;}
+.alert-banner::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(245,158,11,.04),transparent);animation:shimmer 2.5s infinite;}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.alert-pulse{width:44px;height:44px;border-radius:50%;background:rgba(245,158,11,.15);border:2px solid rgba(245,158,11,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:ringpulse 2s infinite;}
+@keyframes ringpulse{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.3)}50%{box-shadow:0 0 0 8px rgba(245,158,11,0)}}
+.alert-pulse-icon{font-size:20px;}
+.alert-content{flex:1;}
+.alert-headline{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.2px;margin-bottom:2px;}
+.alert-sub{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5;}
+.alert-time-chip{padding:4px 10px;border-radius:12px;background:rgba(245,158,11,.15);color:#FCD34D;font-size:11px;font-weight:700;border:1px solid rgba(245,158,11,.25);white-space:nowrap;}
+.alert-actions{display:flex;gap:6px;margin-top:10px;}
+.alert-btn{padding:6px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;border:none;}
+.alert-btn-primary{background:var(--amber2);color:#fff;}
+.alert-btn-primary:hover{background:var(--amber);}
+.alert-btn-ghost{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.12);}
+.alert-btn-ghost:hover{background:rgba(255,255,255,.14);}
+
+/* ─── WEBHOOK FEED ─── */
+.webhook-feed{display:flex;flex-direction:column;gap:8px;}
+.webhook-event{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:all .15s;}
+.webhook-event:hover{border-color:var(--border2);box-shadow:var(--shadow);}
+.webhook-event.new-event{border-color:var(--amber2);background:linear-gradient(135deg,#FFFBEB,#FFF);}
+.webhook-event.processing{border-color:#93C5FD;background:var(--blue-light);}
+.webhook-event.complete{border-color:#A7F3D0;background:var(--green-light);}
+.we-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.we-dot-amber{background:var(--amber2);}
+.we-dot-blue{background:var(--blue);}
+.we-dot-green{background:var(--green2);}
+.we-dot-gray{background:var(--border2);}
+.we-content{flex:1;}
+.we-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.we-detail{font-size:11px;color:var(--text3);line-height:1.5;font-family:'JetBrains Mono',monospace;}
+.we-meta{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap;}
+.we-chip{padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600;}
+.wc-amber{background:var(--amber-light);color:var(--amber);}
+.wc-green{background:var(--green-light);color:var(--green);}
+.wc-blue{background:var(--blue-light);color:var(--blue);}
+.wc-gray{background:var(--gray-light);color:var(--gray);}
+.wc-red{background:var(--red-light);color:var(--red);}
+.we-time{font-size:10px;color:var(--text3);margin-left:auto;white-space:nowrap;}
+.we-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+
+/* ─── CHECKLIST ─── */
+.checklist{display:flex;flex-direction:column;gap:7px;}
+.chk-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);border:1.5px solid;}
+.chk-item.chk-done{background:var(--green-light);border-color:#A7F3D0;}
+.chk-item.chk-warn{background:var(--amber-light);border-color:#FDE68A;}
+.chk-item.chk-err{background:var(--red-light);border-color:#FECACA;}
+.chk-item.chk-pend{background:var(--gray-light);border-color:var(--border);}
+.chk-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.chk-done .chk-icon{background:var(--green2);}
+.chk-warn .chk-icon{background:var(--amber2);}
+.chk-err .chk-icon{background:var(--red);}
+.chk-pend .chk-icon{background:var(--border2);}
+.chk-icon svg{width:10px;height:10px;}
+.chk-label{font-size:12.5px;font-weight:600;color:var(--text2);flex:1;}
+.chk-done .chk-label{color:var(--green);}
+.chk-warn .chk-label{color:var(--amber-dark);}
+.chk-err .chk-label{color:var(--red);}
+.chk-detail{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4;}
+.chk-status{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;flex-shrink:0;margin-top:1px;}
+.chk-done .chk-status{background:#D1FAE5;color:var(--green);}
+.chk-warn .chk-status{background:#FEF3C7;color:var(--amber);}
+.chk-err .chk-status{background:#FEE2E2;color:var(--red);}
+.chk-pend .chk-status{background:var(--border);color:var(--text3);}
+.chk-action{padding:4px 10px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;border:1.5px solid;transition:all .15s;flex-shrink:0;margin-top:1px;}
+.chk-action-amber{border-color:var(--amber);color:var(--amber);background:#fff;}
+.chk-action-amber:hover{background:var(--amber);color:#fff;}
+.chk-action-red{border-color:var(--red);color:var(--red);background:#fff;}
+.chk-action-red:hover{background:var(--red);color:#fff;}
+
+/* ─── PRACTICE PROFILE CARD ─── */
+.practice-hero{background:linear-gradient(135deg,#0F2A4A,#1A3A5C);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.ph-avatar{width:50px;height:50px;border-radius:var(--radius-sm);background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.ph-name{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px;margin-bottom:2px;}
+.ph-npi{font-size:11px;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;}
+.ph-badges{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;}
+.ph-badge{padding:3px 9px;border-radius:10px;font-size:10px;font-weight:700;}
+.pb-plan{background:rgba(245,158,11,.2);color:#FCD34D;border:1px solid rgba(245,158,11,.25);}
+.pb-status{background:rgba(34,197,94,.15);color:#86EFAC;border:1px solid rgba(34,197,94,.2);}
+.pb-specialty{background:rgba(96,165,250,.15);color:#93C5FD;border:1px solid rgba(96,165,250,.2);}
+.ph-spacer{flex:1;}
+.ph-time{text-align:right;}
+.ph-time-label{font-size:10px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.5px;}
+.ph-time-val{font-size:13px;font-weight:600;color:rgba(255,255,255,.7);margin-top:2px;}
+
+/* ─── PROFILE DETAILS ─── */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.detail-item{padding:10px 12px;background:var(--gray-light);border-radius:var(--radius-sm);border:1px solid var(--border);}
+.detail-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.detail-value{font-size:13px;font-weight:600;color:var(--text);}
+.detail-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+
+/* ─── PROGRESS TRACKER ─── */
+.progress-steps{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin-bottom:10px;}
+.ps-item{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.ps-circle{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid var(--border);color:var(--text3);background:#fff;transition:all .3s;}
+.ps-circle.done{background:var(--green2);border-color:var(--green2);color:#fff;}
+.ps-circle.active{background:var(--amber2);border-color:var(--amber2);color:#fff;animation:bounce .6s ease infinite alternate;}
+@keyframes bounce{0%{transform:scale(1)}100%{transform:scale(1.1)}}
+.ps-circle.locked{background:var(--gray-light);border-color:var(--border);}
+.ps-label{font-size:9px;color:var(--text3);text-align:center;line-height:1.2;font-weight:500;}
+.ps-item.done .ps-label{color:var(--green);}
+.ps-item.active .ps-label{color:var(--amber);font-weight:700;}
+.progress-bar-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:5px;}
+.progress-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green2),var(--amber2));transition:width .5s ease;}
+.progress-info{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);}
+
+/* ─── BAA DOCUMENT ─── */
+.baa-doc{background:var(--gray-light);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:14px;}
+.baa-doc-header{padding:10px 14px;background:var(--navy);display:flex;align-items:center;gap:8px;}
+.baa-doc-title{font-size:12px;font-weight:700;color:#fff;}
+.baa-doc-meta{font-size:10px;color:rgba(255,255,255,.45);margin-left:auto;font-family:'JetBrains Mono',monospace;}
+.baa-doc-body{padding:14px;font-size:11px;line-height:1.8;color:var(--text2);max-height:160px;overflow-y:auto;}
+.baa-doc-body strong{color:var(--text);}
+.baa-sign-row{padding:10px 14px;background:#fff;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.baa-signed-by{flex:1;}
+.baa-signed-label{font-size:10px;color:var(--text3);}
+.baa-signed-name{font-size:12px;font-weight:700;color:var(--text);}
+.baa-signed-ts{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.baa-countersign-btn{padding:7px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;border:none;display:flex;align-items:center;gap:5px;}
+.baa-countersign-btn.pending{background:var(--amber);color:#fff;}
+.baa-countersign-btn.pending:hover{background:var(--amber-dark);}
+.baa-countersign-btn.done{background:var(--green-light);color:var(--green);border:1.5px solid #A7F3D0;cursor:default;}
+.baa-countersign-btn svg{width:12px;height:12px;}
+.baa-stamp{display:none;align-items:center;gap:8px;padding:8px 14px;background:var(--green-light);border-top:1px solid #A7F3D0;}
+.baa-stamp.visible{display:flex;}
+.baa-stamp-text{font-size:11px;color:var(--green);font-weight:600;}
+.baa-stamp-vault{font-size:10px;color:var(--text3);margin-left:auto;}
+
+/* ─── EMAIL COMPOSER ─── */
+.email-composer{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.ec-header{padding:12px 16px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;}
+.ec-title{font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:7px;}
+.ec-actions{display:flex;gap:6px;}
+.ec-btn{padding:5px 12px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;border:1px solid;transition:all .15s;}
+.ec-tpl-btn{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7);background:rgba(255,255,255,.07);}
+.ec-tpl-btn:hover{background:rgba(255,255,255,.14);color:#fff;}
+.ec-send-btn{border-color:var(--amber2);color:#fff;background:var(--amber2);}
+.ec-send-btn:hover{background:var(--amber);}
+.ec-field-row{display:flex;align-items:center;border-bottom:1px solid var(--border);}
+.ec-field-label{font-size:11px;font-weight:600;color:var(--text3);padding:0 14px;width:65px;flex-shrink:0;}
+.ec-field-input{flex:1;padding:9px 0;font-size:13px;font-family:'Outfit',sans-serif;color:var(--text);border:none;outline:none;background:transparent;}
+.ec-body-area{padding:14px 16px;}
+.ec-body-textarea{width:100%;height:180px;font-size:12px;font-family:'Outfit',sans-serif;color:var(--text2);border:none;outline:none;resize:none;background:transparent;line-height:1.7;}
+.ec-footer{padding:8px 16px;border-top:1px solid var(--border);background:var(--gray-light);display:flex;align-items:center;justify-content:space-between;}
+.ec-footer-info{font-size:11px;color:var(--text3);}
+.ec-footer-info strong{color:var(--text2);}
+
+/* ─── TEMPLATE LIBRARY ─── */
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.tpl-card{border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:all .15s;}
+.tpl-card:hover{border-color:var(--amber2);background:var(--amber-light);}
+.tpl-card.selected{border-color:var(--amber2);background:var(--amber-light);}
+.tpl-name{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:3px;}
+.tpl-desc{font-size:10px;color:var(--text3);line-height:1.4;}
+.tpl-when{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--amber);margin-top:4px;}
+
+/* ─── AUDIT TRAIL ─── */
+.audit-row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.audit-row:last-child{border-bottom:none;}
+.audit-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);width:78px;flex-shrink:0;padding-top:1px;}
+.audit-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.ad-green{background:var(--green2);}
+.ad-amber{background:var(--amber2);}
+.ad-blue{background:var(--blue);}
+.ad-gray{background:var(--border2);}
+.audit-text{font-size:12.5px;color:var(--text2);line-height:1.5;}
+.audit-actor{font-size:11px;color:var(--text3);margin-top:2px;}
+.audit-actor strong{color:var(--text2);}
+
+/* ─── KPI MINI CARDS ─── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;}
+.kpi-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.kpi-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-1px;}
+.kpi-sub{font-size:10px;margin-top:3px;}
+.kpi-up{color:var(--green);}
+.kpi-amber{color:var(--amber);}
+.kpi-red{color:var(--red);}
+.kpi-gray{color:var(--text3);}
+
+/* ─── NOTICE ─── */
+.notice{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:12px;font-size:12px;line-height:1.5;}
+.notice.amber{background:var(--amber-light);border:1px solid #FDE68A;color:var(--amber-dark);}
+.notice.green{background:var(--green-light);border:1px solid #A7F3D0;color:var(--green);}
+.notice.blue{background:var(--blue-light);border:1px solid #BFDBFE;color:var(--blue);}
+.notice.red{background:var(--red-light);border:1px solid #FECACA;color:var(--red);}
+.notice svg{width:13px;height:13px;flex-shrink:0;margin-top:1px;}
+.notice strong{font-weight:700;}
+
+/* ─── MISC ─── */
+.section-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.section-label-link{font-size:11px;color:var(--amber);font-weight:500;text-transform:none;letter-spacing:0;cursor:pointer;}
+.tag{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;}
+.tag-new{background:linear-gradient(135deg,#FEF3C7,#FDE68A);color:var(--amber-dark);border:1px solid #FCD34D;}
+.tag-live{background:var(--green-light);color:var(--green);border:1px solid #A7F3D0;}
+.tag-warn{background:var(--amber-light);color:var(--amber);}
+.tag-err{background:var(--red-light);color:var(--red);}
+.tag-info{background:var(--blue-light);color:var(--blue);}
+.form-input{padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border .15s;width:100%;}
+.form-input:focus{border-color:var(--amber);}
+.form-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px;display:block;}
+.form-group{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══ TOPBAR ══ -->
+<div class="topbar">
+  <div class="tb-logo">
+    <div class="tb-logo-mark"><svg viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="13" height="13" rx="2.5" stroke="white" stroke-width="1.5"/><path d="M5 7.5h5M7.5 5v5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <span class="tb-logo-text">MOF Admin</span>
+    <span class="tb-logo-badge">&nbsp;/admin</span>
+  </div>
+  <div class="tb-sep"></div>
+  <div class="tb-section">New Signup Center <span>— Phase 3 Workflow</span></div>
+  <div class="tb-spacer"></div>
+  <div class="tb-right">
+    <div class="tb-badge tb-live"><div class="live-dot"></div>Platform Live</div>
+    <div class="tb-badge tb-alert">1 New Signup</div>
+    <div class="tb-user">
+      <div class="tb-avatar">PN</div>
+      <div><div class="tb-user-name">Priya Nair</div><div class="tb-user-role">CS Admin · ATL Zone</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar">
+  <div class="sb-head">
+    <div class="sb-session">
+      <div class="sb-session-label">Active Session</div>
+      <div class="sb-session-name">Priya Nair</div>
+      <div class="sb-session-role">CS Admin · Zone 303XX–304XX</div>
+    </div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-section">My Workflow</div>
+    <button class="sb-btn active" onclick=""><span class="sb-icon">🔔</span>New Signups <span class="sb-badge sb-badge-amber">1</span></button>
+    <button class="sb-btn"><span class="sb-icon">📋</span>Config Reviews <span class="sb-badge sb-badge-red">2</span></button>
+    <button class="sb-btn"><span class="sb-icon">🛡️</span>BAA Queue <span class="sb-badge sb-badge-amber">1</span></button>
+    <button class="sb-btn"><span class="sb-icon">✉️</span>Email Outreach <span class="sb-badge sb-badge-blue">3</span></button>
+    <button class="sb-btn"><span class="sb-icon">📊</span>Stall Tracker</button>
+    <div class="sb-section">All Practices</div>
+    <button class="sb-btn"><span class="sb-icon">🏥</span>All Accounts <span class="sb-badge sb-badge-green">6</span></button>
+    <button class="sb-btn"><span class="sb-icon">📡</span>Webhook Config</button>
+    <div class="sb-section">Support Tools</div>
+    <button class="sb-btn"><span class="sb-icon">🔑</span>Impersonation</button>
+    <button class="sb-btn"><span class="sb-icon">📞</span>Outreach Calls</button>
+    <div class="sb-section">Records</div>
+    <button class="sb-btn"><span class="sb-icon">🛡️</span>BAA Vault</button>
+    <button class="sb-btn"><span class="sb-icon">📋</span>Audit Trail</button>
+    <button class="sb-btn"><span class="sb-icon">📧</span>Email History</button>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-user-row">
+      <div class="sb-avatar">PN</div>
+      <div><div class="sb-user-name">Priya Nair</div><div class="sb-user-sub">CS Admin</div></div>
+      <div class="sb-online"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="content-topbar">
+    <div class="ct-bc">MOF Admin <span style="opacity:.4;margin:0 4px;">›</span> CS Workflow <span style="opacity:.4;margin:0 4px;">›</span> <span>New Signup — Athens Sleep & Wellness</span></div>
+    <div class="ct-spacer"></div>
+    <div class="ct-actions">
+      <button class="cbtn cbtn-outline">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Export Report
+      </button>
+      <button class="cbtn cbtn-outline" onclick="document.getElementById('webhookPanel').scrollIntoView({behavior:'smooth'})">⚙️ Webhook Config</button>
+      <button class="cbtn cbtn-primary" onclick="switchTab('email')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Send Welcome Email
+      </button>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+
+    <!-- ══ REAL-TIME ALERT BANNER ══ -->
+    <div class="alert-banner">
+      <div class="alert-pulse"><div class="alert-pulse-icon">🔔</div></div>
+      <div class="alert-content">
+        <div class="alert-headline">New Practice Signup — Athens Sleep and Wellness Center</div>
+        <div class="alert-sub">Dr. Subodh Agrawal · NPI 1689977761 · Sleep Medicine · Athens GA 30606 · Professional Plan $79/mo · Webhook fired 4 minutes ago via <span style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,.7);">POST /api/webhook/signup</span></div>
+        <div class="alert-actions">
+          <button class="alert-btn alert-btn-primary" onclick="switchTab('checklist')">Review Configuration →</button>
+          <button class="alert-btn alert-btn-ghost" onclick="switchTab('baa')">Sign BAA</button>
+          <button class="alert-btn alert-btn-ghost" onclick="switchTab('email')">Send Welcome Email</button>
+          <button class="alert-btn alert-btn-ghost">Assign to Me</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">
+        <div class="alert-time-chip">4 min ago · 10:38 AM EDT</div>
+        <div class="tag tag-new">⚡ NEW SIGNUP</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);">Assigned: Priya Nair (CS Admin)</div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION TABS ══ -->
+    <div class="section-tabs">
+      <div class="stab active" id="tab-alert" onclick="switchTab('alert')">🔔 Live Alert Feed <span class="stab-badge">1</span></div>
+      <div class="stab" id="tab-profile" onclick="switchTab('profile')">🏥 Practice Profile</div>
+      <div class="stab" id="tab-checklist" onclick="switchTab('checklist')">✅ Config Checklist <span class="stab-badge amber">3 items</span></div>
+      <div class="stab" id="tab-baa" onclick="switchTab('baa')">🛡️ BAA Countersign <span class="stab-badge">Pending</span></div>
+      <div class="stab" id="tab-email" onclick="switchTab('email')">✉️ Welcome Email</div>
+      <div class="stab" id="tab-audit" onclick="switchTab('audit')">📋 Audit Log</div>
+    </div>
+
+    <!-- ══ TAB: LIVE ALERT FEED ══ -->
+    <div class="tab-panel active" id="panel-alert">
+      <div class="grid2" style="gap:16px;">
+        <div>
+          <div class="kpi-row" style="grid-template-columns:1fr 1fr 1fr 1fr;">
+            <div class="kpi"><div class="kpi-label">Today's Signups</div><div class="kpi-val">1</div><div class="kpi-sub kpi-gray">↑ from 0 yesterday</div></div>
+            <div class="kpi"><div class="kpi-label">This Week</div><div class="kpi-val">3</div><div class="kpi-sub kpi-up">+1 high-value</div></div>
+            <div class="kpi"><div class="kpi-label">Awaiting BAA</div><div class="kpi-val" style="color:var(--amber);">1</div><div class="kpi-sub kpi-amber">Action required</div></div>
+            <div class="kpi"><div class="kpi-label">Stalled >24h</div><div class="kpi-val" style="color:var(--red);">0</div><div class="kpi-sub kpi-gray">All on track</div></div>
+          </div>
+
+          <div class="section-label">Webhook Event Feed — Real-time</div>
+          <div class="webhook-feed">
+            <div class="webhook-event new-event">
+              <div class="we-dot we-dot-amber"></div>
+              <div class="we-content">
+                <div class="we-title">POST /api/webhook/signup — Athens Sleep and Wellness Center</div>
+                <div class="we-detail">{"event":"practice.signup","practice_id":"acc_aswc001","npi":"1689977761","email":"subodh@athenssleepcenter.com","plan":"professional","step":2}</div>
+                <div class="we-meta">
+                  <span class="we-chip wc-amber">NEW SIGNUP</span>
+                  <span class="we-chip wc-blue">Professional $79</span>
+                  <span class="we-chip wc-blue">Sleep Medicine</span>
+                  <span class="we-chip wc-amber">Step 2 Complete</span>
+                  <span class="we-time">10:38:07 AM · 4 min ago</span>
+                </div>
+              </div>
+              <div class="we-right">
+                <span class="tag tag-new">NEW</span>
+                <button class="cbtn cbtn-primary" style="font-size:11px;padding:5px 10px;" onclick="switchTab('checklist')">Review →</button>
+              </div>
+            </div>
+
+            <div class="webhook-event processing">
+              <div class="we-dot we-dot-blue"></div>
+              <div class="we-content">
+                <div class="we-title">PUT /api/webhook/signup/step — Athens Sleep (Step 3: Plan Selected)</div>
+                <div class="we-detail">{"event":"onboarding.step","step":3,"plan":"professional","billing":"monthly","amount":79.00}</div>
+                <div class="we-meta">
+                  <span class="we-chip wc-blue">STEP UPDATE</span>
+                  <span class="we-chip wc-blue">Plan: Professional</span>
+                  <span class="we-time">10:39:22 AM · 3 min ago</span>
+                </div>
+              </div>
+              <div class="we-right"><span class="tag tag-info">PROCESSING</span></div>
+            </div>
+
+            <div class="webhook-event processing">
+              <div class="we-dot we-dot-blue"></div>
+              <div class="we-content">
+                <div class="we-title">POST /api/stripe/payment — Payment Method Captured</div>
+                <div class="we-detail">{"event":"payment.method_added","card_last4":"6411","brand":"visa","trial_end":"2026-05-18","first_charge":79.00}</div>
+                <div class="we-meta">
+                  <span class="we-chip wc-green">PAYMENT OK</span>
+                  <span class="we-chip wc-blue">Visa ••••6411</span>
+                  <span class="we-chip wc-gray">Trial: 30 days</span>
+                  <span class="we-time">10:40:05 AM · 2 min ago</span>
+                </div>
+              </div>
+              <div class="we-right"><span class="tag tag-info">PROCESSING</span></div>
+            </div>
+
+            <div class="webhook-event complete">
+              <div class="we-dot we-dot-green"></div>
+              <div class="we-content">
+                <div class="we-title">POST /api/legal/baa — BAA Signed by Practice</div>
+                <div class="we-detail">{"event":"legal.baa_signed","signatory":"Dr. Subodh Agrawal MD","ip":"72.45.xxx.xxx","timestamp":"2026-04-18T14:41:30Z","version":"BAA-v2.4"}</div>
+                <div class="we-meta">
+                  <span class="we-chip wc-green">BAA SIGNED</span>
+                  <span class="we-chip wc-amber">MOF COUNTERSIGN NEEDED</span>
+                  <span class="we-time">10:41:30 AM · 1 min ago</span>
+                </div>
+              </div>
+              <div class="we-right">
+                <span class="tag tag-live">SIGNED</span>
+                <button class="cbtn cbtn-green" style="font-size:11px;padding:5px 10px;" onclick="switchTab('baa')">Countersign →</button>
+              </div>
+            </div>
+
+            <div class="webhook-event" style="opacity:.6;">
+              <div class="we-dot we-dot-gray"></div>
+              <div class="we-content">
+                <div class="we-title">POST /api/twilio/provision — Phone Number Pending</div>
+                <div class="we-detail">{"event":"phone.provision_queued","number_type":"toll_free","area_pref":"877","status":"queued"}</div>
+                <div class="we-meta">
+                  <span class="we-chip wc-gray">QUEUED</span>
+                  <span class="we-chip wc-gray">Toll-Free 877</span>
+                  <span class="we-time">Pending practice action</span>
+                </div>
+              </div>
+              <div class="we-right"><span class="tag" style="background:var(--gray-light);color:var(--gray);">PENDING</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-label">Webhook Configuration <span class="section-label-link" id="webhookPanel">Edit</span></div>
+          <div class="card">
+            <div class="card-body" style="padding:14px;">
+              <div class="form-group">
+                <label class="form-label">Primary Alert Channel</label>
+                <select class="form-input">
+                  <option>💬 Slack — #new-signups (CS Team)</option>
+                  <option>📧 Admin Email Digest</option>
+                  <option>🔗 HubSpot CRM Pipeline</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Slack Webhook URL</label>
+                <input type="text" class="form-input" value="https://hooks.slack.com/services/T0MOFCS..." style="font-family:'JetBrains Mono',monospace;font-size:11px;">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Alert — CS Admin</label>
+                <input type="email" class="form-input" value="priya.n@mof.ai">
+              </div>
+              <div class="form-group">
+                <label class="form-label">High-Value Routing Rule</label>
+                <select class="form-input">
+                  <option>Practice ≥5 providers → Senior CS (James Kim)</option>
+                  <option>Enterprise plan → Account Director</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Stall Detection Threshold</label>
+                <select class="form-input">
+                  <option>Alert if no step progress for 24 hours</option>
+                  <option>Alert after 12 hours</option>
+                  <option>Alert after 48 hours</option>
+                </select>
+              </div>
+              <div class="notice amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+                <strong>Auto-assignment active:</strong> Athens Sleep assigned to Priya Nair based on ZIP 30606 → ATL Zone 306XX rule.
+              </div>
+              <button class="cbtn cbtn-primary" style="width:100%;">Save Webhook Settings</button>
+            </div>
+          </div>
+
+          <div class="section-label" style="margin-top:4px;">CS Workflow — This Signup</div>
+          <div class="card">
+            <div class="card-body" style="padding:14px;">
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);background:var(--green-light);border:1px solid #A7F3D0;">
+                  <div style="width:22px;height:22px;border-radius:50%;background:var(--green2);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--green);">Signup alert received</div><div style="font-size:10px;color:var(--text3);">Webhook fired · Auto-assigned to you</div></div>
+                  <div style="margin-left:auto;font-size:10px;color:var(--text3);">10:38 AM</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);background:var(--amber-light);border:1px solid #FDE68A;">
+                  <div style="width:22px;height:22px;border-radius:50%;background:var(--amber2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:#fff;">2</div>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--amber-dark);">Review configuration checklist</div><div style="font-size:10px;color:var(--text3);">3 items need CS Admin attention</div></div>
+                  <button onclick="switchTab('checklist')" style="margin-left:auto;padding:4px 9px;border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--amber);color:var(--amber);background:#fff;font-family:'Outfit',sans-serif;">Go →</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);background:var(--amber-light);border:1px solid #FDE68A;">
+                  <div style="width:22px;height:22px;border-radius:50%;background:var(--amber2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:#fff;">3</div>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--amber-dark);">Countersign BAA</div><div style="font-size:10px;color:var(--text3);">Practice signed at 10:41 AM · MOF signature pending</div></div>
+                  <button onclick="switchTab('baa')" style="margin-left:auto;padding:4px 9px;border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--amber);color:var(--amber);background:#fff;font-family:'Outfit',sans-serif;">Sign →</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);background:var(--gray-light);border:1px solid var(--border);">
+                  <div style="width:22px;height:22px;border-radius:50%;background:var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:var(--text3);">4</div>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--text3);">Send welcome email</div><div style="font-size:10px;color:var(--text3);">Personalized to Dr. Agrawal · 5 templates available</div></div>
+                  <button onclick="switchTab('email')" style="margin-left:auto;padding:4px 9px;border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--text3);background:#fff;font-family:'Outfit',sans-serif;">Compose →</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);background:var(--gray-light);border:1px solid var(--border);">
+                  <div style="width:22px;height:22px;border-radius:50%;background:var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:var(--text3);">5</div>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--text3);">Set health baseline & monitor</div><div style="font-size:10px;color:var(--text3);">MOF monitors first 50 calls automatically</div></div>
+                  <span style="margin-left:auto;font-size:10px;font-weight:600;color:var(--text3);">After go-live</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: PRACTICE PROFILE ══ -->
+    <div class="tab-panel" id="panel-profile">
+      <div class="practice-hero">
+        <div class="ph-avatar">🏥</div>
+        <div>
+          <div class="ph-name">Athens Sleep and Wellness Center</div>
+          <div class="ph-npi">NPI: 1689977761 &nbsp;·&nbsp; acc_aswc001 &nbsp;·&nbsp; Signed up: Apr 18, 2026 10:38 AM</div>
+          <div class="ph-badges">
+            <span class="ph-badge pb-plan">Professional $79/mo</span>
+            <span class="ph-badge pb-status">⚡ Onboarding</span>
+            <span class="ph-badge pb-specialty">Sleep Medicine</span>
+            <span class="ph-badge" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.12);">Solo Practice</span>
+          </div>
+        </div>
+        <div class="ph-spacer"></div>
+        <div class="ph-time">
+          <div class="ph-time-label">Assigned CS Admin</div>
+          <div class="ph-time-val">Priya Nair</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.38);margin-top:3px;">ATL Zone · 306XX</div>
+        </div>
+      </div>
+
+      <div class="section-label">Onboarding Progress</div>
+      <div class="card">
+        <div class="card-body">
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill" style="width:56%;"></div></div>
+          <div class="progress-info"><span id="progressText">Step 5 of 9 complete — Legal & HIPAA done</span><span id="progressPct" style="font-weight:700;color:var(--amber);">56%</span></div>
+          <div class="progress-steps" style="margin-top:12px;">
+            <div class="ps-item done"><div class="ps-circle done"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="ps-label">Welcome</div></div>
+            <div class="ps-item done"><div class="ps-circle done"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="ps-label">Profile</div></div>
+            <div class="ps-item done"><div class="ps-circle done"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="ps-label">Plan</div></div>
+            <div class="ps-item done"><div class="ps-circle done"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="ps-label">Payment</div></div>
+            <div class="ps-item done"><div class="ps-circle done"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="ps-label">HIPAA</div></div>
+            <div class="ps-item active"><div class="ps-circle active">6</div><div class="ps-label">Knowledge Base</div></div>
+            <div class="ps-item"><div class="ps-circle locked">7</div><div class="ps-label">Phone</div></div>
+            <div class="ps-item"><div class="ps-circle locked">8</div><div class="ps-label">Review</div></div>
+            <div class="ps-item"><div class="ps-circle locked">9</div><div class="ps-label">Go Live</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-item"><div class="detail-label">Provider Name</div><div class="detail-value">Dr. Subodh Agrawal MD</div></div>
+        <div class="detail-item"><div class="detail-label">Practice Email</div><div class="detail-value">subodh@athenssleepcenter.com</div></div>
+        <div class="detail-item"><div class="detail-label">Practice Address</div><div class="detail-value">125 King Ave, Suite 200</div><div class="detail-sub">Athens, GA 30606</div></div>
+        <div class="detail-item"><div class="detail-label">Practice Phone</div><div class="detail-value">(706) 549-1720</div><div class="detail-sub">Main line — not AI number</div></div>
+        <div class="detail-item"><div class="detail-label">Specialty</div><div class="detail-value">Sleep Medicine</div><div class="detail-sub">Solo practice · 1 provider</div></div>
+        <div class="detail-item"><div class="detail-label">EHR System</div><div class="detail-value" style="color:var(--text3);">Not connected yet</div><div class="detail-sub">Optional — can connect post-go-live</div></div>
+        <div class="detail-item"><div class="detail-label">Plan & Billing</div><div class="detail-value">Professional · $79/mo</div><div class="detail-sub">500 min incl. · Trial ends May 18</div></div>
+        <div class="detail-item"><div class="detail-label">Payment Method</div><div class="detail-value">Visa •••• 6411</div><div class="detail-sub">Expires 09/28 · Auto-deduct active</div></div>
+        <div class="detail-item"><div class="detail-label">Recovery Phone</div><div class="detail-value">(706) 555-0142</div><div class="detail-sub">Verified via OTP</div></div>
+        <div class="detail-item"><div class="detail-label">AI Phone Number</div><div class="detail-value" style="color:var(--text3);">Not provisioned yet</div><div class="detail-sub">Step 7 — pending</div></div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: CONFIG CHECKLIST ══ -->
+    <div class="tab-panel" id="panel-checklist">
+      <div class="notice amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        <span><strong>CS Admin action required:</strong> 3 checklist items need your review before Athens Sleep can go live. Items marked ⚠️ are advisory; items marked ❌ are blockers.</span>
+      </div>
+
+      <div class="grid2" style="gap:16px;align-items:start;">
+        <div>
+          <div class="section-label">Account & Legal Checklist</div>
+          <div class="checklist">
+            <div class="chk-item chk-done">
+              <div class="chk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+              <div style="flex:1;"><div class="chk-label">Practice profile created</div><div class="chk-detail">NPI 1689977761 verified · Dr. Subodh Agrawal · Athens GA · Solo</div></div>
+              <div class="chk-status">✓ Done</div>
+            </div>
+            <div class="chk-item chk-done">
+              <div class="chk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+              <div style="flex:1;"><div class="chk-label">Email verified (OTP confirmed)</div><div class="chk-detail">subodh@athenssleepcenter.com · Verified Apr 18, 10:38 AM</div></div>
+              <div class="chk-status">✓ Done</div>
+            </div>
+            <div class="chk-item chk-done">
+              <div class="chk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+              <div style="flex:1;"><div class="chk-label">Plan selected & payment captured</div><div class="chk-detail">Professional $79/mo · Visa ••••6411 · Trial starts today</div></div>
+              <div class="chk-status">✓ Done</div>
+            </div>
+            <div class="chk-item chk-warn">
+              <div class="chk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/></svg></div>
+              <div style="flex:1;"><div class="chk-label">BAA countersigned by MOF</div><div class="chk-detail">Practice signed at 10:41 AM. MOF countersignature outstanding — required before go-live.</div></div>
+              <div class="chk-status">Pending</div>
+              <button class="chk-action chk-action-amber" onclick="switchTab('baa')">Sign BAA →</button>
+            </div>
+            <div class="chk-item chk-done">
+              <div class="chk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+              <div style="flex:1;"><div class="chk-label">Terms of Service signed</div><div class="chk-detail">v2.1 · Signed Apr 18, 10:44 AM · IP 72.45.xxx.xxx</div></div>
+              <div class="chk-status">✓ Done</div>
+            </div>
+            <div class="chk-item chk-done">
+              <div class="chk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+              <div style="flex:1;"><div class="chk-label">Privacy Policy & SLA signed</div><div class="chk-detail">All 4 legal documents complete · Stored in S3 encrypted vault</div></div>
+              <div class="chk-status">✓ Done</div>
+            </div>
+          </div>
+
+          <div class="section-label" style="margin-top:16px;">Agent & Technical Checklist</div>
+          <div class="checklist">
+            <div class="chk-item chk-warn">
+              <div class="chk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/></svg></div>
+              <div style="flex:1;"><div class="chk-label">Knowledge base populated</div><div class="chk-detail">5 Q&As imported. Target: 12+ for Sleep Medicine specialty. AI auto-suggested 7 more — practice needs to review.</div></div>
+              <div class="chk-status">5/12</div>
+              <button class="chk-action chk-action-amber">Nudge →</button>
+            </div>
+            <div class="chk-item chk-pend">
+              <div class="chk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12"/></svg></div>
+              <div style="flex:1;"><div class="chk-label">AI phone number provisioned</div><div class="chk-detail">Practice has not yet selected their number. Step 7 incomplete.</div></div>
+              <div class="chk-status" style="color:var(--text3);">Awaiting</div>
+            </div>
+            <div class="chk-item chk-pend">
+              <div class="chk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg></div>
+              <div style="flex:1;"><div class="chk-label">EHR integration</div><div class="chk-detail">Optional. Epic or Athenahealth. Can be connected after go-live.</div></div>
+              <div class="chk-status" style="color:var(--text3);">Optional</div>
+            </div>
+            <div class="chk-item chk-pend">
+              <div class="chk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+              <div style="flex:1;"><div class="chk-label">Sandbox test (MOF Technical Admin)</div><div class="chk-detail">Mike Torres must run 20-call sandbox. Min 85% pass rate required before go-live unlock.</div></div>
+              <div class="chk-status" style="color:var(--text3);">Not started</div>
+            </div>
+            <div class="chk-item chk-warn">
+              <div class="chk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/></svg></div>
+              <div style="flex:1;"><div class="chk-label">Welcome email not yet sent</div><div class="chk-detail">CS Admin should send personalized welcome email within 2 hours of signup. Builds trust and reduces churn.</div></div>
+              <div class="chk-status">Overdue</div>
+              <button class="chk-action chk-action-amber" onclick="switchTab('email')">Send →</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-label">Checklist Summary</div>
+          <div class="card">
+            <div class="card-body" style="padding:14px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+                <div style="text-align:center;padding:12px;background:var(--green-light);border-radius:var(--radius-sm);border:1px solid #A7F3D0;">
+                  <div style="font-size:24px;font-weight:800;color:var(--green);">7</div>
+                  <div style="font-size:11px;color:var(--green);font-weight:600;">Complete</div>
+                </div>
+                <div style="text-align:center;padding:12px;background:var(--amber-light);border-radius:var(--radius-sm);border:1px solid #FDE68A;">
+                  <div style="font-size:24px;font-weight:800;color:var(--amber);">3</div>
+                  <div style="font-size:11px;color:var(--amber);font-weight:600;">Need Action</div>
+                </div>
+                <div style="text-align:center;padding:12px;background:var(--gray-light);border-radius:var(--radius-sm);border:1px solid var(--border);">
+                  <div style="font-size:24px;font-weight:800;color:var(--text3);">3</div>
+                  <div style="font-size:11px;color:var(--text3);font-weight:600;">Pending Practice</div>
+                </div>
+                <div style="text-align:center;padding:12px;background:var(--red-light);border-radius:var(--radius-sm);border:1px solid #FECACA;">
+                  <div style="font-size:24px;font-weight:800;color:var(--red);">0</div>
+                  <div style="font-size:11px;color:var(--red);font-weight:600;">Blockers</div>
+                </div>
+              </div>
+              <div class="notice green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span><strong>No hard blockers.</strong> Practice can complete setup independently. MOF countersign of BAA is the only required admin action before go-live.</span>
+              </div>
+              <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;">CS Admin Actions Required:</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--amber-dark);">
+                  <span style="color:var(--amber);">①</span> Countersign BAA (required)
+                  <button onclick="switchTab('baa')" style="margin-left:auto;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--amber);color:var(--amber);background:#fff;font-family:'Outfit',sans-serif;">Do now</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--amber-dark);">
+                  <span style="color:var(--amber);">②</span> Send welcome email (within 2h)
+                  <button onclick="switchTab('email')" style="margin-left:auto;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--amber);color:var(--amber);background:#fff;font-family:'Outfit',sans-serif;">Do now</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3);">
+                  <span style="color:var(--text3);">③</span> Nudge practice to finish KB (5/12 Q&As)
+                  <span style="margin-left:auto;font-size:10px;color:var(--text3);">Today</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3);">
+                  <span style="color:var(--text3);">④</span> Request Mike Torres run sandbox test
+                  <span style="margin-left:auto;font-size:10px;color:var(--text3);">After KB done</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label" style="margin-top:4px;">MOF Team Assignments</div>
+          <div class="card">
+            <div class="card-body" style="padding:14px;">
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--gray-light);border-radius:6px;border:1px solid var(--border);">
+                  <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#FDBA74,#EA580C);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">PN</div>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--text);">Priya Nair (you)</div><div style="font-size:10px;color:var(--text3);">CS Admin · Welcome email, BAA, onboarding</div></div>
+                  <span style="margin-left:auto;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600;background:var(--amber-light);color:var(--amber);">Active</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--gray-light);border-radius:6px;border:1px solid var(--border);">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--purple-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--purple);flex-shrink:0;">MT</div>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--text);">Mike Torres</div><div style="font-size:10px;color:var(--text3);">Technical Admin · Sandbox test, agent config</div></div>
+                  <span style="margin-left:auto;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600;background:var(--gray-light);color:var(--text3);border:1px solid var(--border);">Queued</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--gray-light);border-radius:6px;border:1px solid var(--border);">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--teal);flex-shrink:0;">AC</div>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--text);">Amy Chen</div><div style="font-size:10px;color:var(--text3);">Financial Admin · Invoice, billing monitoring</div></div>
+                  <span style="margin-left:auto;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600;background:var(--gray-light);color:var(--text3);border:1px solid var(--border);">Auto-assigned</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: BAA COUNTERSIGN ══ -->
+    <div class="tab-panel" id="panel-baa">
+      <div class="notice amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span><strong>HIPAA Requirement:</strong> The BAA must be countersigned by an authorized MOF representative before any PHI can be processed. Dr. Agrawal signed at 10:41 AM. MOF countersignature is outstanding.</span>
+      </div>
+
+      <div class="grid2" style="gap:16px;align-items:start;">
+        <div>
+          <div class="section-label">Business Associate Agreement — BAA-v2.4</div>
+          <div class="baa-doc">
+            <div class="baa-doc-header">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" style="opacity:.7;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span class="baa-doc-title">HIPAA Business Associate Agreement — BAA-v2.4</span>
+              <span class="baa-doc-meta">2026-04-18 · Athens Sleep & Wellness</span>
+            </div>
+            <div class="baa-doc-body">
+              <strong>BUSINESS ASSOCIATE AGREEMENT</strong><br><br>
+              This Business Associate Agreement ("Agreement") is entered into as of April 18, 2026 ("Effective Date"), by and between <strong>Medical Office Force LLC</strong> ("Business Associate"), a Georgia limited liability company, and <strong>Athens Sleep and Wellness Center</strong>, operated by Dr. Subodh Agrawal MD ("Covered Entity").<br><br>
+              <strong>RECITALS:</strong> Business Associate provides AI-powered virtual receptionist services to Covered Entity pursuant to a Software as a Service Agreement ("Underlying Agreement"). In connection with providing these services, Business Associate may create, receive, maintain, or transmit Protected Health Information ("PHI") on behalf of Covered Entity.<br><br>
+              <strong>1. DEFINITIONS.</strong> The following terms used in this Agreement shall have the same meaning as those terms in the HIPAA Rules: Breach, Data Aggregation, Designated Record Set, Disclosure, Health Care Operations, Individual, Minimum Necessary, Notice of Privacy Practices, Protected Health Information, Required By Law, Secretary, Security Incident, Subcontractor, Unsecured Protected Health Information, and Use.<br><br>
+              <strong>2. OBLIGATIONS AND ACTIVITIES OF BUSINESS ASSOCIATE.</strong> Business Associate agrees to: (a) not use or disclose PHI other than as permitted or required by this Agreement or as required by law; (b) use appropriate safeguards, and comply with Subpart C of 45 CFR Part 164 with respect to electronic PHI, to prevent use or disclosure of PHI other than as provided for by this Agreement; (c) report to Covered Entity any use or disclosure of PHI not provided for by this Agreement, including breaches of unsecured PHI as required at 45 CFR 164.410...<br><br>
+              <strong>3. PERMITTED USES AND DISCLOSURES BY BUSINESS ASSOCIATE.</strong> Business Associate may only use or disclose PHI as necessary to perform the services set forth in the Underlying Agreement, or as required by law, or for the proper management and administration of Business Associate...<br><br>
+              <strong>4. SUBCONTRACTORS.</strong> In accordance with 45 CFR 164.502(e)(1)(ii) and 164.308(b)(2), Business Associate shall ensure that any subcontractors that create, receive, maintain, or transmit PHI on behalf of Business Associate agree to the same restrictions and conditions that apply to Business Associate...
+            </div>
+            <div class="baa-sign-row">
+              <div class="baa-signed-by">
+                <div class="baa-signed-label">Signed by Practice (Covered Entity)</div>
+                <div class="baa-signed-name">Dr. Subodh Agrawal MD · Athens Sleep and Wellness Center</div>
+                <div class="baa-signed-ts">Apr 18, 2026 · 10:41:30 AM EDT · IP: 72.45.xxx.xxx · BAA-v2.4</div>
+              </div>
+              <div style="width:90px;height:36px;border-bottom:2px solid var(--text2);display:flex;align-items:flex-end;padding-bottom:3px;margin-right:14px;">
+                <span style="font-family:'Outfit',sans-serif;font-style:italic;font-size:17px;color:var(--text);letter-spacing:-.5px;">S. Agrawal</span>
+              </div>
+            </div>
+            <div class="baa-sign-row" id="mofSignRow">
+              <div class="baa-signed-by">
+                <div class="baa-signed-label">MOF Countersignature (Business Associate)</div>
+                <div class="baa-signed-name" id="mofSignName" style="color:var(--text3);">Awaiting MOF authorized representative</div>
+                <div class="baa-signed-ts" id="mofSignTs" style="color:var(--border2);">— Not yet signed —</div>
+              </div>
+              <div style="width:90px;height:36px;border-bottom:2px dashed var(--border2);display:flex;align-items:flex-end;padding-bottom:3px;margin-right:14px;" id="mofSigBox">
+                <span id="mofSigText" style="color:var(--border2);font-size:12px;font-style:italic;">Signature</span>
+              </div>
+              <button class="baa-countersign-btn pending" id="countersignBtn" onclick="countersignBAA()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Countersign BAA
+              </button>
+            </div>
+            <div class="baa-stamp" id="baaStamp">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="baa-stamp-text">✓ BAA fully executed — Both parties signed · Apr 18, 2026 · Stored in S3 vault (AES-256) + Practice Admin portal</span>
+              <span class="baa-stamp-vault">S3: baa/acc_aswc001/BAA-v2.4-signed.pdf</span>
+            </div>
+          </div>
+
+          <div class="section-label">Additional Legal Documents</div>
+          <div class="card">
+            <div class="card-body" style="padding:12px 14px;">
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--green-light);border-radius:6px;border:1px solid #A7F3D0;">
+                  <div><div style="font-size:12px;font-weight:600;color:var(--green);">Terms of Service — v2.1</div><div style="font-size:10px;color:var(--text3);">Signed Apr 18, 10:44 AM · No MOF countersign required</div></div>
+                  <span style="font-size:11px;font-weight:700;color:var(--green);">✓ Complete</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--green-light);border-radius:6px;border:1px solid #A7F3D0;">
+                  <div><div style="font-size:12px;font-weight:600;color:var(--green);">Privacy Policy — v3.0</div><div style="font-size:10px;color:var(--text3);">Signed Apr 18, 10:51 AM · No MOF countersign required</div></div>
+                  <span style="font-size:11px;font-weight:700;color:var(--green);">✓ Complete</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--green-light);border-radius:6px;border:1px solid #A7F3D0;">
+                  <div><div style="font-size:12px;font-weight:600;color:var(--green);">SLA Agreement — v1.5</div><div style="font-size:10px;color:var(--text3);">Signed Apr 18, 10:53 AM · No MOF countersign required</div></div>
+                  <span style="font-size:11px;font-weight:700;color:var(--green);">✓ Complete</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-label">BAA Vault Status</div>
+          <div class="card">
+            <div class="card-body" style="padding:14px;">
+              <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+                <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text3);">Document version</span><span style="font-weight:600;font-family:'JetBrains Mono',monospace;">BAA-v2.4</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text3);">Practice signed</span><span style="font-weight:600;color:var(--green);">✓ Apr 18, 10:41 AM</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text3);">MOF countersign</span><span style="font-weight:600;color:var(--amber);" id="vaultStatus">⏳ Pending</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text3);">S3 storage path</span><span style="font-weight:500;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);">baa/acc_aswc001/</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text3);">Encryption</span><span style="font-weight:600;">AES-256 at rest</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text3);">Retention policy</span><span style="font-weight:600;">6 years minimum</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text3);">Annual renewal</span><span style="font-weight:600;">Apr 18, 2027 (auto-remind)</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text3);">Practice can download</span><span style="font-weight:600;color:var(--green);">✓ From their portal</span></div>
+              </div>
+              <div class="notice blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <span>After countersigning, the fully-executed PDF is automatically stored in: (1) MOF Admin Compliance Vault, (2) Practice Admin portal under Legal Documents, (3) AWS S3 with immutable versioning.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">Renewal & Re-attestation</div>
+          <div class="card">
+            <div class="card-body" style="padding:14px;">
+              <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;">MOF auto-sends re-attestation reminders at <strong>60 days, 30 days, and 7 days</strong> before each BAA anniversary. Practice must re-sign in their portal before the anniversary date.</div>
+              <div style="display:flex;gap:8px;">
+                <div style="flex:1;padding:8px;background:var(--gray-light);border-radius:6px;text-align:center;border:1px solid var(--border);">
+                  <div style="font-size:10px;color:var(--text3);">Next renewal</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text);">Apr 18, 2027</div>
+                </div>
+                <div style="flex:1;padding:8px;background:var(--gray-light);border-radius:6px;text-align:center;border:1px solid var(--border);">
+                  <div style="font-size:10px;color:var(--text3);">60-day alert</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text);">Feb 17, 2027</div>
+                </div>
+                <div style="flex:1;padding:8px;background:var(--gray-light);border-radius:6px;text-align:center;border:1px solid var(--border);">
+                  <div style="font-size:10px;color:var(--text3);">Auto-remind</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--green);">✓ Active</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">Other Practices — BAA Status</div>
+          <div class="card">
+            <div class="card-body" style="padding:12px 14px;">
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+                <div style="display:flex;align-items:center;gap:8px;"><span style="flex:1;font-weight:500;">Athens Sleep & Wellness</span><span style="color:var(--amber);font-weight:600;">⏳ MOF pending</span></div>
+                <div style="display:flex;align-items:center;gap:8px;"><span style="flex:1;font-weight:500;">CardioAtlanta</span><span style="color:var(--green);font-weight:600;">✓ Executed</span><span style="color:var(--text3);font-size:10px;">Mar 3, 2026</span></div>
+                <div style="display:flex;align-items:center;gap:8px;"><span style="flex:1;font-weight:500;">PedsFirst Pediatrics</span><span style="color:var(--green);font-weight:600;">✓ Executed</span><span style="color:var(--text3);font-size:10px;">Jan 12, 2026</span></div>
+                <div style="display:flex;align-items:center;gap:8px;"><span style="flex:1;font-weight:500;">NeuroMed Atlanta</span><span style="color:var(--green);font-weight:600;">✓ Executed</span><span style="color:var(--text3);font-size:10px;">Feb 28, 2026</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: WELCOME EMAIL ══ -->
+    <div class="tab-panel" id="panel-email">
+      <div class="grid2" style="gap:16px;align-items:start;">
+        <div>
+          <div class="section-label">Email Template Library</div>
+          <div class="tpl-grid">
+            <div class="tpl-card selected" onclick="loadTemplate('welcome',this)">
+              <div class="tpl-name">🎉 Welcome Email</div>
+              <div class="tpl-desc">Warm introduction, next steps, CS contact info</div>
+              <div class="tpl-when">Send within 2h of signup</div>
+            </div>
+            <div class="tpl-card" onclick="loadTemplate('stalled',this)">
+              <div class="tpl-name">⏳ Stalled Setup</div>
+              <div class="tpl-desc">Gentle nudge if practice pauses mid-onboarding</div>
+              <div class="tpl-when">Send after 24h stall</div>
+            </div>
+            <div class="tpl-card" onclick="loadTemplate('golive',this)">
+              <div class="tpl-name">🚀 Go-Live Congrats</div>
+              <div class="tpl-desc">Celebrate first live call, next optimization tips</div>
+              <div class="tpl-when">Send on go-live day</div>
+            </div>
+            <div class="tpl-card" onclick="loadTemplate('checkin',this)">
+              <div class="tpl-name">📊 7-Day Check-in</div>
+              <div class="tpl-desc">Performance summary, KB suggestions, quick wins</div>
+              <div class="tpl-when">Send 7 days after go-live</div>
+            </div>
+            <div class="tpl-card" onclick="loadTemplate('renewal',this)">
+              <div class="tpl-name">🔄 Renewal Reminder</div>
+              <div class="tpl-desc">30-day trial ending, upsell Professional to Enterprise</div>
+              <div class="tpl-when">Send 5 days before trial ends</div>
+            </div>
+            <div class="tpl-card" onclick="loadTemplate('aha',this)">
+              <div class="tpl-name">⭐ First Booking!</div>
+              <div class="tpl-desc">Celebrate first AI-booked appointment milestone</div>
+              <div class="tpl-when">Auto-triggered by platform</div>
+            </div>
+          </div>
+
+          <div class="section-label">Previous Emails — Athens Sleep</div>
+          <div style="font-size:12px;color:var(--text3);padding:12px;background:var(--gray-light);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center;">No emails sent yet — this is a brand new signup.</div>
+        </div>
+
+        <div>
+          <div class="section-label">Compose & Send</div>
+          <div class="email-composer">
+            <div class="ec-header">
+              <div class="ec-title">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                New Email to Practice
+              </div>
+              <div class="ec-actions">
+                <button class="ec-btn ec-tpl-btn" onclick="loadTemplate('welcome',null)">Load Welcome Template</button>
+                <button class="ec-btn ec-send-btn" onclick="sendEmail()">Send →</button>
+              </div>
+            </div>
+            <div class="ec-field-row">
+              <span class="ec-field-label">From</span>
+              <input class="ec-field-input" value="Priya Nair — priya.n@mof.ai (CS Admin)" readonly style="color:var(--text3);">
+            </div>
+            <div class="ec-field-row">
+              <span class="ec-field-label">To</span>
+              <input class="ec-field-input" id="emailTo" value="subodh@athenssleepcenter.com">
+            </div>
+            <div class="ec-field-row">
+              <span class="ec-field-label">CC</span>
+              <input class="ec-field-input" placeholder="Optional — add practice manager or billing contact">
+            </div>
+            <div class="ec-field-row">
+              <span class="ec-field-label">Subject</span>
+              <input class="ec-field-input" id="emailSubject" value="Welcome to Medical Office Force — Let's get Aria live for Athens Sleep!">
+            </div>
+            <div class="ec-body-area">
+              <textarea class="ec-body-textarea" id="emailBody">Hi Dr. Agrawal,
+
+Welcome to Medical Office Force! We're thrilled to have Athens Sleep and Wellness Center on board.
+
+I'm Priya Nair, your dedicated Customer Success Admin, and I'm here personally to make sure your AI receptionist (we'll call her Aria!) goes live without a hitch.
+
+Your account is set up and you're already at Step 6 — great progress! Here's what's left:
+
+📚 Step 6 — Knowledge Base: You have 5 Q&As uploaded. Aria works best with 12+ for Sleep Medicine practices. I've attached a list of the top 10 questions sleep patients ask — just review and approve the AI suggestions already pre-loaded for you.
+
+📞 Step 7 — Phone Number: Choose your toll-free number (I recommend +1-877-581-2599 — it's been reserved for you).
+
+🚀 Steps 8 & 9 — Review & Go Live: Takes about 5 minutes. Our Technical Admin Mike will run a test call before you flip the switch.
+
+Your AI number will go live within 24 hours of completing setup. After that, every call to your practice — day or night — gets answered by Aria.
+
+Questions? Reply to this email or call me directly at (404) 555-0197. I'll pick up.
+
+Looking forward to helping you save hours every week!
+
+Warm regards,
+Priya Nair
+Customer Success Admin
+Medical Office Force
+priya.n@mof.ai · (404) 555-0197
+support@medicalofficeforce.com</textarea>
+            </div>
+            <div class="ec-footer">
+              <div class="ec-footer-info">Sending from <strong>support@medicalofficeforce.com</strong> · Logged to Email History after send</div>
+              <div style="display:flex;gap:6px;">
+                <button class="ec-btn" style="border-color:var(--border);color:var(--text3);background:#fff;">Save Draft</button>
+                <button class="ec-btn ec-send-btn" onclick="sendEmail()">Send Email →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="notice green" style="margin-top:10px;" id="emailSentNotice" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span id="emailSentText"><strong>Email sent successfully!</strong> Logged to Email History. Dr. Agrawal will receive it within 60 seconds.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: AUDIT LOG ══ -->
+    <div class="tab-panel" id="panel-audit">
+      <div class="notice blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span><strong>HIPAA Immutable Audit Log:</strong> Every action on this practice's account is recorded with timestamp, actor, IP address, and event type. Logs cannot be edited or deleted. Retained for 6 years minimum.</span>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon ci-navy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div><div class="card-title">Audit Trail — Athens Sleep and Wellness Center</div><div class="card-sub">acc_aswc001 · Apr 18, 2026 · All events since account creation</div></div>
+          <div style="margin-left:auto;display:flex;gap:6px;">
+            <button class="cbtn cbtn-outline" style="font-size:11px;padding:5px 10px;">Export CSV</button>
+            <button class="cbtn cbtn-outline" style="font-size:11px;padding:5px 10px;">Filter</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="audit-row"><div class="audit-time">10:42 AM</div><div class="audit-dot ad-amber"></div><div><div class="audit-text"><strong>CS Admin assigned</strong> — Priya Nair auto-assigned to acc_aswc001 based on ZIP 30606 → Zone 306XX rule</div><div class="audit-actor">Actor: <strong>MOF System (auto-assign)</strong> · IP: internal · Event: admin.assignment</div></div></div>
+            <div class="audit-row"><div class="audit-time">10:41 AM</div><div class="audit-dot ad-green"></div><div><div class="audit-text"><strong>BAA signed by practice</strong> — Dr. Subodh Agrawal MD e-signed BAA-v2.4 electronically</div><div class="audit-actor">Actor: <strong>subodh@athenssleepcenter.com</strong> · IP: 72.45.xxx.xxx · Event: legal.baa_signed</div></div></div>
+            <div class="audit-row"><div class="audit-time">10:40 AM</div><div class="audit-dot ad-green"></div><div><div class="audit-text"><strong>Payment method captured</strong> — Stripe token tok_visa6411 added to account. Trial period started.</div><div class="audit-actor">Actor: <strong>subodh@athenssleepcenter.com</strong> · Stripe: pm_1Abc · Event: billing.payment_method_added</div></div></div>
+            <div class="audit-row"><div class="audit-time">10:39 AM</div><div class="audit-dot ad-blue"></div><div><div class="audit-text"><strong>Plan selected</strong> — Professional $79/mo chosen. Billing cycle: monthly. Trial end: May 18, 2026.</div><div class="audit-actor">Actor: <strong>subodh@athenssleepcenter.com</strong> · IP: 72.45.xxx.xxx · Event: onboarding.plan_selected</div></div></div>
+            <div class="audit-row"><div class="audit-time">10:38 AM</div><div class="audit-dot ad-amber"></div><div><div class="audit-text"><strong>Account created — Signup webhook fired</strong> — New practice registered. Email verified via OTP. NPI 1689977761 auto-filled from NPPES.</div><div class="audit-actor">Actor: <strong>subodh@athenssleepcenter.com</strong> · IP: 72.45.xxx.xxx · Event: practice.signup · Webhook: ✓ Delivered</div></div></div>
+            <div class="audit-row" id="baaCountersignAudit" style="display:none;"><div class="audit-time" id="baaAuditTime">10:43 AM</div><div class="audit-dot ad-green"></div><div><div class="audit-text"><strong>BAA countersigned by MOF</strong> — Priya Nair (CS Admin) countersigned BAA-v2.4 on behalf of Medical Office Force LLC. Document fully executed.</div><div class="audit-actor">Actor: <strong>priya.n@mof.ai</strong> · IP: 174.32.xxx.xxx · Event: legal.baa_countersigned · S3: baa/acc_aswc001/BAA-v2.4-signed.pdf</div></div></div>
+            <div class="audit-row" id="emailSentAudit" style="display:none;"><div class="audit-time" id="emailAuditTime">—</div><div class="audit-dot ad-blue"></div><div><div class="audit-text"><strong>Welcome email sent</strong> — Priya Nair sent personalized welcome email using template "Welcome Email v1". Delivered via SES.</div><div class="audit-actor">Actor: <strong>priya.n@mof.ai</strong> · To: subodh@athenssleepcenter.com · Event: email.sent · SES MessageId: 0102...</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- scroll-area -->
+</div><!-- main -->
+</div><!-- shell -->
+
+<script>
+const TEMPLATES = {
+  welcome: {
+    subject: "Welcome to Medical Office Force — Let's get Aria live for Athens Sleep!",
+    body: `Hi Dr. Agrawal,
+
+Welcome to Medical Office Force! We're thrilled to have Athens Sleep and Wellness Center on board.
+
+I'm Priya Nair, your dedicated Customer Success Admin, and I'm here personally to make sure your AI receptionist (we'll call her Aria!) goes live without a hitch.
+
+Your account is set up and you're already at Step 6 — great progress! Here's what's left:
+
+📚 Step 6 — Knowledge Base: You have 5 Q&As uploaded. Aria works best with 12+ for Sleep Medicine practices. I've attached a list of the top 10 questions sleep patients ask — just review and approve the AI suggestions already pre-loaded for you.
+
+📞 Step 7 — Phone Number: Choose your toll-free number (I recommend +1-877-581-2599 — it's been reserved for you).
+
+🚀 Steps 8 & 9 — Review & Go Live: Takes about 5 minutes. Our Technical Admin Mike will run a test call before you flip the switch.
+
+Your AI number will go live within 24 hours of completing setup. After that, every call to your practice — day or night — gets answered by Aria.
+
+Questions? Reply to this email or call me directly at (404) 555-0197. I'll pick up.
+
+Looking forward to helping you save hours every week!
+
+Warm regards,
+Priya Nair
+Customer Success Admin — Medical Office Force
+priya.n@mof.ai · (404) 555-0197`
+  },
+  stalled: {
+    subject: "Your AI agent is almost ready — can we help you finish?",
+    body: `Hi Dr. Agrawal,
+
+I noticed your MedFlow AI setup has paused at Step 6 (Knowledge Base) — totally normal, this is where most practices take a breather!
+
+I'd love to jump on a quick 10-minute call to walk you through it personally. Most practices finish setup in one session.
+
+Here's what we can tackle together:
+• Upload your practice FAQ document (I can do this for you from your website)
+• Approve the 7 AI-suggested Q&As already waiting in your account
+• Pick your toll-free number (+1-877-581-2599 is still reserved)
+
+Would any of these times work?
+• Tomorrow 9:00–11:00 AM
+• This week any afternoon
+
+Or call me directly: (404) 555-0197
+
+Best,
+Priya Nair
+CS Admin — Medical Office Force`
+  },
+  golive: {
+    subject: "🚀 Aria is LIVE — Athens Sleep & Wellness",
+    body: `Hi Dr. Agrawal,
+
+Congratulations — Aria just went live at Athens Sleep and Wellness Center! 🎉
+
+Your AI phone number +1 (877) 581-2599 is now answering calls 24/7.
+
+What to do right now:
+1. Call (877) 581-2599 from your personal phone — hear Aria introduce herself
+2. Update your website and Google Business profile with the new number
+3. Let your front desk staff know Aria will handle after-hours
+
+Your Practice Dashboard is ready at:
+https://app.medicalofficeforce.com/dashboard
+
+Our team will monitor Aria's first 50 calls and reach out with any optimization suggestions.
+
+You're going to love this,
+Priya Nair · CS Admin · Medical Office Force`
+  },
+  checkin: {
+    subject: "7-Day Check-in — How is Aria performing?",
+    body: `Hi Dr. Agrawal,
+
+It's been 7 days since Aria went live at Athens Sleep & Wellness. Here's a quick snapshot:
+
+📊 Week 1 Performance:
+• Calls handled: 47
+• Containment rate: 83% (target: 87%)
+• Avg response time: 1.8 seconds
+• Top intent: Appointment scheduling (62%)
+
+💡 Quick wins available:
+• Add 3 more CPAP resupply Q&As to improve containment by ~4%
+• Enable Spanish language detection (2 Spanish-speaking callers this week)
+
+I'll set up a 15-minute call to review these together if you'd like.
+
+Best,
+Priya · CS Admin · Medical Office Force`
+  },
+  renewal: {
+    subject: "Your 30-day trial ends in 5 days — here's what happens next",
+    body: `Hi Dr. Agrawal,
+
+Your MedFlow AI free trial ends in 5 days (May 18, 2026).
+
+What happens on May 18:
+• Your Visa •••• 6411 will be charged $79.00 for the Professional plan
+• You'll receive invoice INV-2026-001 by email
+• Aria continues answering calls — nothing changes for your patients
+
+Want to upgrade to Enterprise ($149/mo)?
+Enterprise adds outbound AI call campaigns, multi-location management, and a dedicated account manager. Given your volume, it could reduce your per-call cost by 20%.
+
+Reply or call me to discuss: (404) 555-0197
+
+Best,
+Priya · CS Admin · Medical Office Force`
+  },
+  aha: {
+    subject: "🎉 First AI booking confirmed — Athens Sleep & Wellness",
+    body: `Hi Dr. Agrawal,
+
+Exciting news — Aria just completed her first fully automated patient appointment booking! 🎉
+
+A patient called at 11:42 PM (after hours!), Aria handled the full conversation, and the appointment is now confirmed in your calendar for next Tuesday at 2:00 PM.
+
+Time saved: ~8 minutes of staff time.
+Patient waited: 0 seconds.
+
+This is what we built this for. You can see the full transcript in your dashboard:
+https://app.medicalofficeforce.com/calls
+
+So proud of what Athens Sleep & Wellness is doing with this technology.
+
+Cheers,
+Priya Nair · CS Admin · Medical Office Force`
+  }
+};
+
+let baaSignedByMOF = false;
+let emailSent = false;
+
+function switchTab(tab) {
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const tabEl = document.getElementById('tab-' + tab);
+  const panelEl = document.getElementById('panel-' + tab);
+  if(tabEl) tabEl.classList.add('active');
+  if(panelEl) panelEl.classList.add('active');
+}
+
+function loadTemplate(key, clickedCard) {
+  if(clickedCard) {
+    document.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('selected'));
+    clickedCard.classList.add('selected');
+  }
+  const tpl = TEMPLATES[key];
+  if(!tpl) return;
+  document.getElementById('emailSubject').value = tpl.subject;
+  document.getElementById('emailBody').value = tpl.body;
+  document.getElementById('emailSentNotice').style.display = 'none';
+}
+
+function countersignBAA() {
+  if(baaSignedByMOF) return;
+  baaSignedByMOF = true;
+  const btn = document.getElementById('countersignBtn');
+  btn.className = 'baa-countersign-btn done';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> MOF Signed';
+
+  document.getElementById('mofSignName').textContent = 'Priya Nair · CS Admin · Medical Office Force LLC';
+  document.getElementById('mofSignName').style.color = 'var(--green)';
+  const now = new Date();
+  const ts = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) + ' EDT · BAA-v2.4 · Fully Executed';
+  document.getElementById('mofSignTs').textContent = ts;
+  document.getElementById('mofSignTs').style.color = 'var(--text3)';
+  document.getElementById('mofSigText').textContent = 'P. Nair';
+  document.getElementById('mofSigText').style.color = 'var(--navy)';
+  document.getElementById('mofSigText').style.fontFamily = "'Outfit',sans-serif";
+  document.getElementById('mofSigText').style.fontSize = '17px';
+  document.getElementById('mofSigBox').style.borderBottomColor = 'var(--text)';
+  document.getElementById('baaStamp').classList.add('visible');
+  document.getElementById('vaultStatus').textContent = '✓ Fully Executed';
+  document.getElementById('vaultStatus').style.color = 'var(--green)';
+
+  // Add to audit log
+  document.getElementById('baaCountersignAudit').style.display = 'flex';
+  document.getElementById('baaAuditTime').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+
+  // Update checklist tab badge
+  const baaChk = document.querySelector('#panel-checklist .chk-item.chk-warn');
+  if(baaChk) {
+    baaChk.classList.remove('chk-warn');
+    baaChk.classList.add('chk-done');
+    baaChk.querySelector('.chk-label').textContent = 'BAA countersigned by MOF';
+    const s = baaChk.querySelector('.chk-status');
+    if(s){s.textContent='✓ Done';s.className='chk-status';}
+    const a = baaChk.querySelector('.chk-action');
+    if(a) a.remove();
+  }
+}
+
+function sendEmail() {
+  const subj = document.getElementById('emailSubject').value;
+  const body = document.getElementById('emailBody').value;
+  if(!subj || !body) { alert('Please fill in Subject and email body.'); return; }
+  emailSent = true;
+  const notice = document.getElementById('emailSentNotice');
+  notice.style.display = 'flex';
+  document.getElementById('emailSentText').innerHTML = '<strong>Email sent to Dr. Agrawal!</strong> Subject: "' + subj.substring(0,60) + '..." · Logged to Email History · Delivered via AWS SES.';
+
+  // Add to audit log
+  const auditRow = document.getElementById('emailSentAudit');
+  if(auditRow) {
+    auditRow.style.display = 'flex';
+    const now = new Date();
+    document.getElementById('emailAuditTime').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  }
+
+  // Update workflow step 4
+  const step4 = document.querySelector('#panel-alert .alert-btn-ghost:last-child');
+}
+
+// Load welcome template by default
+loadTemplate('welcome', null);
+</script>
+</body>
+</html>
