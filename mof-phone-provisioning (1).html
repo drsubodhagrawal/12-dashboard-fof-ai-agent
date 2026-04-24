@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedFlow AI — Phone Number Provisioning · Athens Sleep & Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1B6B4A;--green2:#059669;--gl:#ECFDF5;--gd:#14533A;
+  --amber:#D97706;--amber2:#F59E0B;--al:#FEF3C7;--ad:#92400E;
+  --blue:#1D4ED8;--blue2:#3B82F6;--bl:#EFF6FF;
+  --red:#DC2626;--rl:#FEF2F2;
+  --purple:#7C3AED;--pl:#F5F3FF;
+  --teal:#0D9488;--tl:#F0FDFA;
+  --navy:#0F2A4A;--navy2:#1A3A5C;
+  --gray:#6B7280;--gray-l:#F9FAFB;--bdr:#E5E7EB;--bdr2:#D1D5DB;
+  --tx:#111827;--tx2:#374151;--tx3:#6B7280;
+  --bg:#F1F5F9;--sur:#FFFFFF;
+  --r:10px;--rs:6px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.05);
+  --shm:0 4px 16px rgba(0,0,0,.10);
+}
+html,body{height:100%;font-family:"Outfit",system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;overflow:hidden;}
+.shell{display:grid;grid-template-rows:52px 48px 1fr;height:100vh;overflow:hidden;}
+
+/* TOPBAR */
+.topbar{background:var(--navy);display:flex;align-items:center;padding:0 20px;gap:0;}
+.tlogo{display:flex;align-items:center;gap:8px;margin-right:14px;}
+.tmark{width:28px;height:28px;background:linear-gradient(135deg,#4ADE80,#1B6B4A);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.tmark svg{width:15px;height:15px;}
+.ttext{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.2px;}
+.tsep{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 12px;}
+.tbread{font-size:12px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:4px;}
+.tbread span{color:rgba(255,255,255,.85);font-weight:600;}
+.tspace{flex:1;}
+.tright{display:flex;align-items:center;gap:8px;}
+.tchip{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;}
+.tcg{background:rgba(74,222,128,.15);color:#86EFAC;}
+.tcb{background:rgba(96,165,250,.15);color:#93C5FD;}
+.ldot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tbtn{padding:5px 14px;border-radius:var(--rs);border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;}
+.tbtnp{border:none;background:linear-gradient(135deg,#4ADE80,#1B6B4A);}
+
+/* TABS */
+.tabs{background:var(--sur);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 20px;overflow-x:auto;}
+.tab{padding:12px 15px;font-size:12.5px;font-weight:500;color:var(--tx3);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.tab:hover{color:var(--tx2);}
+.tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600;}
+.tbadge{padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;background:var(--gl);color:var(--green);}
+.tspace2{flex:1;}
+.numchip{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--rs);background:var(--gl);border:1px solid #A7F3D0;font-size:12px;font-weight:700;color:var(--green);white-space:nowrap;}
+
+/* PANELS */
+.panel{display:none;height:calc(100vh - 100px);overflow:hidden;}
+.panel.active{display:flex;}
+.twocol{display:grid;grid-template-columns:1fr 296px;height:100%;overflow:hidden;}
+.scroll{overflow-y:auto;}
+.pad{padding:20px 22px;}
+
+/* CARDS */
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.chead{padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px;}
+.cicon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.icg{background:var(--gl);}
+.icb{background:var(--bl);}
+.ica{background:var(--al);}
+.ict{background:var(--tl);}
+.icy{background:rgba(15,42,74,.07);}
+.ctitle{font-size:13px;font-weight:700;color:var(--tx);}
+.csub{font-size:11px;color:var(--tx3);margin-top:1px;}
+.chr{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.cbody{padding:14px 16px;}
+
+/* NUMBER TYPE CARDS */
+.ntgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.ntcard{border:2px solid var(--bdr);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.ntcard:hover{border-color:var(--bdr2);box-shadow:var(--sh);}
+.ntcard.ntsel{border-color:var(--green);box-shadow:0 0 0 1px var(--green);}
+.nticon{font-size:28px;margin-bottom:8px;}
+.ntname{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:4px;}
+.ntdesc{font-size:11px;color:var(--tx3);line-height:1.5;margin-bottom:8px;}
+.ntbadge{display:inline-flex;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;}
+.ntbg{background:var(--gl);color:var(--green);}
+.ntbb{background:var(--bl);color:var(--blue);}
+.ntbp{background:var(--pl);color:var(--purple);}
+.ntcheck{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;background:var(--green);display:none;align-items:center;justify-content:center;}
+.ntcheck svg{width:10px;height:10px;}
+.ntsel .ntcheck{display:flex;}
+
+/* NUMBER LIST */
+.numlist{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;margin-bottom:12px;}
+.numitem{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--sur);border:1.5px solid var(--bdr);border-radius:var(--rs);cursor:pointer;transition:all .15s;}
+.numitem:hover{border-color:var(--bdr2);}
+.numitem.numsel{border-color:var(--green);background:var(--gl);}
+.ninum{font-size:15px;font-weight:700;color:var(--tx);font-family:"JetBrains Mono",monospace;letter-spacing:.5px;}
+.ninum.nig{color:var(--green);}
+.nimeta{font-size:11px;color:var(--tx3);}
+.niright{display:flex;align-items:center;gap:6px;}
+.niselbtn{padding:4px 10px;border-radius:var(--rs);font-size:11px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;border:1.5px solid;transition:all .15s;}
+.nibdef{border-color:var(--bdr);color:var(--tx3);background:var(--sur);}
+.nibsel{border-color:#A7F3D0;color:var(--green);background:var(--gl);cursor:default;}
+.ncaps{display:flex;gap:3px;}
+.ncap{padding:1px 5px;border-radius:4px;font-size:9px;font-weight:700;}
+.ncv{background:var(--bl);color:var(--blue);}
+.ncs{background:var(--gl);color:var(--green);}
+
+/* PHONE PREVIEW */
+.phpreview{background:linear-gradient(135deg,#0F2A4A,#1A3A5C);border-radius:var(--r);padding:20px;color:#fff;margin-bottom:14px;}
+.pplabel{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:12px;}
+.ppname{font-size:16px;font-weight:800;color:#fff;margin-bottom:2px;}
+.ppnum{font-size:13px;color:rgba(255,255,255,.6);font-family:"JetBrains Mono",monospace;letter-spacing:.5px;}
+.ppstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;}
+.ppstat{padding:6px;background:rgba(255,255,255,.07);border-radius:6px;text-align:center;}
+.ppstatlabel{font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;}
+.ppstatval{font-size:11px;font-weight:600;color:#86EFAC;}
+
+/* FORWARDING RULES */
+.fwdrule{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--rs);border:1.5px solid var(--bdr);background:var(--sur);margin-bottom:8px;}
+.frnum{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.frnb{background:var(--bl);color:var(--blue);}
+.frng{background:var(--gl);color:var(--green);}
+.frna{background:var(--al);color:var(--amber);}
+.frnr{background:var(--rl);color:var(--red);}
+.frcond{font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:3px;}
+.fraction{font-size:11px;color:var(--tx3);line-height:1.5;}
+.fraction code{font-family:"JetBrains Mono",monospace;font-size:10px;background:var(--gray-l);padding:1px 5px;border-radius:3px;}
+.frtag{padding:2px 7px;border-radius:6px;font-size:10px;font-weight:700;display:inline-block;margin-top:4px;margin-right:4px;}
+.frtai{background:var(--gl);color:var(--green);}
+.frtfwd{background:var(--bl);color:var(--blue);}
+.fredit{padding:4px 8px;border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--bdr);color:var(--tx3);background:var(--sur);font-family:"Outfit",sans-serif;margin-top:5px;}
+
+/* WEBHOOKS */
+.whitem{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 12px;border-radius:var(--rs);border:1px solid var(--bdr);background:var(--sur);margin-bottom:7px;}
+.whitem.whok{border-color:#A7F3D0;background:var(--gl);}
+.whleft{display:flex;align-items:flex-start;gap:9px;}
+.whdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.whdg{background:var(--green2);}
+.whda{background:var(--amber2);}
+.whlabel{font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:2px;}
+.whurl{font-size:10px;color:var(--tx3);font-family:"JetBrains Mono",monospace;}
+.whdesc{font-size:10px;color:var(--tx3);margin-top:2px;}
+.whstat{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap;}
+.wsok{background:var(--gl);color:var(--green);}
+.wsms{font-size:10px;font-family:"JetBrains Mono",monospace;color:var(--tx3);}
+
+/* TEST CALL */
+.tcgrid{display:grid;grid-template-columns:310px 1fr;height:100%;overflow:hidden;}
+.phonemock{background:var(--navy);display:flex;flex-direction:column;align-items:center;padding:20px 16px;overflow-y:auto;}
+.phoneshell{width:236px;background:#1C1C1E;border-radius:42px;padding:13px;box-shadow:0 0 0 2px #3A3A3C,0 20px 60px rgba(0,0,0,.6);}
+.phonescreen{background:#000;border-radius:30px;overflow:hidden;min-height:430px;display:flex;flex-direction:column;}
+.pstatbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 5px;font-size:11px;font-weight:600;color:#fff;}
+.pcallui{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 12px;}
+.pcallstate{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:4px;}
+.ppractice{font-size:15px;font-weight:800;color:#fff;text-align:center;line-height:1.3;margin-bottom:4px;}
+.pnumber{font-size:12px;color:rgba(255,255,255,.5);font-family:"JetBrains Mono",monospace;margin-bottom:12px;}
+.ptimer{font-size:26px;font-weight:300;color:#fff;font-family:"JetBrains Mono",monospace;letter-spacing:2px;margin-bottom:14px;}
+.pwave{display:flex;align-items:center;gap:3px;height:32px;margin-bottom:14px;}
+.pbar{width:4px;background:#30D158;border-radius:2px;animation:wave 1.2s ease-in-out infinite;}
+.pbar:nth-child(1){animation-delay:0s;}
+.pbar:nth-child(2){animation-delay:.1s;}
+.pbar:nth-child(3){animation-delay:.2s;}
+.pbar:nth-child(4){animation-delay:.3s;}
+.pbar:nth-child(5){animation-delay:.4s;}
+.pbar:nth-child(6){animation-delay:.3s;}
+.pbar:nth-child(7){animation-delay:.2s;}
+@keyframes wave{0%,100%{height:6px}50%{height:26px}}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-bottom:12px;}
+.pbtn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:14px;background:#1C1C1E;cursor:pointer;}
+.pbtnicon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;background:#3A3A3C;}
+.pbtnlabel{font-size:9px;color:rgba(255,255,255,.45);}
+.pendcall{width:54px;height:54px;border-radius:50%;background:#FF3B30;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto;cursor:pointer;box-shadow:0 4px 16px rgba(255,59,48,.4);}
+
+/* TRANSCRIPT */
+.trpanel{overflow-y:auto;padding:20px 22px;background:var(--bg);}
+.csb{border-radius:var(--r);padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.csb-live{background:linear-gradient(135deg,var(--navy),var(--navy2));border:1px solid rgba(74,222,128,.2);}
+.csb-done{background:var(--gl);border:1px solid #A7F3D0;}
+.csb-fail{background:var(--rl);border:1px solid #FECACA;}
+.csbicon{font-size:22px;flex-shrink:0;}
+.csbtitle{font-size:13px;font-weight:700;}
+.csb-live .csbtitle{color:#fff;}
+.csb-done .csbtitle{color:var(--green);}
+.csbsub{font-size:11px;margin-top:2px;}
+.csb-live .csbsub{color:rgba(255,255,255,.5);}
+.csb-done .csbsub{color:var(--green);}
+.csbright{margin-left:auto;}
+.tfeed{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.tfline{display:flex;gap:10px;align-items:flex-start;}
+.tfwho{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;width:44px;flex-shrink:0;padding-top:2px;}
+.tfw-aria{color:var(--green);}
+.tfw-caller{color:var(--blue);}
+.tfw-sys{color:var(--tx3);}
+.tftext{font-size:12px;color:var(--tx2);line-height:1.55;flex:1;}
+.tftime{font-size:10px;font-family:"JetBrains Mono",monospace;color:var(--tx3);flex-shrink:0;padding-top:3px;}
+.tfbadge{display:inline-flex;padding:1px 6px;border-radius:5px;font-size:10px;font-weight:600;margin-left:4px;}
+.tfbg{background:var(--gl);color:var(--green);}
+.tfbb{background:var(--bl);color:var(--blue);}
+.tfba{background:var(--al);color:var(--amber);}
+.tfbr{background:var(--rl);color:var(--red);}
+
+/* SIDE PANEL */
+.sidepanel{background:var(--sur);border-left:1px solid var(--bdr);overflow-y:auto;padding:14px;}
+.ssec{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin:12px 0 8px;}
+.ssec:first-child{margin-top:0;}
+.sbar{height:4px;background:var(--bdr);border-radius:2px;margin-top:3px;overflow:hidden;}
+.sbg{height:100%;background:var(--green2);border-radius:2px;}
+.sba{height:100%;background:var(--amber2);border-radius:2px;}
+
+/* MISC */
+.notice{display:flex;align-items:flex-start;gap:7px;padding:9px 11px;border-radius:var(--rs);margin-bottom:10px;font-size:11px;line-height:1.5;}
+.ngreen{background:var(--gl);border:1px solid #A7F3D0;color:var(--green);}
+.namber{background:var(--al);border:1px solid #FDE68A;color:var(--ad);}
+.nblue{background:var(--bl);border:1px solid #BFDBFE;color:var(--blue);}
+.nred{background:var(--rl);border:1px solid #FECACA;color:var(--red);}
+.notice svg{width:12px;height:12px;flex-shrink:0;margin-top:1px;}
+.notice strong{font-weight:700;}
+.btn{padding:7px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:5px;}
+.bgreen{background:var(--green);color:#fff;}
+.bgreen:hover{background:var(--gd);}
+.boutline{background:var(--sur);border:1.5px solid var(--bdr);color:var(--tx2);}
+.slabel{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;}
+.fgroup{margin-bottom:11px;}
+.flabel{font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:3px;display:block;}
+.finput{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;transition:border .15s;}
+.finput:focus{border-color:var(--green);}
+.fif{border-color:var(--green);background:#FAFFFE;}
+.fsel{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;background:var(--sur);}
+.tag{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;}
+.tagg{background:var(--gl);color:var(--green);}
+.taga{background:var(--al);color:var(--amber);}
+.tagb{background:var(--bl);color:var(--blue);}
+.tgg{width:34px;height:19px;border-radius:10px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.tgg.on{background:var(--green);}
+.tgg.off{background:var(--bdr2);}
+.tggk{width:15px;height:15px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tgg.on .tggk{left:17px;}
+.tgg.off .tggk{left:2px;}
+.trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tlogo">
+    <div class="tmark"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5L13 4.5V10.5L7.5 13.5L2 10.5V4.5L7.5 1.5Z" fill="white" opacity=".9"/><circle cx="7.5" cy="7.5" r="2" fill="white"/></svg></div>
+    <span class="ttext">MedFlow AI</span>
+  </div>
+  <div class="tsep"></div>
+  <div class="tbread">Agent Studio <span style="opacity:.35;margin:0 3px">›</span> <span>Phone Provisioning</span> <span style="opacity:.35;margin:0 3px">›</span> Athens Sleep & Wellness</div>
+  <div class="tspace"></div>
+  <div class="tright">
+    <div class="tchip tcg"><div class="ldot"></div>Agent Live</div>
+    <div class="tchip tcb">📞 Twilio Connected</div>
+    <button class="tbtn">💾 Save</button>
+    <button class="tbtn tbtnp">🚀 Apply to Agent</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" id="tab-sel" onclick="ST('sel')">📞 Number Selection</div>
+  <div class="tab" id="tab-cid" onclick="ST('cid')">🪪 Caller ID</div>
+  <div class="tab" id="tab-fwd" onclick="ST('fwd')">🔀 Forwarding Rules</div>
+  <div class="tab" id="tab-lld" onclick="ST('lld')">🔍 Landline Detection <span class="tbadge">On</span></div>
+  <div class="tab" id="tab-wbh" onclick="ST('wbh')">⚡ Webhooks</div>
+  <div class="tab" id="tab-tc" onclick="ST('tc')">🧪 Live Test Call</div>
+  <div class="tspace2"></div>
+  <div class="numchip">📞 Active: +1 (877) 581-2599</div>
+</div>
+
+<!-- ═══ PANEL 1: NUMBER SELECTION ═══ -->
+<div class="panel active" id="panel-sel">
+<div class="twocol">
+<div class="scroll pad">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div><div style="font-size:16px;font-weight:800;color:var(--tx);letter-spacing:-.3px">Choose Your AI Phone Number</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">Powered by Twilio · Voice + SMS + MMS · Athens, GA 30606</div></div>
+    <button class="btn boutline" style="font-size:11px">🔄 Refresh Numbers</button>
+  </div>
+
+  <div class="notice nblue">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span><strong>This number is for patients to call Aria — not your practice's existing line.</strong> Update your website, Google Business, and print materials to point here. Your practice phone stays unchanged.</span>
+  </div>
+
+  <div class="slabel">Step 1 — Choose Number Type</div>
+  <div class="ntgrid">
+    <div class="ntcard" onclick="selType(this,'local')" id="nt-local">
+      <div class="ntcheck"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div class="nticon">📍</div>
+      <div class="ntname">Local Number</div>
+      <div class="ntdesc">Athens (706) area code. Patients recognize local numbers — higher answer rate for outbound calls and appointment reminders.</div>
+      <div class="ntbadge ntbg">$1.15/mo · Best for local practice</div>
+    </div>
+    <div class="ntcard ntsel" onclick="selType(this,'tollfree')" id="nt-tf">
+      <div class="ntcheck"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div class="nticon">📞</div>
+      <div class="ntname">Toll-Free Number</div>
+      <div class="ntdesc">1-800 / 1-877 / 1-888 prefix. No long-distance charges for callers. Professional nationwide presence.</div>
+      <div class="ntbadge ntbb">$2.15/mo · Recommended for medical</div>
+    </div>
+    <div class="ntcard" onclick="selType(this,'vanity')" id="nt-van">
+      <div class="ntcheck"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div class="nticon">✨</div>
+      <div class="ntname">Vanity Number</div>
+      <div class="ntdesc">Custom memorable number like 1-877-SLEEP-ME. Unforgettable, brandable, maximum patient recall.</div>
+      <div class="ntbadge ntbp">$5–30/mo · Premium memorability</div>
+    </div>
+  </div>
+
+  <div class="slabel">Step 2 — Search Available Numbers</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:12px">
+    <div class="fgroup" style="margin:0"><label class="flabel">Prefix / Area Code</label><input type="text" class="finput" id="areaSearch" value="877" placeholder="877, 706, 888..."></div>
+    <div class="fgroup" style="margin:0"><label class="flabel">Contains digits (optional)</label><input type="text" class="finput" id="containsSearch" placeholder="e.g. 5812 or SLEEP"></div>
+    <div style="display:flex;align-items:flex-end;padding-bottom:1px"><button class="btn bgreen" onclick="searchNums()" style="height:36px;padding:0 18px">Search</button></div>
+  </div>
+
+  <div class="slabel">Available Toll-Free Numbers — 877 prefix</div>
+  <div class="numlist" id="numlist">
+    <div class="numitem numsel" onclick="selNum(this,'877-581-2599')">
+      <div><div class="ninum nig">+1 (877) 581-2599</div><div class="nimeta">Reserved for Athens Sleep · Toll-Free · Live demo number</div></div>
+      <div class="niright"><div class="ncaps"><span class="ncap ncv">Voice</span><span class="ncap ncs">SMS</span></div><button class="niselbtn nibsel">Selected ✓</button></div>
+    </div>
+    <div class="numitem" onclick="selNum(this,'800-442-7566')">
+      <div><div class="ninum">+1 (800) 442-7566</div><div class="nimeta">Toll-Free · Available immediately · No hold</div></div>
+      <div class="niright"><div class="ncaps"><span class="ncap ncv">Voice</span><span class="ncap ncs">SMS</span></div><button class="niselbtn nibdef">Select</button></div>
+    </div>
+    <div class="numitem" onclick="selNum(this,'877-663-5433')">
+      <div><div class="ninum">+1 (877) 663-5433</div><div class="nimeta">Toll-Free · Spells 1-877-ONE-LIFE · Available</div></div>
+      <div class="niright"><div class="ncaps"><span class="ncap ncv">Voice</span><span class="ncap ncs">SMS</span></div><button class="niselbtn nibdef">Select</button></div>
+    </div>
+    <div class="numitem" onclick="selNum(this,'888-753-3377')">
+      <div><div class="ninum">+1 (888) 753-3377</div><div class="nimeta">Toll-Free · Available immediately</div></div>
+      <div class="niright"><div class="ncaps"><span class="ncap ncv">Voice</span><span class="ncap ncs">SMS</span></div><button class="niselbtn nibdef">Select</button></div>
+    </div>
+    <div class="numitem" onclick="selNum(this,'877-663-7533')">
+      <div><div class="ninum">+1 (877) 663-7533</div><div class="nimeta">Toll-Free · Spells 1-877-SLEEP-ME · Premium vanity</div></div>
+      <div class="niright"><div class="ncaps"><span class="ncap ncv">Voice</span><span class="ncap ncs">SMS</span></div><button class="niselbtn nibdef" style="border-color:var(--purple);color:var(--purple)">Select · $15/mo</button></div>
+    </div>
+  </div>
+
+  <div style="padding:12px 14px;background:var(--gl);border:1.5px solid #A7F3D0;border-radius:var(--r);display:flex;align-items:center;justify-content:space-between;margin-bottom:14px" id="selbanner">
+    <div><div style="font-size:13px;font-weight:700;color:var(--green)" id="selbannum">Selected: +1 (877) 581-2599</div><div style="font-size:11px;color:var(--tx3);margin-top:2px" id="selbansub">Toll-Free · Voice + SMS · $2.15/mo · Reserved for Athens Sleep</div></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn boutline" style="font-size:11px;padding:5px 10px" onclick="ST('cid')">Configure Caller ID →</button>
+      <button class="btn bgreen" onclick="doProvision()" style="font-size:11px">Provision Number</button>
+    </div>
+  </div>
+
+  <div class="slabel">Provisioning Status — +1 (877) 581-2599</div>
+  <div class="card">
+    <div class="chead"><div class="cicon icg">⚡</div><div><div class="ctitle">Twilio Provisioning · Live</div><div class="csub">Account SID: AC8f3b2d... · Provisioned Apr 18, 2026 10:42 AM EDT</div></div><div class="chr"><span class="tag tagg">● Provisioned</span></div></div>
+    <div class="cbody">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+        <div style="padding:8px;background:var(--gl);border-radius:var(--rs);border:1px solid #A7F3D0;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:3px">Voice</div><div style="font-size:13px;font-weight:700;color:var(--green)">✓ Active</div></div>
+        <div style="padding:8px;background:var(--gl);border-radius:var(--rs);border:1px solid #A7F3D0;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:3px">SMS</div><div style="font-size:13px;font-weight:700;color:var(--green)">✓ Active</div></div>
+        <div style="padding:8px;background:var(--gray-l);border-radius:var(--rs);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:3px">Fax</div><div style="font-size:13px;font-weight:700;color:var(--tx3)">— Off</div></div>
+        <div style="padding:8px;background:var(--gl);border-radius:var(--rs);border:1px solid #A7F3D0;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:3px">MMS</div><div style="font-size:13px;font-weight:700;color:var(--green)">✓ Active</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-l);border-radius:5px"><span style="color:var(--tx3)">Phone SID</span><span style="font-family:'JetBrains Mono',monospace;color:var(--tx2)">PN4d8e2c1f9a0b3...</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-l);border-radius:5px"><span style="color:var(--tx3)">Voice webhook</span><span style="font-family:'JetBrains Mono',monospace;color:var(--green);font-size:10px">https://api.medflow.ai/webhook/voice</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-l);border-radius:5px"><span style="color:var(--tx3)">SMS webhook</span><span style="font-family:'JetBrains Mono',monospace;color:var(--green);font-size:10px">https://api.medflow.ai/webhook/sms-reply</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-l);border-radius:5px"><span style="color:var(--tx3)">Monthly cost</span><span style="font-weight:600">$2.15/mo · auto-billed</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="sidepanel">
+  <div class="ssec">Cost Breakdown</div>
+  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:11px">
+    <div style="padding:7px 10px;background:var(--gray-l);border-radius:5px;border:1px solid var(--bdr);display:flex;justify-content:space-between"><span>Local (706)</span><span style="font-weight:700">$1.15/mo</span></div>
+    <div style="padding:7px 10px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0;display:flex;justify-content:space-between"><span style="font-weight:600;color:var(--green)">Toll-Free 877 ✓</span><span style="font-weight:700;color:var(--green)">$2.15/mo</span></div>
+    <div style="padding:7px 10px;background:var(--gray-l);border-radius:5px;border:1px solid var(--bdr);display:flex;justify-content:space-between"><span>Vanity (SLEEP)</span><span style="font-weight:700">$5–30/mo</span></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px;margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--bdr)"><span style="color:var(--tx3)">Inbound voice</span><span>$0.0085/min</span></div>
+    <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--bdr)"><span style="color:var(--tx3)">Outbound voice</span><span>$0.014/min</span></div>
+    <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--bdr)"><span style="color:var(--tx3)">SMS outbound</span><span>$0.0079/msg</span></div>
+    <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--bdr)"><span style="color:var(--tx3)">SMS inbound</span><span>$0.0075/msg</span></div>
+    <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--tx3)">Lookup v2</span><span>$0.005/call</span></div>
+  </div>
+  <div class="ssec">This Month — Usage</div>
+  <div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--tx2)">Voice minutes</span><span style="font-weight:700">412 / 500</span></div><div class="sbar"><div class="sbg" style="width:82.4%"></div></div><div style="font-size:10px;color:var(--tx3)">88 min remaining this cycle</div></div>
+  <div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--tx2)">SMS sent</span><span style="font-weight:700">23 msgs</span></div><div class="sbar"><div class="sbg" style="width:23%"></div></div></div>
+  <div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--tx2)">Lookup v2 checks</span><span style="font-weight:700">18</span></div></div>
+  <div class="ssec">Number Health</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:5px"><span style="color:var(--green)">●</span><span style="flex:1">Voice webhook healthy</span><span style="font-weight:700;color:var(--green)">✓</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:5px"><span style="color:var(--green)">●</span><span style="flex:1">SMS webhook healthy</span><span style="font-weight:700;color:var(--green)">✓</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:5px"><span style="color:var(--green)">●</span><span style="flex:1">Caller ID configured</span><span style="font-weight:700;color:var(--green)">✓</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:5px"><span style="color:var(--green)">●</span><span style="flex:1">Landline detection active</span><span style="font-weight:700;color:var(--green)">✓</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:5px"><span style="color:var(--green)">●</span><span style="flex:1">Forwarding rules set</span><span style="font-weight:700;color:var(--green)">✓</span></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 2: CALLER ID ═══ -->
+<div class="panel" id="panel-cid">
+<div class="twocol">
+<div class="scroll pad">
+  <div style="font-size:16px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:4px">Caller ID Configuration</div>
+  <div style="font-size:12px;color:var(--tx3);margin-bottom:16px">What patients see when Aria calls them · CNAM outbound display name · 10DLC compliance</div>
+
+  <div class="phpreview">
+    <div class="pplabel">What patients see when Aria places an outbound call</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:18px">🏥</div>
+      <div>
+        <div class="ppname" id="prevName">Athens Sleep and Wellness Center</div>
+        <div class="ppnum" id="prevNum">+1 (877) 581-2599</div>
+      </div>
+    </div>
+    <div class="ppstats">
+      <div class="ppstat"><div class="ppstatlabel">Caller ID</div><div class="ppstatval">Registered ✓</div></div>
+      <div class="ppstat"><div class="ppstatlabel">CNAM</div><div class="ppstatval">Verified ✓</div></div>
+      <div class="ppstat"><div class="ppstatlabel">Spam Score</div><div class="ppstatval">0 / Clean ✓</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="chead"><div class="cicon icb">🪪</div><div><div class="ctitle">Outbound Caller ID Settings</div><div class="csub">What patients see when Aria calls — outbound calls and SMS</div></div></div>
+    <div class="cbody">
+      <div class="fgroup"><label class="flabel">CNAM Display Name — max 15 characters (shows on landlines)</label><input type="text" class="finput fif" id="cnamInput" value="ATHENS SLEEP" maxlength="15" oninput="updatePrev()" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;letter-spacing:1px"><div style="font-size:10px;color:var(--tx3);margin-top:3px">CNAM displays on landlines and older carriers. Mobile phones typically show the number, not CNAM. <span id="cnamCount" style="font-weight:600;color:var(--green)">12/15 characters</span></div></div>
+      <div class="fgroup"><label class="flabel">Practice Display Name — for SMS and app identification</label><input type="text" class="finput fif" id="displayNameInput" value="Athens Sleep and Wellness Center" oninput="updatePrev()"></div>
+      <div class="fgroup"><label class="flabel">Outbound Number</label><select class="fsel"><option>+1 (877) 581-2599 — AI number (Recommended)</option><option>+1 (706) 549-1720 — Practice landline</option></select></div>
+      <div class="fgroup"><label class="flabel">SMS Sender Name (A2P 10DLC)</label><input type="text" class="finput fif" value="Athens Sleep &amp; Wellness"></div>
+      <div class="notice ngreen" style="margin-top:4px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span><strong>10DLC registered.</strong> Athens Sleep & Wellness is registered for A2P 10DLC medical messaging. Spam score: 0 / Clean. No carrier filtering expected.</span>
+      </div>
+      <div class="notice nblue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span><strong>SHAKEN/STIR verified.</strong> Twilio auto-registers toll-free numbers. Your outbound calls display as verified on most carriers — preventing "Spam Likely" flags.</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn bgreen" onclick="alert('Caller ID saved! CNAM propagation takes 5-7 business days across all carriers.')">Save Caller ID</button>
+        <button class="btn boutline" onclick="testCID()">📞 Send Test Call</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="sidepanel">
+  <div class="ssec">Caller ID Status</div>
+  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>CNAM Registered</span><span style="font-weight:700;color:var(--green)">✓ Active</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>10DLC Compliant</span><span style="font-weight:700;color:var(--green)">✓ Registered</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>Spam Score</span><span style="font-weight:700;color:var(--green)">0 / Clean</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>SHAKEN/STIR</span><span style="font-weight:700;color:var(--green)">✓ Verified</span></div>
+  </div>
+  <div class="ssec">CNAM Preview — Landlines</div>
+  <div style="padding:12px;background:var(--navy);border-radius:var(--r);margin-bottom:12px;text-align:center">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#fff;letter-spacing:2px">ATHENS SLEEP</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:5px">What landlines & older phones display</div>
+  </div>
+  <div class="notice namber">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+    <span>CNAM is 15 chars max, uppercase only. Mobile phones show the number, not CNAM. Matters most for landline callers (~14% of your calls).</span>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 3: FORWARDING RULES ═══ -->
+<div class="panel" id="panel-fwd">
+<div class="twocol">
+<div class="scroll pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div><div style="font-size:16px;font-weight:800;color:var(--tx);letter-spacing:-.3px">Call Forwarding Rules</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">Controls when Aria answers vs forwards to your practice team</div></div>
+    <button class="btn bgreen" style="font-size:11px">+ Add Rule</button>
+  </div>
+  <div class="notice ngreen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span><strong>Rules evaluated top-to-bottom.</strong> First match wins. Rule 5 is the default catch-all — Aria handles everything not matched above. Rules execute at Twilio's carrier level before Aria even connects.</span>
+  </div>
+
+  <div class="slabel">5 Active Rules — Evaluated in order</div>
+
+  <div class="fwdrule" style="border-color:#FECACA;background:var(--rl)">
+    <div class="frnum frnr">1</div>
+    <div style="flex:1">
+      <div class="frcond">🚨 Emergency Keywords — Always First</div>
+      <div class="fraction">If caller says "chest pain", "can't breathe", "unconscious", "heart attack" → Aria gives 911 instruction immediately. Never forwards — stays on line until caller confirms help is coming.</div>
+      <div style="margin-top:5px"><span class="frtag" style="background:var(--rl);color:var(--red)">ALWAYS ON · Cannot be disabled</span></div>
+    </div>
+    <span class="tag" style="background:var(--rl);color:var(--red);flex-shrink:0;margin-top:1px">Emergency</span>
+  </div>
+
+  <div class="fwdrule">
+    <div class="frnum frna">2</div>
+    <div style="flex:1">
+      <div class="frcond">📅 Business Hours — Mon–Fri 8:00 AM – 5:00 PM ET</div>
+      <div class="fraction">Aria answers and handles the call. If caller explicitly requests a human, forwards to <code>(706) 549-1720 ext. 0</code> (front desk). Max hold before transfer: 15 seconds.</div>
+      <div style="margin-top:5px"><span class="frtag frtai">Aria Handles</span><span class="frtag frtfwd">→ Staff on transfer request</span></div>
+      <div><button class="fredit" onclick="alert('Edit hours: Mon–Fri 8AM–5PM ET
+Transfer: (706) 549-1720 ext. 0
+Max hold: 15 seconds')">Edit Rule</button></div>
+    </div>
+    <span class="tag tagg" style="flex-shrink:0;margin-top:1px">Aria First</span>
+  </div>
+
+  <div class="fwdrule">
+    <div class="frnum frnb">3</div>
+    <div style="flex:1">
+      <div class="frcond">🌙 After Hours — 5:00 PM to 8:00 AM ET (Weekdays)</div>
+      <div class="fraction">Aria answers 24/7. Collects name, reason for call, callback number, and preferred callback time. Sends message to staff via internal notification. No live transfer available after hours.</div>
+      <div style="margin-top:5px"><span class="frtag frtai">Aria 24/7</span><span class="frtag" style="background:var(--tl);color:var(--teal)">→ Message taken + staff notified</span></div>
+      <div><button class="fredit" onclick="alert('Edit after-hours script and notification recipients')">Edit Recipients</button></div>
+    </div>
+    <span class="tag tagb" style="flex-shrink:0;margin-top:1px">After Hours</span>
+  </div>
+
+  <div class="fwdrule">
+    <div class="frnum frng">4</div>
+    <div style="flex:1">
+      <div class="frcond">📅 Weekends & Holidays</div>
+      <div class="fraction">Same as after-hours: Aria answers, takes message, notifies on-call staff. Holiday schedule: New Year's, Memorial Day, July 4th, Labor Day, Thanksgiving, Christmas.</div>
+      <div style="margin-top:5px"><span class="frtag frtai">Aria 24/7</span><span class="frtag" style="background:var(--tl);color:var(--teal)">→ Message taken</span></div>
+      <div><button class="fredit" onclick="alert('Edit holiday schedule and on-call notification')">Edit Holidays</button></div>
+    </div>
+    <span class="tag tagg" style="flex-shrink:0;margin-top:1px">Weekends</span>
+  </div>
+
+  <div class="fwdrule" style="border-color:#A7F3D0;background:var(--gl)">
+    <div class="frnum frng">5</div>
+    <div style="flex:1">
+      <div class="frcond">✅ Default Catch-All — All Other Calls</div>
+      <div class="fraction">Aria answers and handles all unmatched calls using containment rules and knowledge base. This rule catches everything not matched by rules 1–4. Containment rate: 87.3%.</div>
+      <div style="margin-top:5px"><span class="frtag frtai">Aria Handles — Default</span></div>
+    </div>
+    <span class="tag tagg" style="flex-shrink:0;margin-top:1px">Default</span>
+  </div>
+
+  <div class="slabel" style="margin-top:16px">Office Hours Schedule</div>
+  <div class="card">
+    <div class="cbody">
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:12px">
+        <div style="text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);margin-bottom:5px">Mon</div><div style="padding:4px 0;background:var(--gl);border-radius:5px;font-size:10px;font-weight:600;color:var(--green)">8a–5p</div></div>
+        <div style="text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);margin-bottom:5px">Tue</div><div style="padding:4px 0;background:var(--gl);border-radius:5px;font-size:10px;font-weight:600;color:var(--green)">8a–5p</div></div>
+        <div style="text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);margin-bottom:5px">Wed</div><div style="padding:4px 0;background:var(--gl);border-radius:5px;font-size:10px;font-weight:600;color:var(--green)">8a–5p</div></div>
+        <div style="text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);margin-bottom:5px">Thu</div><div style="padding:4px 0;background:var(--gl);border-radius:5px;font-size:10px;font-weight:600;color:var(--green)">8a–5p</div></div>
+        <div style="text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);margin-bottom:5px">Fri</div><div style="padding:4px 0;background:var(--gl);border-radius:5px;font-size:10px;font-weight:600;color:var(--green)">8a–5p</div></div>
+        <div style="text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);margin-bottom:5px">Sat</div><div style="padding:4px 0;background:var(--gray-l);border-radius:5px;font-size:10px;font-weight:600;color:var(--tx3)">Closed</div></div>
+        <div style="text-align:center"><div style="font-size:10px;font-weight:700;color:var(--tx3);margin-bottom:5px">Sun</div><div style="padding:4px 0;background:var(--gray-l);border-radius:5px;font-size:10px;font-weight:600;color:var(--tx3)">Closed</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div class="fgroup"><label class="flabel">Open time</label><input type="time" class="finput" value="08:00"></div>
+        <div class="fgroup"><label class="flabel">Close time</label><input type="time" class="finput" value="17:00"></div>
+        <div class="fgroup"><label class="flabel">Timezone</label><select class="fsel"><option>Eastern (ET)</option><option>Central (CT)</option><option>Pacific (PT)</option></select></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="sidepanel">
+  <div class="ssec">Transfer Numbers</div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;font-size:11px">
+    <div style="padding:7px 10px;background:var(--gray-l);border-radius:5px;border:1px solid var(--bdr)"><div style="font-weight:700;color:var(--tx2);margin-bottom:2px">Front Desk (Primary)</div><div style="font-family:'JetBrains Mono',monospace;color:var(--green)">(706) 549-1720 ext. 0</div></div>
+    <div style="padding:7px 10px;background:var(--gray-l);border-radius:5px;border:1px solid var(--bdr)"><div style="font-weight:700;color:var(--tx2);margin-bottom:2px">Clinical Nurse</div><div style="font-family:'JetBrains Mono',monospace;color:var(--blue)">(706) 549-1720 ext. 3</div></div>
+    <div style="padding:7px 10px;background:var(--gray-l);border-radius:5px;border:1px solid var(--bdr)"><div style="font-weight:700;color:var(--tx2);margin-bottom:2px">Billing Dept.</div><div style="font-family:'JetBrains Mono',monospace;color:var(--purple)">(706) 549-1720 ext. 4</div></div>
+    <div style="padding:7px 10px;background:var(--gray-l);border-radius:5px;border:1px solid var(--bdr)"><div style="font-weight:700;color:var(--tx2);margin-bottom:2px">On-Call (After Hours)</div><div style="font-family:'JetBrains Mono',monospace;color:var(--amber)">(706) 555-0188</div></div>
+  </div>
+  <div class="ssec">Today's Call Routing</div>
+  <div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--tx2)">Aria handled</span><span style="font-weight:700;color:var(--green)">47 calls</span></div><div class="sbar"><div class="sbg" style="width:85%"></div></div></div>
+  <div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--tx2)">Transferred to staff</span><span style="font-weight:700;color:var(--amber)">6 calls</span></div><div class="sbar"><div class="sba" style="width:11%"></div></div></div>
+  <div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--tx2)">After-hours messages</span><span style="font-weight:700">3 msgs</span></div></div>
+  <div class="notice nblue">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span>Forwarding rules execute at the Twilio carrier level via TwiML before Aria even connects — instantaneous and reliable.</span>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 4: LANDLINE DETECTION ═══ -->
+<div class="panel" id="panel-lld">
+<div class="twocol">
+<div class="scroll pad">
+  <div style="font-size:16px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:4px">Landline Detection — Twilio Lookup v2</div>
+  <div style="font-size:12px;color:var(--tx3);margin-bottom:16px">Identifies caller phone type before attempting SMS fallback · Prevents wasted messages · $0.005/lookup · Cached per session</div>
+
+  <div style="padding:16px 18px;background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r);margin-bottom:16px;display:flex;align-items:center;gap:14px">
+    <div style="font-size:26px">🔍</div>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:2px">Twilio Lookup v2 — Line Type Intelligence</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.5)">Checks if each caller's number is mobile, landline, VoIP, or toll-free before triggering SMS fallback. Result cached per call — only one lookup charge per session.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div class="tgg on" id="lldMaster" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div>
+      <div style="font-size:10px;color:rgba(255,255,255,.45);font-weight:600">Active</div>
+    </div>
+  </div>
+
+  <div class="slabel">How Each Phone Type is Handled</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+    <div style="padding:14px;background:var(--gl);border-radius:var(--r);border:1.5px solid #A7F3D0">
+      <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px">📱 Mobile</div>
+      <div style="font-size:11px;color:var(--tx2);line-height:1.6;margin-bottom:8px">SMS capability confirmed. Aria sends the mid-call SMS fallback text when STT confidence drops below the threshold.</div>
+      <div style="font-size:11px;padding:4px 8px;background:#fff;border-radius:4px;font-family:'JetBrains Mono',monospace;color:var(--green)">→ Layer 2 SMS active</div>
+    </div>
+    <div style="padding:14px;background:var(--rl);border-radius:var(--r);border:1.5px solid #FECACA">
+      <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:4px">📟 Landline</div>
+      <div style="font-size:11px;color:var(--tx2);line-height:1.6;margin-bottom:8px">Cannot receive SMS. Aria skips Layer 2 entirely and jumps to Layer 3 graceful skip after 2 voice attempts. No failed SMS delivery.</div>
+      <div style="font-size:11px;padding:4px 8px;background:#fff;border-radius:4px;font-family:'JetBrains Mono',monospace;color:var(--red)">→ Layer 3 graceful skip</div>
+    </div>
+    <div style="padding:14px;background:var(--bl);border-radius:var(--r);border:1.5px solid #BFDBFE">
+      <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:4px">💻 VoIP (Fixed)</div>
+      <div style="font-size:11px;color:var(--tx2);line-height:1.6;margin-bottom:8px">Many VoIP numbers support SMS. Aria attempts the text; if delivery fails (Twilio error 21614), automatically falls back to Layer 3.</div>
+      <div style="font-size:11px;padding:4px 8px;background:#fff;border-radius:4px;font-family:'JetBrains Mono',monospace;color:var(--blue)">→ Attempt SMS, catch error</div>
+    </div>
+    <div style="padding:14px;background:var(--al);border-radius:var(--r);border:1.5px solid #FDE68A">
+      <div style="font-size:13px;font-weight:700;color:var(--ad);margin-bottom:4px">❓ Unknown</div>
+      <div style="font-size:11px;color:var(--tx2);line-height:1.6;margin-bottom:8px">Lookup returned unknown type. Aria attempts SMS conservatively; catches any failure gracefully at the Twilio error level.</div>
+      <div style="font-size:11px;padding:4px 8px;background:#fff;border-radius:4px;font-family:'JetBrains Mono',monospace;color:var(--amber)">→ Attempt SMS, catch error</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="chead"><div class="cicon ict">⚙️</div><div><div class="ctitle">Detection Configuration</div><div class="csub">Twilio Lookup v2 API · Lazy evaluation · Per-session cache</div></div></div>
+    <div class="cbody">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">
+        <div class="fgroup"><label class="flabel">Lookup timing</label><select class="fsel"><option>On first SMS trigger (lazy — recommended)</option><option>On call connect (eager — every call)</option></select></div>
+        <div class="fgroup"><label class="flabel">Cache duration</label><select class="fsel"><option>Per call session (no repeat charge)</option><option>24 hours (same caller)</option></select></div>
+        <div class="fgroup"><label class="flabel">Lookup error fallback</label><select class="fsel"><option>Attempt SMS anyway (recommended)</option><option>Skip to graceful skip</option></select></div>
+        <div class="fgroup"><label class="flabel">Lookup fields</label><select class="fsel"><option>line_type_intelligence only ($0.005)</option><option>line_type + carrier data ($0.008)</option></select></div>
+      </div>
+      <div class="trow"><div><div class="tgg-label" style="font-size:12px;color:var(--tx2)">Log line type in call metadata</div><div style="font-size:10px;color:var(--tx3)">Records mobile/landline/voip in call log for analytics</div></div><div class="tgg on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div></div>
+      <div class="trow"><div><div style="font-size:12px;color:var(--tx2)">Alert MOF if landline rate exceeds 30%</div><div style="font-size:10px;color:var(--tx3)">Signals shift in caller demographics or number type</div></div><div class="tgg on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div></div>
+    </div>
+  </div>
+
+  <div class="slabel">Caller Phone Type Distribution — Last 30 Days</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+    <div style="padding:12px;background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:22px;font-weight:800;color:var(--green)">78%</div><div style="font-size:10px;font-weight:700;color:var(--tx3);margin-top:3px">Mobile</div><div style="font-size:10px;color:var(--tx3)">210 callers</div></div>
+    <div style="padding:12px;background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:22px;font-weight:800;color:var(--red)">14%</div><div style="font-size:10px;font-weight:700;color:var(--tx3);margin-top:3px">Landline</div><div style="font-size:10px;color:var(--tx3)">38 callers</div></div>
+    <div style="padding:12px;background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:22px;font-weight:800;color:var(--blue)">6%</div><div style="font-size:10px;font-weight:700;color:var(--tx3);margin-top:3px">VoIP</div><div style="font-size:10px;color:var(--tx3)">16 callers</div></div>
+    <div style="padding:12px;background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:22px;font-weight:800;color:var(--amber)">2%</div><div style="font-size:10px;font-weight:700;color:var(--tx3);margin-top:3px">Unknown</div><div style="font-size:10px;color:var(--tx3)">5 callers</div></div>
+  </div>
+</div>
+<div class="sidepanel">
+  <div class="ssec">Landline Impact</div>
+  <div style="font-size:11px;color:var(--tx2);line-height:1.7;margin-bottom:12px">Without landline detection, Aria would attempt SMS to 38 callers/month who cannot receive it — every attempt would fail and frustrate the caller. Detection prevents all 38 wasted attempts monthly.</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-l);border-radius:4px"><span>SMS prevented/month</span><span style="font-weight:700;color:var(--green)">38</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-l);border-radius:4px"><span>Lookup cost (lazy)</span><span style="font-weight:700">~$0.09/mo</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gray-l);border-radius:4px"><span>Failed SMS cost saved</span><span style="font-weight:700;color:var(--green)">$0.30/mo</span></div>
+  </div>
+  <div class="ssec">API Response Example</div>
+  <div style="padding:10px;background:var(--navy);border-radius:var(--r);margin-bottom:12px">
+    <div style="font-size:9px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Twilio Lookup v2</div>
+    <pre style="font-size:10px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,.8);white-space:pre-wrap;line-height:1.6">{"phone_number":
+  "+17065551234",
+  "line_type_intelligence":{
+    "type":"mobile",
+    "carrier_name":"AT&T",
+    "error_code":null
+  }
+}</pre>
+  </div>
+  <div class="notice ngreen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span>Landline detection included in all Professional and Enterprise plans — bundled with the Never-Loop guarantee at no extra charge.</span>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 5: WEBHOOKS ═══ -->
+<div class="panel" id="panel-wbh">
+<div class="twocol">
+<div class="scroll pad">
+  <div style="font-size:16px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:4px">Webhook & Integration Status</div>
+  <div style="font-size:12px;color:var(--tx3);margin-bottom:16px">All endpoints connecting Twilio to your AI agent · Health checked every 5 minutes · Auto-heal on failure</div>
+
+  <div class="notice ngreen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span><strong>All 4 webhooks healthy.</strong> Last health check: 2 minutes ago. 30-day uptime: 99.94%. One incident Apr 5 (2h AWS maintenance window, auto-healed). MOF Technical Admin alerted within 60 seconds of any failure.</span>
+  </div>
+
+  <div class="slabel">Active Webhooks — Twilio Configuration</div>
+
+  <div class="whitem whok">
+    <div class="whleft">
+      <div class="whdot whdg"></div>
+      <div><div class="whlabel">Voice Incoming — Primary</div><div class="whurl">POST https://api.medflow.ai/webhook/voice</div><div class="whdesc">All inbound calls → Routes to Aria agent pipeline → Deepgram STT → Claude LLM → ElevenLabs TTS</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+      <span class="whstat wsok">✓ Healthy</span>
+      <span class="wsms">234ms avg · 99.97% uptime</span>
+    </div>
+  </div>
+
+  <div class="whitem whok">
+    <div class="whleft">
+      <div class="whdot whdg"></div>
+      <div><div class="whlabel">Voice Status Callback</div><div class="whurl">POST https://api.medflow.ai/webhook/voice-status</div><div class="whdesc">Call completion events → Triggers transcript generation, call log, summary email, and billing calculation</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+      <span class="whstat wsok">✓ Healthy</span>
+      <span class="wsms">189ms avg · 99.98% uptime</span>
+    </div>
+  </div>
+
+  <div class="whitem whok">
+    <div class="whleft">
+      <div class="whdot whdg"></div>
+      <div><div class="whlabel">SMS Incoming Reply — Mid-Call Fallback</div><div class="whurl">POST https://api.medflow.ai/webhook/sms-reply</div><div class="whdesc">SMS replies during active calls → Injects typed text back into voice conversation → Never-Loop Layer 2</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+      <span class="whstat wsok">✓ Healthy</span>
+      <span class="wsms">267ms avg · 99.91% uptime</span>
+    </div>
+  </div>
+
+  <div class="whitem whok">
+    <div class="whleft">
+      <div class="whdot whdg"></div>
+      <div><div class="whlabel">SMS Status Callback</div><div class="whurl">POST https://api.medflow.ai/webhook/sms-status</div><div class="whdesc">SMS delivery status (delivered/failed) → Triggers graceful skip on Twilio error 21614 (landline)</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+      <span class="whstat wsok">✓ Healthy</span>
+      <span class="wsms">201ms avg · 99.93% uptime</span>
+    </div>
+  </div>
+
+  <div class="slabel" style="margin-top:14px">30-Day Uptime — All Webhooks</div>
+  <div class="card">
+    <div class="cbody" style="padding:14px">
+      <div style="display:grid;grid-template-columns:repeat(30,1fr);gap:2px;height:36px;align-items:end">
+        <div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:70%"></div><div style="background:var(--red);border-radius:1px;height:28%;cursor:pointer" title="Apr 5 — 2h AWS maintenance, auto-healed" onclick="alert('Apr 5, 2026 — 02:15 AM to 04:12 AM ET
+Cause: AWS ECS maintenance window
+Duration: 1h 57m
+Impact: ~14 calls rerouted to voicemail
+Resolution: Auto-healed. MOF Technical Admin Mike Torres notified at 02:16 AM.')"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div><div style="background:var(--green2);border-radius:1px;height:100%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--tx3)"><span>Mar 19</span><span style="color:var(--red)">Apr 5 — 2h outage (click)</span><span>Apr 18 (today)</span></div>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:8px;font-size:11px">
+        <span style="font-weight:800;color:var(--green);font-size:16px">99.94%</span>
+        <span style="color:var(--tx3)">uptime · 1 incident · Auto-healed · All webhooks pass security validation</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="slabel">Webhook Security</div>
+  <div class="card">
+    <div class="cbody" style="padding:14px">
+      <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--gl);border-radius:5px"><span style="color:var(--green)">✓</span><span style="flex:1">Twilio signature validation (X-Twilio-Signature header verified)</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--gl);border-radius:5px"><span style="color:var(--green)">✓</span><span style="flex:1">HTTPS / TLS 1.3 only — no plaintext webhook traffic</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--gl);border-radius:5px"><span style="color:var(--green)">✓</span><span style="flex:1">IP allowlist — Twilio IP ranges only (no arbitrary POST)</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--gl);border-radius:5px"><span style="color:var(--green)">✓</span><span style="flex:1">Webhook shared secret for additional auth layer</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="sidepanel">
+  <div class="ssec">Incident History</div>
+  <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;margin-bottom:12px">
+    <div style="padding:7px 10px;background:var(--rl);border-radius:5px;border:1px solid #FECACA">
+      <div style="font-weight:700;color:var(--red)">Apr 5, 2026 — 1h 57m</div>
+      <div style="color:var(--tx3);margin-top:2px">AWS ECS maintenance. Auto-healed. Mike Torres alerted 02:16 AM. 14 calls rerouted.</div>
+    </div>
+    <div style="padding:7px 10px;background:var(--gray-l);border-radius:5px;border:1px solid var(--bdr)"><div style="font-weight:600;color:var(--tx2)">No other incidents in 30 days</div></div>
+  </div>
+  <div class="ssec">Auto-Heal Sequence</div>
+  <div style="font-size:11px;color:var(--tx2);line-height:1.7;margin-bottom:10px">If any webhook returns 5xx errors for 60+ consecutive seconds:<br><br>1. MOF Technical Admin alerted (Slack + SMS)<br>2. ECS task auto-restart attempted<br>3. Failover to backup endpoint<br>4. Practice admin notified if &gt;10 min downtime<br>5. Post-incident report generated</div>
+  <div class="ssec">Recent Webhook Calls</div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:10px" id="whlog">
+    <div style="display:flex;gap:6px;padding:4px 8px;background:var(--gray-l);border-radius:4px"><span style="font-family:'JetBrains Mono',monospace;color:var(--tx3);width:46px">10:42</span><span style="color:var(--green)">POST /webhook/voice → 200 (187ms)</span></div>
+    <div style="display:flex;gap:6px;padding:4px 8px;background:var(--gray-l);border-radius:4px"><span style="font-family:'JetBrains Mono',monospace;color:var(--tx3);width:46px">10:41</span><span style="color:var(--green)">POST /webhook/voice-status → 200 (163ms)</span></div>
+    <div style="display:flex;gap:6px;padding:4px 8px;background:var(--gray-l);border-radius:4px"><span style="font-family:'JetBrains Mono',monospace;color:var(--tx3);width:46px">10:38</span><span style="color:var(--green)">POST /webhook/sms-reply → 200 (241ms)</span></div>
+    <div style="display:flex;gap:6px;padding:4px 8px;background:var(--gray-l);border-radius:4px"><span style="font-family:'JetBrains Mono',monospace;color:var(--tx3);width:46px">10:36</span><span style="color:var(--green)">POST /webhook/voice → 200 (209ms)</span></div>
+    <div style="display:flex;gap:6px;padding:4px 8px;background:var(--gray-l);border-radius:4px"><span style="font-family:'JetBrains Mono',monospace;color:var(--tx3);width:46px">10:31</span><span style="color:var(--green)">POST /webhook/voice → 200 (198ms)</span></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 6: LIVE TEST CALL ═══ -->
+<div class="panel" id="panel-tc">
+<div class="tcgrid">
+
+  <!-- Phone mockup column -->
+  <div class="phonemock">
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-align:center;margin-bottom:16px;text-transform:uppercase;letter-spacing:.8px">Test Call Simulation</div>
+
+    <div class="phoneshell">
+      <div style="width:80px;height:26px;background:#1C1C1E;border-radius:0 0 16px 16px;position:relative;margin:0 auto 2px;display:flex;align-items:center;justify-content:center;gap:6px;z-index:5">
+        <div style="width:9px;height:9px;border-radius:50%;background:#2C2C2E"></div>
+        <div style="width:46px;height:5px;border-radius:3px;background:#2C2C2E"></div>
+      </div>
+      <div class="phonescreen">
+        <div class="pstatbar"><span>9:41</span><span>📶 AT&T</span><span>🔋 87%</span></div>
+        <div class="pcallui">
+          <div class="pcallstate" id="callState">Ready</div>
+          <div class="ppractice">Athens Sleep and Wellness Center</div>
+          <div class="pnumber">+1 (877) 581-2599</div>
+          <div class="ptimer" id="callTimer">0:00</div>
+          <div class="pwave" id="callWave" style="display:none">
+            <div class="pbar" style="height:6px"></div>
+            <div class="pbar" style="height:10px"></div>
+            <div class="pbar" style="height:18px"></div>
+            <div class="pbar" style="height:24px"></div>
+            <div class="pbar" style="height:26px"></div>
+            <div class="pbar" style="height:18px"></div>
+            <div class="pbar" style="height:10px"></div>
+          </div>
+          <div class="pgrid">
+            <div class="pbtn"><div class="pbtnicon">🔇</div><div class="pbtnlabel">Mute</div></div>
+            <div class="pbtn"><div class="pbtnicon">⌨️</div><div class="pbtnlabel">Keypad</div></div>
+            <div class="pbtn"><div class="pbtnicon">🔊</div><div class="pbtnlabel">Speaker</div></div>
+            <div class="pbtn"><div class="pbtnicon">➕</div><div class="pbtnlabel">Add</div></div>
+            <div class="pbtn"><div class="pbtnicon">📋</div><div class="pbtnlabel">Notes</div></div>
+            <div class="pbtn"><div class="pbtnicon">📹</div><div class="pbtnlabel">FaceTime</div></div>
+          </div>
+          <div class="pendcall" id="endBtn" onclick="endCall()">📵</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;width:100%;max-width:240px">
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">Test Scenario</div>
+      <select id="scenarioPicker" class="fsel" style="margin-bottom:8px;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);color:#fff">
+        <option value="greet">Basic greeting test</option>
+        <option value="sched">Schedule appointment</option>
+        <option value="loop">Never-loop (mumble test)</option>
+        <option value="emerg">Emergency — chest pain</option>
+        <option value="spanish">Spanish language switch</option>
+        <option value="cpap">CPAP resupply request</option>
+      </select>
+      <button class="btn bgreen" style="width:100%;justify-content:center" id="startBtn" onclick="startCall()">📞 Start Test Call</button>
+      <div style="margin-top:8px;text-align:center;font-size:10px;color:rgba(255,255,255,.25)">Simulated · Not a real Twilio call<br>Real test: dial +1 (877) 581-2599</div>
+    </div>
+  </div>
+
+  <!-- Transcript column -->
+  <div class="trpanel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div><div style="font-size:16px;font-weight:800;color:var(--tx);letter-spacing:-.3px">Live Test Call Transcript</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">Real-time view of Aria's responses, STT confidence, and intent detection</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn boutline" style="font-size:11px" onclick="clearCall()">Clear</button>
+        <button class="btn boutline" style="font-size:11px" onclick="alert('Transcript exported as PDF: test-call-2026-04-18.pdf
+Includes STT scores, intent trace, webhook logs.')">⬇ Export</button>
+      </div>
+    </div>
+
+    <div class="csb csb-live" id="csbanner">
+      <div class="csbicon">📞</div>
+      <div><div class="csbtitle">Ready — Select a scenario and press Start Test Call</div><div class="csbsub">+1 (877) 581-2599 · Athens Sleep and Wellness Center · Aria v2.1</div></div>
+      <div class="csbright"><span class="tag tagb">Twilio Connected</span></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px">
+      <div style="padding:8px;background:var(--sur);border-radius:var(--rs);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px">Duration</div><div style="font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace" id="mDur">0:00</div></div>
+      <div style="padding:8px;background:var(--sur);border-radius:var(--rs);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px">Response</div><div style="font-size:15px;font-weight:700;color:var(--green)" id="mResp">—</div></div>
+      <div style="padding:8px;background:var(--sur);border-radius:var(--rs);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px">STT Conf.</div><div style="font-size:15px;font-weight:700;color:var(--blue)" id="mStt">—</div></div>
+      <div style="padding:8px;background:var(--sur);border-radius:var(--rs);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px">Intent</div><div style="font-size:11px;font-weight:700;color:var(--purple)" id="mInt">—</div></div>
+      <div style="padding:8px;background:var(--sur);border-radius:var(--rs);border:1px solid var(--bdr);text-align:center"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px">Contained</div><div style="font-size:15px;font-weight:700" id="mCont">—</div></div>
+    </div>
+
+    <div class="tfeed" id="tfeed">
+      <div style="padding:24px;text-align:center;color:var(--tx3);font-size:12px">
+        <div style="font-size:28px;margin-bottom:8px">📞</div>
+        Select a scenario above and press "Start Test Call" to begin the simulation.<br>The transcript appears here in real time, including STT confidence scores,<br>intent classification, and the Never-Loop layer activations.
+      </div>
+    </div>
+
+    <div id="postCall" style="display:none">
+      <div class="csb csb-done" id="resultBanner">
+        <div class="csbicon">✅</div>
+        <div><div class="csbtitle">Test Complete — PASSED</div><div class="csbsub">All checks passed · Agent ready for production</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:8px">
+        <div style="padding:10px;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);text-align:center"><div style="font-size:18px;font-weight:800;color:var(--green)" id="rTime">1.3s</div><div style="font-size:10px;color:var(--tx3)">Avg response time</div></div>
+        <div style="padding:10px;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);text-align:center"><div style="font-size:18px;font-weight:800;color:var(--green)" id="rLoops">0</div><div style="font-size:10px;color:var(--tx3)">Loop events</div></div>
+        <div style="padding:10px;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);text-align:center"><div style="font-size:18px;font-weight:800;color:var(--green)" id="rStt">94%</div><div style="font-size:10px;color:var(--tx3)">Avg STT conf.</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+</div><!-- .shell -->
+
+<script>
+// ── TAB SWITCH ──
+function ST(t){
+  document.querySelectorAll(".tab").forEach(e=>e.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(e=>e.classList.remove("active"));
+  document.getElementById("tab-"+t).classList.add("active");
+  document.getElementById("panel-"+t).classList.add("active");
+}
+
+// ── NUMBER TYPE SELECT ──
+function selType(el,type){
+  document.querySelectorAll(".ntcard").forEach(c=>c.classList.remove("ntsel"));
+  el.classList.add("ntsel");
+  const prefixes={local:"706",tollfree:"877",vanity:"877-SLEEP"};
+  document.getElementById("areaSearch").value=prefixes[type]||"877";
+  searchNums();
+}
+
+// ── NUMBER SEARCH ──
+function searchNums(){
+  const nums=[
+    {n:"+1 (877) 581-2599",m:"Reserved for Athens Sleep · Toll-Free",sel:true,cost:""},
+    {n:"+1 (800) 442-7566",m:"Toll-Free · Available immediately",sel:false,cost:""},
+    {n:"+1 (877) 663-5433",m:"Toll-Free · Spells 1-877-ONE-LIFE",sel:false,cost:""},
+    {n:"+1 (888) 753-3377",m:"Toll-Free · Available immediately",sel:false,cost:""},
+    {n:"+1 (877) 663-7533",m:"Toll-Free · Spells 1-877-SLEEP-ME · Premium",sel:false,cost:"$15/mo"}
+  ];
+  document.getElementById("numlist").innerHTML=nums.map(n=>`
+    <div class="numitem ${n.sel?"numsel":""}" onclick="selNum(this,'${n.n}')">
+      <div><div class="ninum ${n.sel?"nig":""}">${n.n}</div><div class="nimeta">${n.m}</div></div>
+      <div class="niright">
+        <div class="ncaps"><span class="ncap ncv">Voice</span><span class="ncap ncs">SMS</span></div>
+        <button class="niselbtn ${n.sel?"nibsel":"nibdef"}" ${n.cost?`style="border-color:var(--purple);color:var(--purple)"`:""}>
+          ${n.sel?"Selected ✓":n.cost?"Select · "+n.cost:"Select"}
+        </button>
+      </div>
+    </div>`).join("");
+}
+
+// ── NUMBER SELECT ──
+function selNum(el,numStr){
+  document.querySelectorAll(".numitem").forEach(n=>{
+    n.classList.remove("numsel");
+    const nb=n.querySelector(".ninum"); if(nb) nb.classList.remove("nig");
+    const btn=n.querySelector(".niselbtn"); if(btn){btn.className="niselbtn nibdef";btn.textContent="Select";}
+  });
+  el.classList.add("numsel");
+  const nb=el.querySelector(".ninum"); if(nb) nb.classList.add("nig");
+  const btn=el.querySelector(".niselbtn"); if(btn){btn.className="niselbtn nibsel";btn.textContent="Selected ✓";}
+  const bar=document.getElementById("selbanner");
+  if(bar){
+    bar.querySelector("#selbannum").textContent="Selected: "+numStr;
+    bar.querySelector("#selbansub").textContent="Toll-Free · Voice + SMS enabled · $2.15/mo";
+  }
+  document.getElementById("prevNum").textContent=numStr;
+}
+
+// ── PROVISION ──
+function doProvision(){
+  alert("✅ Number provisioned!
+
++1 (877) 581-2599
+Phone SID: PN4d8e2c1f...
+Voice webhook: ✓ Active
+SMS webhook: ✓ Active
+Landline detection: ✓ Enabled
+
+Caller ID \"ATHENS SLEEP\" propagation: 5-7 business days
+
+Proceed to configure Call Forwarding Rules.");
+}
+
+// ── CALLER ID PREVIEW ──
+function updatePrev(){
+  const n=document.getElementById("displayNameInput").value;
+  const c=document.getElementById("cnamInput").value;
+  const pn=document.getElementById("prevName"); if(pn) pn.textContent=n;
+  const cc=document.getElementById("cnamCount"); if(cc) cc.textContent=c.length+"/15 characters";
+}
+
+// ── TEST CALLER ID ──
+function testCID(){
+  alert("📞 Test call initiated!
+
+Aria is calling (706) 555-0190 from +1 (877) 581-2599.
+
+Mobile display: +1 (877) 581-2599
+Landline display: ATHENS SLEEP
+
+Aria will say: \"This is a test call from Athens Sleep and Wellness Center. Your caller ID is configured correctly. Goodbye!\"
+
+Call ends automatically after 15 seconds.");
+}
+
+// ── TEST CALL ──
+let sec=0,timerInterval=null;
+
+const SCENARIOS={
+  greet:[
+    {d:0,w:"sys",t:"Call connected · Twilio POST /webhook/voice → 200 OK (187ms) · Deepgram Nova-2 STT streaming · Line type: Mobile",b:"sys"},
+    {d:900,w:"aria",t:"Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you today?",resp:"0.9s",intent:"Greeting",stt:null,cont:null},
+    {d:3500,w:"caller",t:"Just making sure this number is working",stt:93},
+    {d:5100,w:"aria",t:"Yes! You've reached Athens Sleep and Wellness Center at +1 (877) 581-2599. I'm Aria, your AI receptionist. Is there anything I can help you with — scheduling, questions, or something else?",resp:"1.1s",intent:"Verification",stt:null,cont:true},
+    {d:7800,w:"caller",t:"No, that's all, thanks",stt:97},
+    {d:9200,w:"aria",t:"You're welcome! Have a wonderful day. Goodbye!",resp:"0.8s",intent:"Closing",stt:null,cont:true},
+    {d:10400,w:"sys",t:"Call ended · Duration: 0:10 · Contained ✓ · Loops: 0 · STT avg: 95% · ✅ PASS",b:"done"}
+  ],
+  sched:[
+    {d:0,w:"sys",t:"Call connected · Mobile · Lookup v2: $0.005 charged · Line type cached for session",b:"sys"},
+    {d:900,w:"aria",t:"Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you today?",resp:"0.9s",intent:"Greeting",stt:null,cont:null},
+    {d:3200,w:"caller",t:"I need to schedule an appointment with Dr. Agrawal",stt:91},
+    {d:4700,w:"aria",t:"I'd love to help you schedule with Dr. Agrawal! Are you a new patient, or have you been seen here before?",resp:"1.2s",intent:"Scheduling",stt:null,cont:true},
+    {d:7000,w:"caller",t:"New patient",stt:98},
+    {d:8300,w:"aria",t:"Welcome! Let me get you set up. Could I start with your full name?",resp:"0.9s",intent:"Collect",stt:null,cont:null},
+    {d:10800,w:"caller",t:"[mumble — STT: 38%]",stt:38,isLow:true},
+    {d:11900,w:"sys",t:"STT 38% < 70% threshold → Layer 1: mandatory rephrase (cannot repeat same wording)",b:"l1"},
+    {d:12100,w:"aria",t:"Could you spell your first and last name for me? I want to make sure I get it exactly right.",resp:"0.9s",intent:"Collect L1",stt:null,cont:null},
+    {d:15000,w:"caller",t:"Sarah Johnson",stt:92},
+    {d:16500,w:"aria",t:"Thank you, Sarah! And your date of birth?",resp:"0.8s",intent:"Collect",stt:null,cont:null},
+    {d:18800,w:"caller",t:"March 15, 1978",stt:95},
+    {d:20200,w:"aria",t:"Dr. Agrawal has openings Thursday April 24th at 10 AM or Friday April 25th at 2 PM. Which works better for you?",resp:"1.4s",intent:"Offer slots",stt:null,cont:true},
+    {d:23000,w:"caller",t:"Thursday morning please",stt:89},
+    {d:24500,w:"aria",t:"You're all set, Sarah! Thursday April 24th at 10 AM at 125 King Ave. A confirmation text is on its way. Anything else?",resp:"1.2s",intent:"Confirmed",stt:null,cont:true},
+    {d:26400,w:"caller",t:"No, thank you",stt:97},
+    {d:27600,w:"aria",t:"See you Thursday! Have a great day.",resp:"0.8s",intent:"Closing",stt:null,cont:true},
+    {d:28800,w:"sys",t:"Call ended · 0:28 · Booked ✓ · L1 rephrase used once · No L2 SMS needed · STT avg: 87% · ✅ PASS",b:"done"}
+  ],
+  loop:[
+    {d:0,w:"sys",t:"Never-Loop test · Monitor: max 2 voice attempts per question · STT threshold: 70%",b:"sys"},
+    {d:900,w:"aria",t:"Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you today?",resp:"0.9s",intent:"Greeting",stt:null,cont:null},
+    {d:3000,w:"caller",t:"I need to update my date of birth on file",stt:86},
+    {d:4400,w:"aria",t:"Happy to help with that. Could I get your date of birth to verify your account?",resp:"1.0s",intent:"Collect",stt:null,cont:null},
+    {d:6800,w:"caller",t:"[mumble — STT: 32%]",stt:32,isLow:true},
+    {d:7800,w:"sys",t:"STT 32% → Attempt 1/2 · Layer 1 activated · Must rephrase — cannot repeat original wording",b:"l1"},
+    {d:8100,w:"aria",t:"Could you tell me the month, day, and year you were born? For example, January fifteenth, nineteen eighty.",resp:"0.9s",intent:"L1 Rephrase",stt:null,cont:null},
+    {d:11200,w:"caller",t:"[mumble — STT: 25%]",stt:25,isLow:true},
+    {d:12300,w:"sys",t:"STT 25% → Attempt 2/2 reached · Twilio Lookup v2: Mobile ✓ · Layer 2 SMS triggered",b:"l2"},
+    {d:12800,w:"aria",t:"I want to make sure I get this right — I just sent you a quick text. Could you type your date of birth there? I'll wait right here.",resp:"1.0s",intent:"SMS Fallback",stt:null,cont:null},
+    {d:15000,w:"sys",t:"SMS sent to caller · Waiting for reply (60s timeout) · No extra voice ask — Never-Loop preserved ✓",b:"sys"},
+    {d:18500,w:"caller",t:"[SMS reply received: \"March 15, 1970\"]",stt:null,isSMS:true},
+    {d:18900,w:"sys",t:"SMS reply injected into call context · Never-Loop: 0 voice repeats · L2 resolved cleanly",b:"sys"},
+    {d:19300,w:"aria",t:"Perfect! I have your date of birth as March 15th, 1970. Let me update that right away.",resp:"0.8s",intent:"Confirmed",stt:null,cont:true},
+    {d:21500,w:"sys",t:"Test complete · Never-Loop PASS ✓ · 2 voice attempts + 1 SMS · Zero same-question voice repeats · ✅ PASS",b:"done",loops:0}
+  ],
+  emerg:[
+    {d:0,w:"sys",t:"Emergency protocol test · Monitoring for crisis keywords · Response target: <10 seconds",b:"sys"},
+    {d:900,w:"aria",t:"Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you today?",resp:"0.9s",intent:"Greeting",stt:null,cont:null},
+    {d:2800,w:"caller",t:"I have really bad chest pain and I can't breathe properly",stt:88,isEmerg:true},
+    {d:3100,w:"sys",t:"🚨 Emergency keywords detected: \"chest pain\" + \"can't breathe\" → Emergency protocol in 0.4s",b:"emerg"},
+    {d:3700,w:"aria",t:"This sounds like a medical emergency. Please hang up right now and call 911 immediately, or have someone take you to the nearest emergency room. Do NOT wait. Are you able to call 911?",resp:"0.7s",intent:"EMERGENCY",stt:null,cont:false,isEmerg:true},
+    {d:7400,w:"caller",t:"Yes, calling them now",stt:91},
+    {d:8600,w:"aria",t:"Good — call 911 now. I will stay on this line with you.",resp:"0.5s",intent:"Emergency support",stt:null,cont:false},
+    {d:12000,w:"sys",t:"Call ended · Emergency handled in 0.7s · Meets <10s target ✓ · Emergency log filed · ✅ PASS",b:"done",loops:0,sttAvg:90}
+  ],
+  spanish:[
+    {d:0,w:"sys",t:"Language detection test · Deepgram Nova-2 multilingual · Detection window: 3 seconds",b:"sys"},
+    {d:900,w:"aria",t:"Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you today?",resp:"0.9s",intent:"Greeting",stt:null,cont:null},
+    {d:2900,w:"caller",t:"Hola, necesito hacer una cita con el doctor Agrawal para el martes.",stt:96},
+    {d:3300,w:"sys",t:"Spanish detected · Confidence: 96% ≥ 75% threshold → Aria switches silently · Sofía voice activated",b:"lang"},
+    {d:4000,w:"aria",t:"¡Hola! Con mucho gusto le ayudo a agendar su cita. ¿Es usted paciente nuevo o ya ha visitado nuestra clínica?",resp:"2.1s",intent:"Scheduling (ES)",stt:null,cont:true},
+    {d:7200,w:"caller",t:"Paciente nuevo",stt:95},
+    {d:8500,w:"aria",t:"¡Bienvenido! Para empezar, ¿me puede decir su nombre completo y fecha de nacimiento?",resp:"1.1s",intent:"Collect (ES)",stt:null,cont:null},
+    {d:11800,w:"caller",t:"Carlos Mendoza, 12 de febrero de 1965",stt:94},
+    {d:13300,w:"aria",t:"Gracias Carlos. El doctor Agrawal tiene disponibilidad el martes 22 de abril a las 10 de la mañana. ¿Le viene bien?",resp:"1.3s",intent:"Offer slots (ES)",stt:null,cont:true},
+    {d:16500,w:"sys",t:"Spanish test complete · Detection: 96% ✓ · Switch time: 2.1s · Containment: 84% · Sofía voice: ✓ · ✅ PASS",b:"done",loops:0,sttAvg:95}
+  ],
+  cpap:[
+    {d:0,w:"sys",t:"CPAP resupply test · Sleep medicine specialty rule · Rule 4 containment target: 94%",b:"sys"},
+    {d:900,w:"aria",t:"Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you today?",resp:"0.9s",intent:"Greeting",stt:null,cont:null},
+    {d:3200,w:"caller",t:"I need to order new CPAP supplies — my mask is falling apart and I need new filters",stt:91},
+    {d:4700,w:"aria",t:"I can absolutely help you with that CPAP resupply! Could I get your patient ID or date of birth to pull up your account?",resp:"1.1s",intent:"CPAP",stt:null,cont:true},
+    {d:7400,w:"caller",t:"April 3rd, 1952",stt:93},
+    {d:8800,w:"aria",t:"Got it! And which CPAP device do you have — is it a ResMed, Philips, or another brand?",resp:"1.0s",intent:"Collect",stt:null,cont:null},
+    {d:11400,w:"caller",t:"ResMed AirSense 11",stt:90},
+    {d:12700,w:"aria",t:"I've submitted your resupply request for a ResMed AirSense 11 full face mask and filters. Our clinical team will process this in 1-2 business days and send you a confirmation text. Anything else?",resp:"1.3s",intent:"Confirmed",stt:null,cont:true},
+    {d:15500,w:"caller",t:"No that's it, thank you",stt:97},
+    {d:16800,w:"aria",t:"You're welcome! Have a great day.",resp:"0.8s",intent:"Closing",stt:null,cont:true},
+    {d:18000,w:"sys",t:"CPAP resupply test · Contained ✓ · No transfer needed · Specialty rule 4 working · ✅ PASS",b:"done",loops:0,sttAvg:92}
+  ]
+};
+
+function startCall(){
+  const key=document.getElementById("scenarioPicker").value;
+  const evts=SCENARIOS[key]; if(!evts) return;
+  clearCall();
+  sec=0;
+  const callState=document.getElementById("callState");
+  const wave=document.getElementById("callWave");
+  const startBtn=document.getElementById("startBtn");
+  const banner=document.getElementById("csbanner");
+  if(startBtn){startBtn.textContent="⏱ In progress...";startBtn.disabled=true;}
+  if(callState) callState.textContent="Connecting...";
+  if(banner) banner.innerHTML='<div class="csbicon" style="animation:blink 1s infinite">📞</div><div><div class="csbtitle">Test call in progress — '+document.getElementById("scenarioPicker").selectedOptions[0].text+'</div><div class="csbsub">Aria v2.1 · +1 (877) 581-2599 · Athens Sleep & Wellness</div></div><div class="csbright"><span class="tag" style="background:rgba(74,222,128,.2);color:#86EFAC">● Live</span></div>';
+  timerInterval=setInterval(()=>{
+    sec++;
+    const m=Math.floor(sec/60),s=sec%60;
+    const ts=m+":"+(s<10?"0":"")+s;
+    document.getElementById("callTimer").textContent=ts;
+    document.getElementById("mDur").textContent=ts;
+  },1000);
+  setTimeout(()=>{if(callState) callState.textContent="Connected";if(wave) wave.style.display="flex";},600);
+  evts.forEach(ev=>{
+    setTimeout(()=>{
+      addLine(ev);
+      if(ev.resp) document.getElementById("mResp").textContent=ev.resp;
+      if(ev.stt&&ev.stt>0) document.getElementById("mStt").textContent=ev.stt+"%";
+      if(ev.intent) document.getElementById("mInt").textContent=ev.intent;
+      if(ev.cont!==null&&ev.cont!==undefined){
+        const mc=document.getElementById("mCont");
+        mc.textContent=ev.cont?"✓ Yes":"Transfer";
+        mc.style.color=ev.cont?"var(--green)":"var(--amber)";
+      }
+      if(ev.b==="done"){
+        clearInterval(timerInterval);
+        if(startBtn){startBtn.textContent="📞 Start Test Call";startBtn.disabled=false;}
+        if(callState) callState.textContent="Ended";
+        if(wave) wave.style.display="none";
+        const pc=document.getElementById("postCall"); if(pc) pc.style.display="block";
+        const rb=document.getElementById("resultBanner");
+        if(rb){rb.className="csb csb-done";rb.innerHTML='<div class="csbicon">✅</div><div><div class="csbtitle">Test Complete — PASSED</div><div class="csbsub">'+ev.t+'</div></div>';}
+        if(ev.loops!==undefined) document.getElementById("rLoops").textContent=ev.loops;
+        if(ev.sttAvg) document.getElementById("rStt").textContent=ev.sttAvg+"%";
+      }
+    },ev.d);
+  });
+}
+
+function addLine(ev){
+  const feed=document.getElementById("tfeed"); if(!feed) return;
+  const empty=feed.querySelector("div[style*='text-align:center']"); if(empty) empty.remove();
+  const div=document.createElement("div"); div.className="tfline";
+  let wc="tfw-sys",wl="SYS";
+  if(ev.w==="aria"){wc="tfw-aria";wl="ARIA";}
+  else if(ev.w==="caller"){wc="tfw-caller";wl="TEST";}
+  let badges="";
+  if(ev.b==="l1") badges+='<span class="tfbadge tfbb">L1 Rephrase</span>';
+  else if(ev.b==="l2") badges+='<span class="tfbadge tfba">L2 SMS</span>';
+  else if(ev.b==="emerg") badges+='<span class="tfbadge tfbr">🚨 Emergency</span>';
+  else if(ev.b==="lang") badges+='<span class="tfbadge tfbb">🌐 Spanish</span>';
+  else if(ev.b==="done") badges+='<span class="tfbadge tfbg">✓ Done</span>';
+  if(ev.cont===true) badges+='<span class="tfbadge tfbg">Contained</span>';
+  if(ev.isLow&&ev.stt) badges+='<span class="tfbadge tfbr">STT: '+ev.stt+'%</span>';
+  else if(ev.stt&&ev.stt>=70) badges+='<span class="tfbadge tfbb">STT: '+ev.stt+'%</span>';
+  if(ev.isSMS) badges+='<span class="tfbadge tfba">📱 SMS Reply</span>';
+  if(ev.isEmerg) badges+='<span class="tfbadge tfbr">⚡ Emergency</span>';
+  if(ev.resp) badges+='<span class="tfbadge tfbg">'+ev.resp+'</span>';
+  const sysStyle=ev.w==="sys"?"font-style:italic;font-size:11px;color:var(--tx3)":"font-size:12px;color:"+(ev.w==="aria"?"var(--tx2)":"var(--blue)");
+  const m=Math.floor(sec/60),s=sec%60;
+  div.innerHTML='<div class="tfwho '+wc+'">'+wl+'</div><div class="tftext" style="'+sysStyle+'">'+ev.t+badges+'</div><div class="tftime">'+m+":"+(s<10?"0":"")+s+"</div>";
+  feed.appendChild(div);
+  feed.scrollTop=feed.scrollHeight;
+}
+
+function endCall(){
+  clearInterval(timerInterval);
+  const callState=document.getElementById("callState"); if(callState) callState.textContent="Ended";
+  const wave=document.getElementById("callWave"); if(wave) wave.style.display="none";
+  const btn=document.getElementById("startBtn"); if(btn){btn.textContent="📞 Start Test Call";btn.disabled=false;}
+}
+
+function clearCall(){
+  clearInterval(timerInterval);
+  sec=0;
+  ["callTimer","mDur"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent="0:00";});
+  ["mResp","mStt","mInt","mCont"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent="—";});
+  const feed=document.getElementById("tfeed");
+  if(feed) feed.innerHTML='<div style="padding:24px;text-align:center;color:var(--tx3);font-size:12px"><div style="font-size:28px;margin-bottom:8px">📞</div>Select a scenario above and press "Start Test Call" to begin.<br>The transcript appears here in real time.</div>';
+  const pc=document.getElementById("postCall"); if(pc) pc.style.display="none";
+  const callState=document.getElementById("callState"); if(callState) callState.textContent="Ready";
+  const wave=document.getElementById("callWave"); if(wave) wave.style.display="none";
+  const banner=document.getElementById("csbanner");
+  if(banner) banner.innerHTML='<div class="csbicon">📞</div><div><div class="csbtitle">Ready — Select a scenario and press Start Test Call</div><div class="csbsub">+1 (877) 581-2599 · Athens Sleep and Wellness Center · Aria v2.1</div></div><div class="csbright"><span class="tag tagb">Twilio Connected</span></div>';
+}
+</script>
+</body>
+</html>
