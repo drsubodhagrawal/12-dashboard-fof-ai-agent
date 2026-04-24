@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedFlow AI — Practice Dashboard · Athens Sleep & Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1B6B4A;--green2:#059669;--gl:#ECFDF5;--gd:#14533A;
+  --amber:#D97706;--amber2:#F59E0B;--al:#FEF3C7;--ad:#92400E;
+  --blue:#1D4ED8;--blue2:#3B82F6;--bl:#EFF6FF;
+  --red:#DC2626;--rl:#FEF2F2;
+  --purple:#7C3AED;--pl:#F5F3FF;
+  --teal:#0D9488;--tl:#F0FDFA;
+  --navy:#0F2A4A;--navy2:#1A3A5C;
+  --gray:#6B7280;--grl:#F9FAFB;--bdr:#E5E7EB;--bdr2:#D1D5DB;
+  --tx:#111827;--tx2:#374151;--tx3:#6B7280;
+  --bg:#F1F5F9;--sur:#FFFFFF;
+  --r:10px;--rs:6px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.05);
+  --shm:0 4px 16px rgba(0,0,0,.10);
+}
+html,body{height:100%;font-family:"Outfit",system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;}
+.app{display:grid;grid-template-columns:220px 1fr;grid-template-rows:52px 1fr;height:100vh;overflow:hidden;}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;background:var(--navy);display:flex;align-items:center;padding:0 20px;gap:0;z-index:100;}
+.tlogo{display:flex;align-items:center;gap:8px;margin-right:16px;}
+.tmark{width:28px;height:28px;background:linear-gradient(135deg,#4ADE80,#1B6B4A);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.tmark svg{width:15px;height:15px;}
+.ttext{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.2px;}
+.tsep{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 14px;}
+.tpractice{display:flex;align-items:center;gap:8px;}
+.tpicon{width:24px;height:24px;border-radius:5px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:12px;}
+.tpname{font-size:12px;font-weight:600;color:rgba(255,255,255,.85);}
+.tpsub{font-size:10px;color:rgba(255,255,255,.4);}
+.tspace{flex:1;}
+.tright{display:flex;align-items:center;gap:8px;}
+.tchip{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;}
+.tcg{background:rgba(74,222,128,.15);color:#86EFAC;}
+.ldot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tnotif{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
+.tnotif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--amber2);border:1.5px solid var(--navy);}
+.tavatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#4ADE80,#059669);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;cursor:pointer;}
+
+/* SIDEBAR */
+.sidebar{background:var(--sur);border-right:1px solid var(--bdr);overflow-y:auto;display:flex;flex-direction:column;}
+.sb-section{font-size:9.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--tx3);padding:16px 16px 6px;}
+.sb-section:first-child{padding-top:14px;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 14px;cursor:pointer;border-radius:0;transition:all .15s;border-left:2.5px solid transparent;font-size:13px;font-weight:500;color:var(--tx2);}
+.sb-item:hover{background:var(--grl);color:var(--tx);}
+.sb-item.active{background:var(--gl);color:var(--green);border-left-color:var(--green);font-weight:600;}
+.sb-icon{width:18px;text-align:center;font-size:14px;flex-shrink:0;}
+.sb-badge{margin-left:auto;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;}
+.sbb-green{background:var(--gl);color:var(--green);}
+.sbb-amber{background:var(--al);color:var(--amber);}
+.sbb-red{background:var(--rl);color:var(--red);}
+.sb-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--bdr);}
+.sb-plan{padding:10px 12px;background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--rs);}
+.sb-plan-name{font-size:11px;font-weight:700;color:#fff;margin-bottom:2px;}
+.sb-plan-sub{font-size:10px;color:rgba(255,255,255,.45);}
+
+/* MAIN */
+.main{overflow:hidden;display:flex;flex-direction:column;}
+
+/* KPI BAR */
+.kpi-bar{background:var(--sur);border-bottom:1px solid var(--bdr);padding:0 24px;display:flex;align-items:stretch;gap:0;flex-shrink:0;}
+.kpi{display:flex;align-items:center;gap:12px;padding:14px 20px;border-right:1px solid var(--bdr);cursor:pointer;transition:background .15s;position:relative;}
+.kpi:hover{background:var(--grl);}
+.kpi:first-child{padding-left:0;}
+.kpi-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;}
+.ki-green{background:var(--gl);}
+.ki-blue{background:var(--bl);}
+.ki-amber{background:var(--al);}
+.ki-purple{background:var(--pl);}
+.ki-teal{background:var(--tl);}
+.ki-red{background:var(--rl);}
+.kpi-val{font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-1px;line-height:1;}
+.kpi-label{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+.kpi-delta{font-size:10px;font-weight:700;margin-top:1px;}
+.kpi-delta.up{color:var(--green2);}
+.kpi-delta.down{color:var(--red);}
+.kpi-delta.neutral{color:var(--tx3);}
+.kpi-live{position:absolute;top:8px;right:8px;width:6px;height:6px;border-radius:50%;background:#22C55E;animation:blink 1.8s infinite;}
+.kpi-spacer{flex:1;}
+.aria-status{display:flex;align-items:center;gap:8px;padding:12px 0 12px 20px;}
+.as-dot{width:10px;height:10px;border-radius:50%;background:var(--green2);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(5,150,105,.4)}50%{box-shadow:0 0 0 6px rgba(5,150,105,0)}}
+.as-label{font-size:12px;font-weight:600;color:var(--green);}
+.as-sub{font-size:10px;color:var(--tx3);}
+
+/* PAGE PANELS */
+.pages{flex:1;overflow:hidden;position:relative;}
+.page{display:none;height:100%;overflow:hidden;}
+.page.active{display:flex;}
+.scroll{overflow-y:auto;}
+.pad{padding:20px 24px;}
+
+/* CALL LOG */
+.calllog-layout{display:grid;grid-template-columns:1fr 400px;height:100%;overflow:hidden;}
+.call-filters{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-btn{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--bdr);background:var(--sur);color:var(--tx2);font-family:"Outfit",sans-serif;transition:all .15s;}
+.filter-btn:hover{border-color:var(--bdr2);}
+.filter-btn.fb-active{background:var(--green);color:#fff;border-color:var(--green);}
+.search-input{flex:1;max-width:280px;padding:6px 12px;border:1.5px solid var(--bdr);border-radius:20px;font-size:12px;font-family:"Outfit",sans-serif;outline:none;}
+.search-input:focus{border-color:var(--green);}
+
+/* CALL TABLE */
+.call-table{width:100%;border-collapse:collapse;}
+.call-table th{padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--bdr);background:var(--grl);position:sticky;top:0;z-index:5;}
+.call-table td{padding:11px 12px;border-bottom:1px solid var(--bdr);font-size:12px;color:var(--tx2);vertical-align:middle;}
+.call-table tr:hover td{background:var(--grl);cursor:pointer;}
+.call-table tr.ct-selected td{background:var(--gl);}
+.call-intent{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;}
+.ci-sched{background:var(--bl);color:var(--blue);}
+.ci-faq{background:var(--grl);color:var(--tx3);}
+.ci-billing{background:var(--tl);color:var(--teal);}
+.ci-rx{background:var(--pl);color:var(--purple);}
+.ci-transfer{background:var(--al);color:var(--amber);}
+.ci-emerg{background:var(--rl);color:var(--red);}
+.ci-cpap{background:#FFF0F9;color:#C026D3;}
+.call-outcome{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;}
+.co-contained{background:var(--gl);color:var(--green);}
+.co-transfer{background:var(--al);color:var(--amber);}
+.co-vm{background:var(--grl);color:var(--tx3);}
+.call-sentiment{font-size:13px;}
+.call-duration{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--tx3);}
+
+/* CALL DETAIL PANEL */
+.detail-panel{background:var(--sur);border-left:1px solid var(--bdr);overflow-y:auto;display:flex;flex-direction:column;}
+.dp-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--tx3);text-align:center;padding:24px;}
+.dp-empty-icon{font-size:36px;margin-bottom:10px;}
+.dp-header{padding:16px;border-bottom:1px solid var(--bdr);}
+.dp-patient{font-size:16px;font-weight:800;color:var(--tx);margin-bottom:2px;}
+.dp-meta{font-size:11px;color:var(--tx3);}
+.dp-tabs{display:flex;border-bottom:1px solid var(--bdr);}
+.dpt{padding:10px 14px;font-size:12px;font-weight:500;color:var(--tx3);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;}
+.dpt:hover{color:var(--tx2);}
+.dpt.active{color:var(--green);border-bottom-color:var(--green);font-weight:600;}
+.dp-content{flex:1;padding:14px 16px;overflow-y:auto;}
+.dp-section{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--tx3);margin:10px 0 6px;}
+.dp-section:first-child{margin-top:0;}
+
+/* AI SUMMARY CARD */
+.ai-summary{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r);padding:14px 16px;margin-bottom:12px;}
+.ai-s-label{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+.ai-s-text{font-size:12px;color:rgba(255,255,255,.85);line-height:1.65;}
+.ai-s-tags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;}
+.ai-s-tag{padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600;}
+.ast-green{background:rgba(74,222,128,.2);color:#86EFAC;}
+.ast-amber{background:rgba(251,191,36,.2);color:#FCD34D;}
+.ast-blue{background:rgba(96,165,250,.2);color:#93C5FD;}
+
+/* TRANSCRIPT */
+.transcript-line{display:flex;gap:8px;margin-bottom:8px;font-size:12px;}
+.tl-who{font-weight:700;width:44px;flex-shrink:0;font-size:10px;text-transform:uppercase;letter-spacing:.3px;padding-top:1px;}
+.tl-aria{color:var(--green);}
+.tl-patient{color:var(--blue);}
+.tl-system{color:var(--tx3);}
+.tl-text{color:var(--tx2);line-height:1.6;flex:1;}
+.tl-conf{font-size:10px;font-family:"JetBrains Mono",monospace;color:var(--tx3);}
+
+/* DELIVERY OPTIONS */
+.delivery-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.dcard{border:2px solid var(--bdr);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .18s;}
+.dcard:hover{border-color:var(--bdr2);box-shadow:var(--sh);}
+.dcard.dcard-sel{border-color:var(--green);background:var(--gl);}
+.dcard-icon{font-size:22px;margin-bottom:7px;}
+.dcard-name{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:3px;}
+.dcard-desc{font-size:11px;color:var(--tx3);line-height:1.5;}
+.dcard-badge{display:inline-flex;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:700;margin-top:5px;}
+.dcb-green{background:var(--gl);color:var(--green);}
+.dcb-blue{background:var(--bl);color:var(--blue);}
+.dcb-amber{background:var(--al);color:var(--amber);}
+
+/* APPOINTMENT MGMT */
+.appt-layout{display:grid;grid-template-columns:1fr 340px;height:100%;overflow:hidden;}
+.appt-table tr.appt-confirmed td{border-left:3px solid var(--green);}
+.appt-table tr.appt-pending td{border-left:3px solid var(--amber);}
+.appt-table tr.appt-cancelled td{border-left:3px solid var(--red);opacity:.65;}
+.appt-status{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;}
+.as-conf{background:var(--gl);color:var(--green);}
+.as-pend{background:var(--al);color:var(--amber);}
+.as-canc{background:var(--rl);color:var(--red);}
+.as-noshow{background:var(--grl);color:var(--tx3);}
+
+/* KB EDITOR */
+.kb-layout{display:grid;grid-template-columns:1fr 320px;height:100%;overflow:hidden;}
+.kb-item{padding:12px 14px;border-bottom:1px solid var(--bdr);cursor:pointer;transition:background .12s;}
+.kb-item:hover{background:var(--grl);}
+.kb-item.kb-sel{background:var(--gl);border-left:2px solid var(--green);}
+.kb-q{font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:3px;}
+.kb-a{font-size:11px;color:var(--tx3);line-height:1.5;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.kb-item-tags{display:flex;gap:4px;margin-top:5px;}
+.kb-tag{padding:1px 6px;border-radius:6px;font-size:9px;font-weight:700;}
+.kbt-faq{background:var(--grl);color:var(--tx3);}
+.kbt-sched{background:var(--bl);color:var(--blue);}
+.kbt-cpap{background:#FFF0F9;color:#C026D3;}
+.kbt-billing{background:var(--tl);color:var(--teal);}
+.kbt-emergency{background:var(--rl);color:var(--red);}
+.kbt-approved{background:var(--gl);color:var(--green);}
+.kbt-draft{background:var(--al);color:var(--amber);}
+
+/* MISC */
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.chead{padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px;}
+.cicon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.cicg{background:var(--gl);}
+.cicb{background:var(--bl);}
+.cica{background:var(--al);}
+.ctitle{font-size:13px;font-weight:700;color:var(--tx);}
+.csub{font-size:11px;color:var(--tx3);margin-top:1px;}
+.chr{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.cbody{padding:14px 16px;}
+.notice{display:flex;align-items:flex-start;gap:7px;padding:9px 11px;border-radius:var(--rs);margin-bottom:10px;font-size:11px;line-height:1.5;}
+.ngreen{background:var(--gl);border:1px solid #A7F3D0;color:var(--green);}
+.namber{background:var(--al);border:1px solid #FDE68A;color:var(--ad);}
+.nblue{background:var(--bl);border:1px solid #BFDBFE;color:var(--blue);}
+.nred{background:var(--rl);border:1px solid #FECACA;color:var(--red);}
+.notice svg{width:12px;height:12px;flex-shrink:0;margin-top:1px;}
+.notice strong{font-weight:700;}
+.btn{padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:5px;}
+.bgreen{background:var(--green);color:#fff;}
+.bgreen:hover{background:var(--gd);}
+.boutline{background:var(--sur);border:1.5px solid var(--bdr);color:var(--tx2);}
+.boutline:hover{border-color:var(--bdr2);}
+.bred{background:var(--rl);color:var(--red);border:1px solid #FECACA;}
+.bamber{background:var(--al);color:var(--amber);border:1px solid #FDE68A;}
+.slabel{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;}
+.fgroup{margin-bottom:11px;}
+.flabel{font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:3px;display:block;}
+.finput{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;transition:border .15s;}
+.finput:focus{border-color:var(--green);}
+.fsel{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;background:var(--sur);}
+.ftextarea{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;resize:vertical;line-height:1.6;}
+.ftextarea:focus{border-color:var(--green);}
+.tag{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;}
+.tagg{background:var(--gl);color:var(--green);}
+.taga{background:var(--al);color:var(--amber);}
+.tagb{background:var(--bl);color:var(--blue);}
+.tagr{background:var(--rl);color:var(--red);}
+.tagp{background:var(--pl);color:var(--purple);}
+.trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.tgg{width:34px;height:19px;border-radius:10px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.tgg.on{background:var(--green);}
+.tgg.off{background:var(--bdr2);}
+.tggk{width:15px;height:15px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tgg.on .tggk{left:17px;}
+.tgg.off .tggk{left:2px;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px;}
+.progress-ring{display:inline-block;position:relative;}
+.pr-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;font-weight:800;color:var(--tx);}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tlogo">
+    <div class="tmark"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5L13 4.5V10.5L7.5 13.5L2 10.5V4.5L7.5 1.5Z" fill="white" opacity=".9"/><circle cx="7.5" cy="7.5" r="2" fill="white"/></svg></div>
+    <span class="ttext">MedFlow AI</span>
+  </div>
+  <div class="tsep"></div>
+  <div class="tpractice">
+    <div class="tpicon">🏥</div>
+    <div>
+      <div class="tpname">Athens Sleep and Wellness Center</div>
+      <div class="tpsub">Practice Admin · Dr. Subodh Agrawal · NPI 1689977761</div>
+    </div>
+  </div>
+  <div class="tspace"></div>
+  <div class="tright">
+    <div class="tchip tcg"><div class="ldot"></div>Aria Live · v2.1</div>
+    <div class="tnotif"><span style="font-size:13px">🔔</span><div class="tnotif-dot"></div></div>
+    <div class="tavatar">SA</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-section">Overview</div>
+  <div class="sb-item active" onclick="SP(this,'calls')"><div class="sb-icon">📞</div>Call Log<div class="sb-badge sbb-amber">3 new</div></div>
+  <div class="sb-item" onclick="SP(this,'appts')"><div class="sb-icon">📅</div>Appointments<div class="sb-badge sbb-green">12 today</div></div>
+
+  <div class="sb-section">Agent</div>
+  <div class="sb-item" onclick="SP(this,'kb')"><div class="sb-icon">📚</div>Knowledge Base<div class="sb-badge sbb-amber">2 drafts</div></div>
+  <div class="sb-item" onclick="SP(this,'transcript')"><div class="sb-icon">📄</div>Transcript Delivery</div>
+  <div class="sb-item" onclick="SP(this,'routing')"><div class="sb-icon">🔀</div>Call Routing</div>
+
+  <div class="sb-section">Account</div>
+  <div class="sb-item" onclick="SP(this,'billing')"><div class="sb-icon">💳</div>Billing</div>
+  <div class="sb-item" onclick="SP(this,'hipaa')"><div class="sb-icon">🔒</div>HIPAA Audit Log</div>
+  <div class="sb-item" onclick="SP(this,'settings')"><div class="sb-icon">⚙️</div>Settings</div>
+
+  <div class="sb-bottom">
+    <div class="sb-plan">
+      <div class="sb-plan-name">Professional Plan</div>
+      <div class="sb-plan-sub">412 / 500 min used · $79/mo</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN AREA -->
+<div class="main">
+
+  <!-- KPI BAR -->
+  <div class="kpi-bar">
+    <div class="kpi" onclick="SP(document.querySelector('.sb-item'),'calls')">
+      <div class="kpi-icon ki-green" style="font-size:18px">📞</div>
+      <div>
+        <div class="kpi-val" id="kpi-calls">53</div>
+        <div class="kpi-label">Calls Today</div>
+        <div class="kpi-delta up">↑ 12% vs yesterday</div>
+      </div>
+      <div class="kpi-live"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon ki-green">✅</div>
+      <div>
+        <div class="kpi-val" style="color:var(--green)">87%</div>
+        <div class="kpi-label">Contained</div>
+        <div class="kpi-delta up">↑ target met</div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon ki-blue">📅</div>
+      <div>
+        <div class="kpi-val" style="color:var(--blue)">11</div>
+        <div class="kpi-label">Appts Booked</div>
+        <div class="kpi-delta up">↑ 3 vs avg</div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon ki-amber">⏱️</div>
+      <div>
+        <div class="kpi-val">1.3s</div>
+        <div class="kpi-label">Avg Response</div>
+        <div class="kpi-delta up">↑ fast</div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon ki-purple">😊</div>
+      <div>
+        <div class="kpi-val">4.4</div>
+        <div class="kpi-label">Sentiment / 5</div>
+        <div class="kpi-delta neutral">→ stable</div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon ki-teal">🔄</div>
+      <div>
+        <div class="kpi-val">0</div>
+        <div class="kpi-label">Loop Events</div>
+        <div class="kpi-delta up">↑ perfect</div>
+      </div>
+    </div>
+    <div class="kpi-spacer"></div>
+    <div class="aria-status">
+      <div class="as-dot"></div>
+      <div>
+        <div class="as-label">Aria is live</div>
+        <div class="as-sub">+1 (877) 581-2599 · Sleep Medicine</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE PANELS -->
+  <div class="pages">
+
+    <!-- ═══ CALL LOG ═══ -->
+    <div class="page active" id="pg-calls">
+    <div class="calllog-layout">
+      <div class="scroll pad">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div><div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.2px">Call Log — Today, April 18, 2026</div><div style="font-size:11px;color:var(--tx3);margin-top:1px">53 calls · 87% contained · 11 appointments booked · Aria handling all calls</div></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn boutline" style="font-size:11px">⬇ Export CSV</button>
+            <button class="btn bgreen" style="font-size:11px">📊 Analytics</button>
+          </div>
+        </div>
+        <div class="call-filters">
+          <button class="filter-btn fb-active" onclick="filterCalls(this,'all')">All (53)</button>
+          <button class="filter-btn" onclick="filterCalls(this,'contained')">Contained (46)</button>
+          <button class="filter-btn" onclick="filterCalls(this,'transfer')">Transferred (7)</button>
+          <button class="filter-btn" onclick="filterCalls(this,'sched')">Scheduling</button>
+          <button class="filter-btn" onclick="filterCalls(this,'cpap')">CPAP</button>
+          <button class="filter-btn" onclick="filterCalls(this,'new')">🔵 Unreviewed (3)</button>
+          <input type="text" class="search-input" placeholder="Search patient name...">
+        </div>
+        <div style="overflow-x:auto">
+          <table class="call-table" id="callTable">
+            <thead><tr>
+              <th style="width:70px">Time</th>
+              <th>Patient / Caller</th>
+              <th>Intent</th>
+              <th>Outcome</th>
+              <th>Duration</th>
+              <th>Sentiment</th>
+              <th style="width:80px">Actions</th>
+            </tr></thead>
+            <tbody id="callRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CALL DETAIL PANEL -->
+      <div class="detail-panel" id="detailPanel">
+        <div class="dp-empty" id="dpEmpty">
+          <div class="dp-empty-icon">👆</div>
+          <div style="font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:5px">Select a call to view details</div>
+          <div style="font-size:11px;color:var(--tx3);line-height:1.5">AI summary, full transcript, delivery options, and call actions appear here.</div>
+        </div>
+        <div id="dpContent" style="display:none;height:100%;display:none;flex-direction:column">
+          <div class="dp-header">
+            <div class="dp-patient" id="dpPatient">Sarah Johnson</div>
+            <div class="dp-meta" id="dpMeta">Today 10:42 AM · 3m 24s · +1 (706) 555-0142 · Mobile</div>
+            <div style="display:flex;gap:5px;margin-top:7px">
+              <span class="tag tagg" id="dpIntent">Scheduling</span>
+              <span class="tag tagg" id="dpOutcome">Contained ✓</span>
+              <span class="tag tagb">STT 91% avg</span>
+            </div>
+          </div>
+          <div class="dp-tabs">
+            <div class="dpt active" onclick="DT(this,'summary')">AI Summary</div>
+            <div class="dpt" onclick="DT(this,'transcript')">Transcript</div>
+            <div class="dpt" onclick="DT(this,'delivery')">Delivery</div>
+            <div class="dpt" onclick="DT(this,'actions')">Actions</div>
+          </div>
+
+          <!-- SUMMARY TAB -->
+          <div class="dp-content" id="dt-summary">
+            <div class="ai-summary">
+              <div class="ai-s-label">
+                <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                AI-Generated Summary · Claude via AWS Bedrock
+              </div>
+              <div class="ai-s-text" id="dpSummaryText">Sarah Johnson (DOB Mar 15, 1978) called to schedule a new patient sleep study. Aria confirmed referral on file from PCP Dr. Martinez, verified Aetna insurance coverage, and booked an in-lab polysomnography for Tuesday April 22nd at 9 PM. Confirmation SMS sent to (706) 555-0142. No issues during call — patient was pleasant and satisfied.</div>
+              <div class="ai-s-tags" id="dpSummaryTags">
+                <span class="ai-s-tag ast-green">✓ Booked</span>
+                <span class="ai-s-tag ast-blue">Sleep Study · PSG</span>
+                <span class="ai-s-tag ast-green">Aetna · Verified</span>
+                <span class="ai-s-tag ast-green">Referral confirmed</span>
+              </div>
+            </div>
+
+            <div class="slabel">Call Metrics</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+              <div style="padding:8px 10px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700;letter-spacing:.3px;margin-bottom:2px">Response time</div><div style="font-size:15px;font-weight:800;color:var(--green)">1.2s avg</div></div>
+              <div style="padding:8px 10px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700;letter-spacing:.3px;margin-bottom:2px">STT confidence</div><div style="font-size:15px;font-weight:800;color:var(--blue)">91% avg</div></div>
+              <div style="padding:8px 10px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700;letter-spacing:.3px;margin-bottom:2px">Loop events</div><div style="font-size:15px;font-weight:800;color:var(--green)">0</div></div>
+              <div style="padding:8px 10px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700;letter-spacing:.3px;margin-bottom:2px">Sentiment</div><div style="font-size:15px;font-weight:800;color:var(--green)">😊 4.8/5</div></div>
+            </div>
+
+            <div class="slabel">Appointment Created</div>
+            <div style="padding:10px 12px;background:var(--gl);border:1px solid #A7F3D0;border-radius:var(--rs);margin-bottom:12px">
+              <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:3px">✓ In-Lab Sleep Study (PSG) Booked</div>
+              <div style="font-size:11px;color:var(--tx3);line-height:1.6">Patient: Sarah Johnson · Tue Apr 22, 2026 · 9:00 PM<br>Dr. Agrawal · Athens Sleep Lab · Referral: Dr. Martinez</div>
+            </div>
+            <button class="btn bgreen" style="width:100%;justify-content:center;margin-bottom:6px" onclick="DT(document.querySelector('.dpt:nth-child(3)'),'delivery')">Configure Delivery →</button>
+            <button class="btn boutline" style="width:100%;justify-content:center" onclick="alert('Listening to call recording...')">▶ Play Recording (3:24)</button>
+          </div>
+
+          <!-- TRANSCRIPT TAB -->
+          <div class="dp-content" id="dt-transcript" style="display:none">
+            <div class="notice nblue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <span>Full transcript encrypted at rest (AES-256) and in transit (TLS 1.3). HIPAA audit logged on access.</span>
+            </div>
+            <div id="dpTranscript">
+              <div class="transcript-line"><div class="tl-who tl-aria">ARIA</div><div class="tl-text">Thank you for calling Athens Sleep and Wellness Center. This is Aria — how may I help you today?<span class="tl-conf" style="margin-left:6px">0.9s</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-patient">PATIENT</div><div class="tl-text">Hi, I need to schedule a sleep study. My doctor sent over a referral.<span class="tl-conf" style="margin-left:6px">STT: 92%</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-aria">ARIA</div><div class="tl-text">Of course! I'd be happy to help schedule your sleep study. We do have a referral on file from Dr. Martinez. Are you interested in our in-lab sleep study or a home sleep test?<span class="tl-conf" style="margin-left:6px">1.2s</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-patient">PATIENT</div><div class="tl-text">The in-lab one I think, my doctor recommended it.<span class="tl-conf" style="margin-left:6px">STT: 89%</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-aria">ARIA</div><div class="tl-text">Perfect. The in-lab polysomnography gives us the most comprehensive data. Could I get your name and date of birth to pull up your account?<span class="tl-conf" style="margin-left:6px">1.1s</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-patient">PATIENT</div><div class="tl-text">Sarah Johnson, March 15, 1978.<span class="tl-conf" style="margin-left:6px">STT: 95%</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-aria">ARIA</div><div class="tl-text">Thank you, Sarah! And what insurance do you have?<span class="tl-conf" style="margin-left:6px">0.8s</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-patient">PATIENT</div><div class="tl-text">Aetna, through my employer.<span class="tl-conf" style="margin-left:6px">STT: 97%</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-aria">ARIA</div><div class="tl-text">Great — we do accept Aetna. Dr. Agrawal has an opening Tuesday April 22nd at 9 PM for an in-lab study, or Thursday April 24th at 9:30 PM. Which works better?<span class="tl-conf" style="margin-left:6px">1.4s</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-patient">PATIENT</div><div class="tl-text">Tuesday works perfectly.<span class="tl-conf" style="margin-left:6px">STT: 98%</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-aria">ARIA</div><div class="tl-text">Wonderful! You're booked for Tuesday April 22nd at 9 PM. I'll send a confirmation text with prep instructions shortly. Is there anything else I can help you with today?<span class="tl-conf" style="margin-left:6px">1.3s</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-patient">PATIENT</div><div class="tl-text">No, that's everything. Thank you so much!<span class="tl-conf" style="margin-left:6px">STT: 96%</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-aria">ARIA</div><div class="tl-text">You're so welcome! Have a wonderful evening, Sarah. Goodbye!<span class="tl-conf" style="margin-left:6px">0.8s</span></div></div>
+              <div class="transcript-line"><div class="tl-who tl-system">SYS</div><div class="tl-text" style="font-style:italic;color:var(--tx3)">Call ended · 3:24 total · Contained · Appointment booked · SMS sent</div></div>
+            </div>
+          </div>
+
+          <!-- DELIVERY TAB -->
+          <div class="dp-content" id="dt-delivery" style="display:none">
+            <div class="slabel">Choose Transcript Delivery Method</div>
+
+            <div class="delivery-grid" id="deliveryGrid">
+              <div class="dcard" onclick="selDelivery(this,'pdf')">
+                <div class="dcard-icon">📄</div>
+                <div class="dcard-name">PDF Summary Report</div>
+                <div class="dcard-desc">AI summary + full transcript exported as PDF. Emailed to designated recipients or downloadable instantly.</div>
+                <div class="dcard-badge dcb-green">No EHR needed</div>
+              </div>
+              <div class="dcard dcard-sel" onclick="selDelivery(this,'ehr')">
+                <div class="dcard-icon">🏥</div>
+                <div class="dcard-name">EHR Integration (FHIR)</div>
+                <div class="dcard-desc">Push transcript and appointment directly into athenahealth via FHIR R4 API. Appended to patient chart automatically.</div>
+                <div class="dcard-badge dcb-blue">athenahealth connected</div>
+              </div>
+              <div class="dcard" onclick="selDelivery(this,'email')">
+                <div class="dcard-icon">📧</div>
+                <div class="dcard-name">Email Notification Only</div>
+                <div class="dcard-desc">Short summary email to staff with key details — name, intent, outcome, follow-up needed. No attachment.</div>
+                <div class="dcard-badge dcb-green">Instant delivery</div>
+              </div>
+              <div class="dcard" onclick="selDelivery(this,'sms')">
+                <div class="dcard-icon">💬</div>
+                <div class="dcard-name">SMS to Patient</div>
+                <div class="dcard-desc">Send the appointment confirmation and prep instructions directly to the patient's mobile number via Twilio SMS.</div>
+                <div class="dcard-badge dcb-amber">Already sent ✓</div>
+              </div>
+            </div>
+
+            <!-- EHR PATH (default selected) -->
+            <div id="delivery-ehr" class="card">
+              <div class="chead"><div class="cicon cicb">🏥</div><div><div class="ctitle">FHIR R4 Integration Path — athenahealth</div><div class="csub">Push call data directly into patient chart · OAuth 2.0 · SMART on FHIR</div></div><div class="chr"><span class="tag tagg">Connected ✓</span></div></div>
+              <div class="cbody">
+                <div class="notice ngreen">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <strong>Patient matched in athenahealth.</strong> Sarah Johnson found via DOB + last name match. FHIR Patient ID: PAT-0042917. Chart ready to receive call note.
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;margin-bottom:12px">
+                  <div style="padding:7px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr);display:flex;justify-content:space-between"><span style="color:var(--tx3)">FHIR endpoint</span><span style="font-family:'JetBrains Mono',monospace;color:var(--tx2);font-size:10px">https://api.athenahealth.com/fhir/r4</span></div>
+                  <div style="padding:7px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr);display:flex;justify-content:space-between"><span style="color:var(--tx3)">Resource type</span><span style="font-weight:600">Communication + Appointment</span></div>
+                  <div style="padding:7px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr);display:flex;justify-content:space-between"><span style="color:var(--tx3)">Patient ID</span><span style="font-weight:600;font-family:'JetBrains Mono',monospace">PAT-0042917</span></div>
+                  <div style="padding:7px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr);display:flex;justify-content:space-between"><span style="color:var(--tx3)">Push status</span><span style="color:var(--green);font-weight:700">✓ Pushed 10:43 AM</span></div>
+                </div>
+                <div class="fgroup"><label class="flabel">Note appended to chart</label><textarea class="ftextarea" rows="4">MEDFLOW AI CALL NOTE — Apr 18, 2026 10:42 AM
+Intent: Sleep Study Scheduling
+Outcome: Booked — PSG In-Lab Apr 22, 9 PM
+Insurance: Aetna (verified)
+Referral: Dr. Martinez (confirmed on file)
+Agent: Aria v2.1 | Contained | 3:24 duration</textarea></div>
+                <button class="btn bgreen" style="width:100%;justify-content:center" onclick="alert('FHIR push confirmed! Communication resource and Appointment resource pushed to athenahealth for Sarah Johnson (PAT-0042917).')">Re-Push to athenahealth</button>
+              </div>
+            </div>
+
+            <!-- PDF PATH (hidden by default) -->
+            <div id="delivery-pdf" class="card" style="display:none">
+              <div class="chead"><div class="cicon cicg">📄</div><div><div class="ctitle">PDF Summary Report — Non-Integrated Path</div><div class="csub">For practices without EHR integration · Download or email instantly</div></div></div>
+              <div class="cbody">
+                <div class="notice namber">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+                  <strong>No EHR connected.</strong> Using PDF delivery. Connect athenahealth or another EHR in Settings → Integrations to unlock automatic chart updates.
+                </div>
+                <div class="fgroup"><label class="flabel">Email recipients</label><input type="text" class="finput" value="subodh@athenssleepcenter.com, staff@athenssleepcenter.com"></div>
+                <div class="fgroup"><label class="flabel">PDF contents</label>
+                  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--green)">AI summary (always included)</label>
+                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--green)">Full transcript with timestamps</label>
+                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--green)">Appointment details</label>
+                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" style="accent-color:var(--green)">STT confidence scores</label>
+                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" style="accent-color:var(--green)">Call metrics (response time, loops)</label>
+                  </div>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <button class="btn bgreen" style="flex:1;justify-content:center" onclick="alert('PDF report sent to subodh@athenssleepcenter.com and staff@athenssleepcenter.com')">Send PDF Report</button>
+                  <button class="btn boutline" onclick="alert('Downloading PDF...')">⬇ Download</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTIONS TAB -->
+          <div class="dp-content" id="dt-actions" style="display:none">
+            <div class="slabel">Call Actions</div>
+            <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px">
+              <button class="btn boutline" style="justify-content:flex-start;gap:10px" onclick="alert('Calling (706) 555-0142 to follow up with Sarah Johnson...')"><span>📞</span> Call Patient Back</button>
+              <button class="btn boutline" style="justify-content:flex-start;gap:10px" onclick="alert('SMS sent: \'Hi Sarah, this is Athens Sleep following up on your appointment Tuesday Apr 22 at 9 PM. Please call us if you have questions!\'')"><span>💬</span> Send Follow-up SMS</button>
+              <button class="btn boutline" style="justify-content:flex-start;gap:10px" onclick="alert('Call flagged for medical staff review.')"><span>🚩</span> Flag for Staff Review</button>
+              <button class="btn boutline" style="justify-content:flex-start;gap:10px" onclick="alert('Transcript added to KB training queue for AI improvement.')"><span>📚</span> Use in KB Training</button>
+              <button class="btn boutline" style="justify-content:flex-start;gap:10px" onclick="alert('HIPAA audit log entry created for this access.')"><span>🔒</span> View HIPAA Audit Entry</button>
+              <button class="btn bred" style="justify-content:flex-start;gap:10px" onclick="alert('Are you sure? This will permanently delete the call recording and transcript. This action cannot be undone.')"><span>🗑️</span> Delete Recording (HIPAA)</button>
+            </div>
+            <div class="slabel">Quality Rating</div>
+            <div style="padding:12px;background:var(--grl);border-radius:var(--r);border:1px solid var(--bdr)">
+              <div style="font-size:11px;color:var(--tx3);margin-bottom:8px">Rate Aria's performance on this call</div>
+              <div style="display:flex;gap:6px;margin-bottom:8px">
+                <button class="btn boutline" style="font-size:18px;padding:6px 10px" onclick="rateCall(5)">⭐⭐⭐⭐⭐</button>
+              </div>
+              <textarea class="ftextarea" rows="2" placeholder="Optional feedback to improve Aria..."></textarea>
+              <button class="btn bgreen" style="margin-top:6px;width:100%;justify-content:center" onclick="alert('Feedback submitted to MOF for AI training.')">Submit Feedback</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- ═══ APPOINTMENTS ═══ -->
+    <div class="page" id="pg-appts">
+    <div class="appt-layout">
+      <div class="scroll pad">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div><div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.2px">Appointment Manager — April 18, 2026</div><div style="font-size:11px;color:var(--tx3);margin-top:1px">12 appointments today · 11 confirmed · 1 pending · Booked via Aria or manual entry</div></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn boutline" style="font-size:11px">⬅ Previous Day</button>
+            <button class="btn boutline" style="font-size:11px;background:var(--gl);border-color:#A7F3D0;color:var(--green)">Today</button>
+            <button class="btn boutline" style="font-size:11px">Next Day ➡</button>
+            <button class="btn bgreen" style="font-size:11px" onclick="alert('Add appointment modal opens here...')">+ New Appointment</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+          <div style="padding:12px;background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:20px;font-weight:800;color:var(--green)">12</div><div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.3px">Total Today</div></div>
+          <div style="padding:12px;background:var(--gl);border-radius:var(--r);border:1px solid #A7F3D0;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--green)">11</div><div style="font-size:10px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:.3px">Confirmed</div></div>
+          <div style="padding:12px;background:var(--al);border-radius:var(--r);border:1px solid #FDE68A;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--amber)">1</div><div style="font-size:10px;color:var(--amber);font-weight:700;text-transform:uppercase;letter-spacing:.3px">Pending</div></div>
+          <div style="padding:12px;background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);text-align:center"><div style="font-size:20px;font-weight:800;color:var(--blue)">11</div><div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.3px">AI-Booked</div></div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="call-table appt-table">
+            <thead><tr><th>Time</th><th>Patient</th><th>Type</th><th>Provider</th><th>Status</th><th>Source</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr class="appt-confirmed" onclick="showApptDetail('sarah')">
+                <td style="font-family:'JetBrains Mono',monospace;font-weight:600">9:00 AM</td>
+                <td><div style="font-weight:600">Sarah Johnson</div><div style="font-size:10px;color:var(--tx3)">(706) 555-0142</div></td>
+                <td><span class="call-intent ci-sched">In-Lab PSG</span></td>
+                <td>Dr. Agrawal</td>
+                <td><span class="appt-status as-conf">Confirmed</span></td>
+                <td><span style="font-size:10px;font-weight:600;color:var(--green)">🤖 Aria</span></td>
+                <td><button class="btn boutline" style="font-size:10px;padding:3px 8px">Edit</button></td>
+              </tr>
+              <tr class="appt-confirmed">
+                <td style="font-family:'JetBrains Mono',monospace;font-weight:600">10:00 AM</td>
+                <td><div style="font-weight:600">Marcus Williams</div><div style="font-size:10px;color:var(--tx3)">(706) 555-0188</div></td>
+                <td><span class="call-intent ci-sched">CPAP Follow-up</span></td>
+                <td>Dr. Agrawal</td>
+                <td><span class="appt-status as-conf">Confirmed</span></td>
+                <td><span style="font-size:10px;font-weight:600;color:var(--green)">🤖 Aria</span></td>
+                <td><button class="btn boutline" style="font-size:10px;padding:3px 8px">Edit</button></td>
+              </tr>
+              <tr class="appt-confirmed">
+                <td style="font-family:'JetBrains Mono',monospace;font-weight:600">11:00 AM</td>
+                <td><div style="font-weight:600">Linda Chen</div><div style="font-size:10px;color:var(--tx3)">(706) 555-0231</div></td>
+                <td><span class="call-intent ci-faq">New Patient Consult</span></td>
+                <td>Dr. Agrawal</td>
+                <td><span class="appt-status as-conf">Confirmed</span></td>
+                <td><span style="font-size:10px;font-weight:600;color:var(--tx3)">📅 Manual</span></td>
+                <td><button class="btn boutline" style="font-size:10px;padding:3px 8px">Edit</button></td>
+              </tr>
+              <tr class="appt-pending">
+                <td style="font-family:'JetBrains Mono',monospace;font-weight:600">1:30 PM</td>
+                <td><div style="font-weight:600">James Rivera</div><div style="font-size:10px;color:var(--tx3)">(706) 555-0299</div></td>
+                <td><span class="call-intent ci-sched">Home Sleep Test</span></td>
+                <td>Dr. Agrawal</td>
+                <td><span class="appt-status as-pend">Pending</span></td>
+                <td><span style="font-size:10px;font-weight:600;color:var(--green)">🤖 Aria</span></td>
+                <td><div style="display:flex;gap:4px"><button class="btn bgreen" style="font-size:10px;padding:3px 8px" onclick="alert('Confirmed!')">Confirm</button><button class="btn bred" style="font-size:10px;padding:3px 8px" onclick="alert('Cancelled.')">Cancel</button></div></td>
+              </tr>
+              <tr class="appt-confirmed">
+                <td style="font-family:'JetBrains Mono',monospace;font-weight:600">2:00 PM</td>
+                <td><div style="font-weight:600">Patricia O'Brien</div><div style="font-size:10px;color:var(--tx3)">(706) 555-0311</div></td>
+                <td><span class="call-intent ci-sched">Results Review</span></td>
+                <td>Dr. Agrawal</td>
+                <td><span class="appt-status as-conf">Confirmed</span></td>
+                <td><span style="font-size:10px;font-weight:600;color:var(--green)">🤖 Aria</span></td>
+                <td><button class="btn boutline" style="font-size:10px;padding:3px 8px">Edit</button></td>
+              </tr>
+              <tr class="appt-confirmed">
+                <td style="font-family:'JetBrains Mono',monospace;font-weight:600">3:00 PM</td>
+                <td><div style="font-weight:600">David Kim</div><div style="font-size:10px;color:var(--tx3)">(706) 555-0442</div></td>
+                <td><span class="call-intent ci-cpap">CPAP Initiation</span></td>
+                <td>Dr. Agrawal</td>
+                <td><span class="appt-status as-conf">Confirmed</span></td>
+                <td><span style="font-size:10px;font-weight:600;color:var(--green)">🤖 Aria</span></td>
+                <td><button class="btn boutline" style="font-size:10px;padding:3px 8px">Edit</button></td>
+              </tr>
+              <tr class="appt-confirmed">
+                <td style="font-family:'JetBrains Mono',monospace;font-weight:600">4:00 PM</td>
+                <td><div style="font-weight:600">Maria Gonzalez</div><div style="font-size:10px;color:var(--tx3)">(706) 555-0512 · ES</div></td>
+                <td><span class="call-intent ci-sched">Follow-Up</span></td>
+                <td>Dr. Agrawal</td>
+                <td><span class="appt-status as-conf">Confirmed</span></td>
+                <td><span style="font-size:10px;font-weight:600;color:var(--green)">🤖 Aria</span></td>
+                <td><button class="btn boutline" style="font-size:10px;padding:3px 8px">Edit</button></td>
+              </tr>
+              <tr style="background:rgba(239,68,68,.04)">
+                <td style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--tx3)">9 PM</td>
+                <td><div style="font-weight:600">Sarah Johnson</div><div style="font-size:10px;color:var(--tx3)">PSG Night Study</div></td>
+                <td><span class="call-intent ci-sched">In-Lab PSG</span></td>
+                <td>Dr. Agrawal</td>
+                <td><span class="appt-status as-conf">Confirmed</span></td>
+                <td><span style="font-size:10px;font-weight:600;color:var(--green)">🤖 Aria</span></td>
+                <td><button class="btn boutline" style="font-size:10px;padding:3px 8px">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="sidepanel" style="background:var(--sur);border-left:1px solid var(--bdr);overflow-y:auto;padding:16px">
+        <div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:12px">Quick Stats — This Week</div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px;font-size:11px">
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Total booked</span><span style="font-weight:700;color:var(--green)">47</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>AI-booked</span><span style="font-weight:700;color:var(--green)">42 (89%)</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>No-shows</span><span style="font-weight:700;color:var(--amber)">2</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Cancellations</span><span style="font-weight:700">4</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Sleep studies</span><span style="font-weight:700;color:var(--blue)">18</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>CPAP appts</span><span style="font-weight:700">12</span></div>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:10px">Upcoming Reminders</div>
+        <div class="notice nblue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>Aria will auto-send reminder SMS to all confirmed patients 24h and 1h before their appointments.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+          <div style="padding:7px 10px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0">
+            <div style="font-weight:600;color:var(--green)">Tomorrow 9 AM — James Rivera</div>
+            <div style="color:var(--tx3)">Home Sleep Test reminder → queued</div>
+          </div>
+          <div style="padding:7px 10px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0">
+            <div style="font-weight:600;color:var(--green)">Tue 9 PM — Sarah Johnson</div>
+            <div style="color:var(--tx3)">PSG night study reminder → queued</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- ═══ KNOWLEDGE BASE ═══ -->
+    <div class="page" id="pg-kb">
+    <div class="kb-layout">
+      <!-- KB List -->
+      <div class="scroll" style="border-right:1px solid var(--bdr)">
+        <div style="padding:16px 16px 10px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--sur);z-index:5">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--tx)">Knowledge Base Editor</div>
+            <div style="font-size:11px;color:var(--tx3)">13 Q&A entries · Athens Sleep · Sleep Medicine</div>
+          </div>
+          <button class="btn bgreen" style="font-size:11px" onclick="newKBItem()">+ Add Q&A</button>
+        </div>
+        <div style="padding:10px 14px;border-bottom:1px solid var(--bdr);display:flex;gap:6px">
+          <input type="text" class="search-input" placeholder="Search KB..." style="flex:1;max-width:100%">
+          <select class="fsel" style="width:120px;font-size:11px;padding:5px 8px">
+            <option>All categories</option>
+            <option>Scheduling</option>
+            <option>CPAP</option>
+            <option>FAQ</option>
+            <option>Billing</option>
+          </select>
+        </div>
+
+        <!-- KB items -->
+        <div id="kbList">
+          <div class="kb-item kb-sel" onclick="selKB(this,0)">
+            <div class="kb-q">What are your office hours?</div>
+            <div class="kb-a">We are open Monday through Friday, 8 AM to 5 PM. We are located at 125 King Avenue, Suite 200, Athens, Georgia. Free parking is available in the lot.</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-faq">FAQ</span><span class="kb-tag kbt-approved">Approved</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,1)">
+            <div class="kb-q">Do you accept new patients?</div>
+            <div class="kb-a">Yes, we are currently accepting new patients for sleep medicine consultations and sleep studies. A referral from your primary care provider is required for most insurance plans.</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-faq">FAQ</span><span class="kb-tag kbt-approved">Approved</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,2)">
+            <div class="kb-q">How do I schedule a CPAP resupply?</div>
+            <div class="kb-a">You can request CPAP supplies by calling our AI number anytime. Aria will collect your patient ID, CPAP model, and supplies needed. Our clinical team processes requests within 1-2 business days.</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-cpap">CPAP</span><span class="kb-tag kbt-approved">Approved</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,3)">
+            <div class="kb-q">What insurance plans do you accept?</div>
+            <div class="kb-a">We accept most major insurance plans including Aetna, Blue Cross Blue Shield, Cigna, UnitedHealthcare, Humana, and Medicare. Please call to verify your specific plan.</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-billing">Billing</span><span class="kb-tag kbt-approved">Approved</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,4)">
+            <div class="kb-q">What should I expect during a sleep study?</div>
+            <div class="kb-a">An in-lab polysomnography (PSG) takes place overnight. You will arrive at 8:30 PM, be set up with monitoring equipment by 9 PM, and typically leave by 6 AM. The study is completely painless and you may bring your own pillow and comfortable clothing.</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-sched">Scheduling</span><span class="kb-tag kbt-approved">Approved</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,5)">
+            <div class="kb-q">How do I get my CPAP pressure adjusted?</div>
+            <div class="kb-a">CPAP pressure adjustments require a provider review. Please call to schedule a CPAP follow-up appointment with Dr. Agrawal. Bring your CPAP device or your myAir/DreamMapper data if available.</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-cpap">CPAP</span><span class="kb-tag kbt-approved">Approved</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,6)">
+            <div class="kb-q">What is your cancellation policy?</div>
+            <div class="kb-a">We require 24 hours notice for cancellations. Same-day cancellations or no-shows for sleep studies may incur a $50 fee. Please call as soon as possible if you need to reschedule.</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-sched">Scheduling</span><span class="kb-tag kbt-approved">Approved</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,7)">
+            <div class="kb-q">How do I request a prescription refill for sleep medication?</div>
+            <div class="kb-a">Prescription refill requests are reviewed by Dr. Agrawal. Please call or send a request through the patient portal. Allow 2-3 business days for processing. We cannot refill controlled substances by phone.</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-billing">Rx</span><span class="kb-tag kbt-approved">Approved</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,8)">
+            <div class="kb-q">Can I do a home sleep test instead of in-lab?</div>
+            <div class="kb-a">Yes, home sleep tests (HST) are available for patients with a low-to-moderate risk of sleep apnea. Dr. Agrawal will determine which study type is most appropriate during your initial consultation or based on your referral.</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-sched">Scheduling</span><span class="kb-tag kbt-approved">Approved</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,9)">
+            <div class="kb-q">Where are you located and is there parking?</div>
+            <div class="kb-a">We are located at 125 King Avenue, Suite 200, Athens, Georgia 30606. There is free parking in the lot adjacent to the building. We are off the Loop 10 bypass, easily accessible from Athens and surrounding areas.</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-faq">FAQ</span><span class="kb-tag kbt-approved">Approved</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,10)">
+            <div class="kb-q">How do I check if my sleep study results are ready?</div>
+            <div class="kb-a">Sleep study results typically take 7-10 business days to be reviewed by Dr. Agrawal. You will receive a call or letter when results are ready. You can also check through the patient portal or call our office.</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-sched">Scheduling</span><span class="kb-tag kbt-approved">Approved</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,11)" style="border-left:2px solid var(--amber)">
+            <div class="kb-q" style="color:var(--amber)">⚠ How much does a sleep study cost? (Draft)</div>
+            <div class="kb-a">With insurance, your cost depends on your plan — we recommend calling your insurance to confirm your sleep study coverage. Out-of-pocket costs range from $200-$600 depending on your deductible...</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-billing">Billing</span><span class="kb-tag kbt-draft">Draft</span></div>
+          </div>
+          <div class="kb-item" onclick="selKB(this,12)" style="border-left:2px solid var(--amber)">
+            <div class="kb-q" style="color:var(--amber)">⚠ Do you offer telehealth visits? (Draft)</div>
+            <div class="kb-a">Yes, Dr. Agrawal offers telehealth appointments for follow-up consultations, CPAP management, and results reviews. Telehealth visits are covered by most major insurances...</div>
+            <div class="kb-item-tags"><span class="kb-tag kbt-faq">FAQ</span><span class="kb-tag kbt-draft">Draft</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KB Editor -->
+      <div class="scroll" style="background:var(--sur)">
+        <div style="padding:16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:13px;font-weight:700;color:var(--tx)">Edit Knowledge Base Entry</div>
+          <div style="display:flex;gap:5px">
+            <button class="btn bred" style="font-size:11px;padding:4px 9px" onclick="deleteKB()">Delete</button>
+            <button class="btn bgreen" style="font-size:11px;padding:4px 9px" onclick="saveKB()">Save & Approve</button>
+          </div>
+        </div>
+        <div style="padding:16px">
+          <div class="fgroup"><label class="flabel">Question (what patients say to trigger this)</label><input type="text" class="finput" id="kbQ" value="What are your office hours?"></div>
+          <div class="fgroup"><label class="flabel">Answer (what Aria says)</label><textarea class="ftextarea" rows="5" id="kbA">We are open Monday through Friday, 8 AM to 5 PM. We are located at 125 King Avenue, Suite 200, Athens, Georgia. Free parking is available in the lot.</textarea></div>
+          <div class="fgroup"><label class="flabel">Category</label><select class="fsel"><option>FAQ / Information</option><option>Scheduling</option><option>CPAP</option><option>Billing</option><option>Emergency</option></select></div>
+          <div class="fgroup"><label class="flabel">Trigger phrases (Aria uses these to detect this intent)</label><input type="text" class="finput" value="hours, open, when are you open, office hours, what time, schedule hours"></div>
+          <div class="notice ngreen" style="margin-top:4px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <strong>AI Suggestion:</strong> This entry has been used in 38 calls this month with 99% accuracy. No edits recommended.
+          </div>
+          <div style="margin-top:12px;padding:12px;background:var(--grl);border-radius:var(--r);border:1px solid var(--bdr)">
+            <div style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">AI Suggestions</div>
+            <button class="btn boutline" style="width:100%;justify-content:flex-start;font-size:11px;margin-bottom:6px" onclick="alert('AI generating 3 alternative phrasings for this answer...')">🤖 Generate alternative phrasings</button>
+            <button class="btn boutline" style="width:100%;justify-content:flex-start;font-size:11px;margin-bottom:6px" onclick="alert('AI checking this entry against similar KB items for consistency...')">🔍 Check for conflicts</button>
+            <button class="btn boutline" style="width:100%;justify-content:flex-start;font-size:11px" onclick="alert('Importing Q&A from your website at athenssleepcenter.com...')">🌐 Import from website</button>
+          </div>
+          <div style="margin-top:12px">
+            <div class="slabel">Usage Stats — This Entry</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;font-size:11px">
+              <div style="padding:7px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><div style="color:var(--tx3)">Times triggered</div><div style="font-weight:700;color:var(--tx);margin-top:2px">38 this month</div></div>
+              <div style="padding:7px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><div style="color:var(--tx3)">Caller satisfaction</div><div style="font-weight:700;color:var(--green);margin-top:2px">99% ✓</div></div>
+              <div style="padding:7px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><div style="color:var(--tx3)">Escalated to staff</div><div style="font-weight:700;margin-top:2px">1 time (2.6%)</div></div>
+              <div style="padding:7px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><div style="color:var(--tx3)">Last triggered</div><div style="font-weight:700;margin-top:2px">Today 11:22 AM</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- ═══ TRANSCRIPT DELIVERY ═══ -->
+    <div class="page" id="pg-transcript">
+    <div style="display:grid;grid-template-columns:1fr 1fr;height:100%;overflow:hidden">
+      <!-- Non-integrated path -->
+      <div class="scroll pad" style="border-right:1px solid var(--bdr)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.2px">📄 Non-Integrated Path</div>
+          <span class="tag taga">No EHR</span>
+        </div>
+        <div style="font-size:12px;color:var(--tx3);margin-bottom:16px">For practices without an EHR connection · PDF export + email delivery</div>
+        <div class="notice namber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <strong>No EHR connected.</strong> You're on the PDF/email delivery path. Connect an EHR system in Settings → Integrations to enable automatic chart updates.
+        </div>
+        <div class="card">
+          <div class="chead"><div class="cicon cica">📧</div><div><div class="ctitle">Email Delivery Configuration</div><div class="csub">After every call, send PDF summary to these recipients</div></div></div>
+          <div class="cbody">
+            <div class="fgroup"><label class="flabel">Primary recipient (always receives summary)</label><input type="email" class="finput" value="subodh@athenssleepcenter.com"></div>
+            <div class="fgroup"><label class="flabel">Additional recipients (comma-separated)</label><input type="email" class="finput" value="staff@athenssleepcenter.com"></div>
+            <div class="fgroup"><label class="flabel">Send summary for</label><select class="fsel"><option>All calls (every call gets a summary)</option><option>Contained calls only</option><option>Transferred calls only</option><option>Calls with appointments</option></select></div>
+            <div class="trow"><div><div style="font-size:12px;color:var(--tx2)">Send immediately after call ends</div></div><div class="tgg on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div></div>
+            <div class="trow"><div><div style="font-size:12px;color:var(--tx2)">Include full transcript (not just summary)</div></div><div class="tgg on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div></div>
+            <div class="trow"><div><div style="font-size:12px;color:var(--tx2)">Include audio recording link</div></div><div class="tgg off" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="chead"><div class="cicon cicg">📄</div><div><div class="ctitle">PDF Report Contents</div><div class="csub">What goes in each auto-generated PDF</div></div></div>
+          <div class="cbody">
+            <div style="display:flex;flex-direction:column;gap:7px;font-size:12px">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--green)"><div><div style="font-weight:600">AI Summary</div><div style="font-size:10px;color:var(--tx3)">2-3 sentence plain English summary of the call</div></div></label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--green)"><div><div style="font-weight:600">Patient name, phone, intent, outcome</div><div style="font-size:10px;color:var(--tx3)">Structured call metadata</div></div></label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--green)"><div><div style="font-weight:600">Full transcript with timestamps</div><div style="font-size:10px;color:var(--tx3)">Complete word-by-word transcript</div></div></label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--green)"><div><div style="font-weight:600">Appointment details (if booked)</div><div style="font-size:10px;color:var(--tx3)">Date, time, type, provider</div></div></label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--green)"><div><div style="font-weight:600">Call metrics (response time, STT confidence, loops)</div><div style="font-size:10px;color:var(--tx3)">Technical quality data</div></div></label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--green)"><div><div style="font-weight:600">HIPAA audit log entry reference</div><div style="font-size:10px;color:var(--tx3)">Compliance reference number</div></div></label>
+            </div>
+            <button class="btn bgreen" style="width:100%;justify-content:center;margin-top:12px" onclick="alert('Settings saved! PDF delivery active.')">Save Delivery Settings</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="chead"><div class="cicon cicg">📬</div><div><div class="ctitle">Daily Digest Option</div><div class="csub">Instead of per-call emails, get one summary each morning</div></div></div>
+          <div class="cbody">
+            <div class="trow" style="margin-bottom:12px"><div><div style="font-size:12px;color:var(--tx2);font-weight:600">Enable daily digest instead of per-call emails</div><div style="font-size:10px;color:var(--tx3)">Sent at 7 AM ET with all previous day's calls</div></div><div class="tgg off" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tggk"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EHR-integrated path -->
+      <div class="scroll pad">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.2px">🏥 EHR-Integrated Path</div>
+          <span class="tag tagg">athenahealth Connected</span>
+        </div>
+        <div style="font-size:12px;color:var(--tx3);margin-bottom:16px">FHIR R4 API · Auto-push to patient chart · OAuth 2.0 · SMART on FHIR</div>
+        <div class="notice ngreen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <strong>athenahealth connected and active.</strong> Call notes and appointments push automatically to the patient chart within 30 seconds of call completion. 412 records pushed this month, 0 errors.
+        </div>
+        <div class="card">
+          <div class="chead"><div class="cicon cicb">🏥</div><div><div class="ctitle">athenahealth FHIR Integration</div><div class="csub">FHIR R4 · Practice ID: ATH-00291 · OAuth token valid until May 18</div></div><div class="chr"><span class="tag tagg">● Active</span></div></div>
+          <div class="cbody">
+            <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:12px">
+              <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">FHIR endpoint</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px">https://api.athenahealth.com/fhir/r4</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">Practice ID</span><span style="font-family:'JetBrains Mono',monospace">ATH-00291</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">OAuth token</span><span style="color:var(--green);font-weight:600">Valid · Expires May 18, 2026</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">Records pushed (month)</span><span style="font-weight:700;color:var(--green)">412 · 0 errors</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span style="color:var(--tx3)">Patient match rate</span><span style="font-weight:700;color:var(--green)">94.2%</span></div>
+            </div>
+            <button class="btn boutline" style="width:100%;justify-content:center;margin-bottom:6px" onclick="alert('Reconnecting OAuth with athenahealth...')">🔄 Refresh OAuth Token</button>
+            <button class="btn bred" style="width:100%;justify-content:center" onclick="alert('Disconnecting athenahealth integration. Are you sure? This will stop all auto-pushes.')">Disconnect athenahealth</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="chead"><div class="cicon cicb">⚙️</div><div><div class="ctitle">FHIR Push Configuration</div><div class="csub">What resources to push after each call</div></div></div>
+          <div class="cbody">
+            <div style="display:flex;flex-direction:column;gap:7px;font-size:12px;margin-bottom:12px">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--green)"><div><div style="font-weight:600">Communication resource (call note)</div><div style="font-size:10px;color:var(--tx3)">AI summary + transcript appended to chart as Communication</div></div></label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--green)"><div><div style="font-weight:600">Appointment resource (if booked)</div><div style="font-size:10px;color:var(--tx3)">Creates or confirms Appointment in athenahealth schedule</div></div></label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--green)"><div><div style="font-weight:600">Patient demographic update</div><div style="font-size:10px;color:var(--tx3)">Update phone number, insurance if collected on call</div></div></label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--green)"><div><div style="font-weight:600">Flag unmatched patients for staff</div><div style="font-size:10px;color:var(--tx3)">Create task for staff when patient not found in EHR</div></div></label>
+            </div>
+            <div class="fgroup"><label class="flabel">Unmatched patient handling</label><select class="fsel"><option>Create new patient record automatically</option><option>Flag for staff to match manually (safer)</option><option>Hold push until staff confirms match</option></select></div>
+            <button class="btn bgreen" style="width:100%;justify-content:center" onclick="alert('FHIR push settings saved!')">Save Integration Settings</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="chead"><div class="cicon cicg">🔗</div><div><div class="ctitle">Add Another EHR System</div><div class="csub">Connect a second EHR or practice management system</div></div></div>
+          <div class="cbody">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <button class="btn boutline" style="justify-content:center;flex-direction:column;padding:12px 8px;height:auto;gap:4px" onclick="alert('Connecting to DrChrono...')"><div style="font-size:16px">🏥</div><div style="font-size:11px">DrChrono</div></button>
+              <button class="btn boutline" style="justify-content:center;flex-direction:column;padding:12px 8px;height:auto;gap:4px" onclick="alert('Connecting to Kareo...')"><div style="font-size:16px">📋</div><div style="font-size:11px">Kareo</div></button>
+              <button class="btn boutline" style="justify-content:center;flex-direction:column;padding:12px 8px;height:auto;gap:4px" onclick="alert('Connecting to AdvancedMD...')"><div style="font-size:16px">🏥</div><div style="font-size:11px">AdvancedMD</div></button>
+              <button class="btn boutline" style="justify-content:center;flex-direction:column;padding:12px 8px;height:auto;gap:4px" onclick="alert('Connecting to Epic via MyChart...')"><div style="font-size:16px">🔗</div><div style="font-size:11px">Epic (SMART)</div></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- Routing, Billing, HIPAA, Settings stubs -->
+    <div class="page" id="pg-routing"><div class="scroll pad"><div style="font-size:15px;font-weight:800;color:var(--tx);margin-bottom:12px">Call Routing Configuration</div><div class="notice nblue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>Configure which intents forward to which staff extensions. Manage business hours, after-hours scripts, and transfer numbers.</span></div><button class="btn bgreen" onclick="SP(document.querySelectorAll('.sb-item')[0],'calls')">← Back to Call Log</button></div></div>
+    <div class="page" id="pg-billing"><div class="scroll pad"><div style="font-size:15px;font-weight:800;color:var(--tx);margin-bottom:12px">Billing — Professional Plan · $79/mo</div><div class="notice ngreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><strong>Next invoice INV-2026-002 due May 11, 2026 — $79.00</strong> · Visa ••••6411</div><button class="btn bgreen" onclick="SP(document.querySelectorAll('.sb-item')[0],'calls')">← Back to Call Log</button></div></div>
+    <div class="page" id="pg-hipaa"><div class="scroll pad"><div style="font-size:15px;font-weight:800;color:var(--tx);margin-bottom:12px">HIPAA Audit Trail — Immutable Log</div><div class="notice ngreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><strong>0 violations this month.</strong> All PHI access logged with actor, IP, timestamp, and action. Immutable — cannot be deleted.</div><button class="btn bgreen" onclick="SP(document.querySelectorAll('.sb-item')[0],'calls')">← Back to Call Log</button></div></div>
+    <div class="page" id="pg-settings"><div class="scroll pad"><div style="font-size:15px;font-weight:800;color:var(--tx);margin-bottom:12px">Practice Settings</div><div class="notice nblue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>Edit practice info, notification preferences, team members, integrations, and security settings.</span></div><button class="btn bgreen" onclick="SP(document.querySelectorAll('.sb-item')[0],'calls')">← Back to Call Log</button></div></div>
+
+  </div><!-- pages -->
+</div><!-- main -->
+
+</div><!-- app -->
+
+<script>
+// ── CALL DATA ──
+const CALLS=[
+  {time:"10:42 AM",patient:"Sarah Johnson",phone:"(706) 555-0142",intent:"Scheduling",outcome:"Contained",duration:"3:24",sentiment:"😊",stt:91,new:false,summary:"Sarah Johnson called to schedule an in-lab sleep study (PSG). Referral from Dr. Martinez confirmed. Aetna insurance verified. Booked for Tue Apr 22 at 9 PM. Confirmation SMS sent.",summaryTags:["✓ Booked","Sleep Study · PSG","Aetna · Verified","Referral confirmed"],appt:"In-Lab PSG · Tue Apr 22, 9 PM · Dr. Agrawal"},
+  {time:"10:31 AM",patient:"Marcus Williams",phone:"(706) 555-0188",intent:"CPAP",outcome:"Contained",duration:"2:11",sentiment:"😊",stt:94,new:false,summary:"Marcus Williams requested a CPAP mask resupply (ResMed AirSense 11 — full face mask and filters). Patient ID verified. Request logged and routed to clinical team. 1-2 business day processing.",summaryTags:["✓ Resupply submitted","ResMed AirSense 11","Clinical team notified"],appt:"None"},
+  {time:"10:18 AM",patient:"(706) 555-0301",phone:"(706) 555-0301",intent:"Transfer",outcome:"Transfer",duration:"1:42",sentiment:"😐",stt:78,new:false,summary:"Caller asked to speak directly with Dr. Agrawal. Aria explained the appointment process and offered to schedule, but caller insisted on speaking to a person. Transferred to front desk ext. 0.",summaryTags:["Transfer to front desk","Caller request — human"],appt:"None"},
+  {time:"10:05 AM",patient:"Linda Chen",phone:"(706) 555-0231",intent:"FAQ",outcome:"Contained",duration:"1:08",sentiment:"😊",stt:97,new:false,summary:"Linda Chen asked about office hours, location, and parking availability. Aria answered all three questions accurately from the knowledge base. Call ended with caller satisfied.",summaryTags:["Hours + location answered","0 escalations","KB accuracy 100%"],appt:"None"},
+  {time:"9:52 AM",patient:"James Rivera",phone:"(706) 555-0299",intent:"Scheduling",outcome:"Contained",duration:"4:12",sentiment:"😊",stt:88,new:true,summary:"James Rivera scheduled a home sleep test (HST) after Aria explained the difference between in-lab and home options. Blue Cross insurance verified. Booked for Thu Apr 24 at 8 PM.",summaryTags:["✓ Booked","Home Sleep Test","Blue Cross verified"],appt:"Home Sleep Test · Thu Apr 24, 8 PM"},
+  {time:"9:44 AM",patient:"Maria Gonzalez",phone:"(706) 555-0512",intent:"Scheduling",outcome:"Contained",duration:"3:55",sentiment:"😊",stt:96,new:true,summary:"Maria Gonzalez (Spanish) called to schedule a follow-up appointment. Aria switched to Spanish upon detection (96% confidence). Verified Cigna insurance. Booked for Fri Apr 25 at 10 AM.",summaryTags:["✓ Booked","🇪🇸 Spanish detected","Cigna verified"],appt:"Follow-Up · Fri Apr 25, 10 AM"},
+  {time:"9:30 AM",patient:"Patricia O'Brien",phone:"(706) 555-0311",intent:"Billing",outcome:"Transfer",duration:"2:38",sentiment:"😐",stt:85,new:false,summary:"Patricia O'Brien called with a billing question about her EOB from her last sleep study. Aria provided general insurance info from KB but the specific billing dispute required staff assistance. Transferred to billing ext. 4.",summaryTags:["Billing dispute","Transfer to billing ext. 4","KB gap detected"],appt:"None"},
+  {time:"9:18 AM",patient:"David Kim",phone:"(706) 555-0442",intent:"Scheduling",outcome:"Contained",duration:"2:44",sentiment:"😊",stt:93,new:true,summary:"David Kim scheduled a CPAP initiation appointment. Explained what to bring (prescription, CPAP device). Humana insurance verified. Booked for today at 3 PM.",summaryTags:["✓ Booked","CPAP Initiation","Humana verified"],appt:"CPAP Initiation · Today 3 PM · Dr. Agrawal"},
+  {time:"9:02 AM",patient:"Anonymous",phone:"(706) 555-0199",intent:"FAQ",outcome:"Contained",duration:"0:48",sentiment:"😐",stt:82,new:false,summary:"Caller asked about sleep study pricing. Aria provided general information about insurance coverage and directed the caller to contact their insurance for exact coverage details.",summaryTags:["Pricing inquiry","No booking","KB pricing entry used"],appt:"None"},
+  {time:"8:47 AM",patient:"Robert Torres",phone:"(706) 555-0088",intent:"Scheduling",outcome:"Contained",duration:"3:01",sentiment:"😊",stt:90,new:false,summary:"Robert Torres rescheduled his sleep study from April 19 to April 26. 24-hour notice policy confirmed. No cancellation fee applicable. New slot confirmed, reminder SMS queued.",summaryTags:["✓ Rescheduled","Apr 26 9 PM","24h notice met"],appt:"Rescheduled · PSG Apr 26, 9 PM"},
+];
+
+function renderCalls(){
+  const tbody=document.getElementById("callRows");
+  tbody.innerHTML=CALLS.map((c,i)=>`
+    <tr onclick="selCall(${i})" class="${i===0?"ct-selected":""}">
+      <td><div style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:11px">${c.time}</div>${c.new?'<div style="font-size:9px;color:var(--blue);font-weight:700">NEW</div>':""}
+      </td>
+      <td><div style="font-weight:600">${c.patient}</div><div style="font-size:10px;color:var(--tx3)">${c.phone}</div></td>
+      <td><span class="call-intent ${intentClass(c.intent)}">${c.intent}</span></td>
+      <td><span class="call-outcome ${c.outcome==="Contained"?"co-contained":"co-transfer"}">${c.outcome==="Contained"?"Contained ✓":"Transfer ↗"}</span></td>
+      <td class="call-duration">${c.duration}</td>
+      <td class="call-sentiment" style="font-size:16px">${c.sentiment}</td>
+      <td><button class="btn boutline" style="font-size:10px;padding:3px 8px" onclick="event.stopPropagation();selCall(${i})">View</button></td>
+    </tr>
+  `).join("");
+}
+
+function intentClass(i){return{Scheduling:"ci-sched",FAQ:"ci-faq",Billing:"ci-billing",CPAP:"ci-cpap",Transfer:"ci-transfer"}[i]||"ci-faq";}
+
+function selCall(i){
+  const c=CALLS[i];
+  document.querySelectorAll(".call-table tr").forEach((r,j)=>{r.className=j===i?"ct-selected":"";});
+  document.getElementById("dpEmpty").style.display="none";
+  const dpC=document.getElementById("dpContent");
+  dpC.style.display="flex";
+  dpC.style.flexDirection="column";
+  document.getElementById("dpPatient").textContent=c.patient;
+  document.getElementById("dpMeta").textContent="Today "+c.time+" · "+c.duration+" · "+c.phone;
+  document.getElementById("dpIntent").textContent=c.intent;
+  document.getElementById("dpIntent").className="tag "+(c.intent==="Scheduling"?"tagb":c.intent==="CPAP"?"tagp":c.intent==="Billing"?"tag tagg":c.intent==="Transfer"?"taga":"tagg");
+  document.getElementById("dpOutcome").textContent=c.outcome==="Contained"?"Contained ✓":"Transferred ↗";
+  document.getElementById("dpOutcome").className="tag "+(c.outcome==="Contained"?"tagg":"taga");
+  document.getElementById("dpSummaryText").textContent=c.summary;
+  const tagsEl=document.getElementById("dpSummaryTags");
+  tagsEl.innerHTML=c.summaryTags.map(t=>`<span class="ai-s-tag ast-green">${t}</span>`).join("");
+  if(c.appt!=="None"){
+    document.getElementById("dpSummaryText").insertAdjacentHTML("afterend",`<div id="dpAppt" style="margin-top:8px;padding:8px 10px;background:rgba(74,222,128,.15);border-radius:5px;font-size:11px;color:#86EFAC;font-weight:600">✓ ${c.appt}</div>`);
+  }else{const old=document.getElementById("dpAppt");if(old)old.remove();}
+  DT(document.querySelector(".dpt"),"summary");
+}
+
+function DT(el,tab){
+  document.querySelectorAll(".dpt").forEach(t=>t.classList.remove("active"));
+  ["dt-summary","dt-transcript","dt-delivery","dt-actions"].forEach(id=>{
+    const el2=document.getElementById(id); if(el2) el2.style.display="none";
+  });
+  el.classList.add("active");
+  const target=document.getElementById("dt-"+tab);
+  if(target) target.style.display="block";
+}
+
+function filterCalls(btn,filter){
+  document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("fb-active"));
+  btn.classList.add("fb-active");
+}
+
+// ── SIDEBAR PAGE SWITCH ──
+function SP(el,page){
+  document.querySelectorAll(".sb-item").forEach(i=>i.classList.remove("active"));
+  if(el) el.classList.add("active");
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  const pg=document.getElementById("pg-"+page);
+  if(pg) pg.classList.add("active");
+}
+
+// ── DELIVERY PATH ──
+function selDelivery(el,type){
+  document.querySelectorAll(".dcard").forEach(c=>c.classList.remove("dcard-sel"));
+  el.classList.add("dcard-sel");
+  ["delivery-ehr","delivery-pdf"].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display="none";});
+  const show=type==="ehr"?"delivery-ehr":type==="pdf"?"delivery-pdf":null;
+  if(show){const e=document.getElementById(show);if(e)e.style.display="block";}
+}
+
+// ── KB EDITOR ──
+const KB_Q=["What are your office hours?","Do you accept new patients?","How do I schedule a CPAP resupply?","What insurance plans do you accept?","What should I expect during a sleep study?","How do I get my CPAP pressure adjusted?","What is your cancellation policy?","How do I request a prescription refill for sleep medication?","Can I do a home sleep test instead of in-lab?","Where are you located and is there parking?","How do I check if my sleep study results are ready?","⚠ How much does a sleep study cost? (Draft)","⚠ Do you offer telehealth visits? (Draft)"];
+const KB_A=["We are open Monday through Friday, 8 AM to 5 PM. We are located at 125 King Avenue, Suite 200, Athens, Georgia. Free parking is available in the lot.","Yes, we are currently accepting new patients for sleep medicine consultations and sleep studies. A referral from your primary care provider is required for most insurance plans.","You can request CPAP supplies by calling our AI number anytime. Aria will collect your patient ID, CPAP model, and supplies needed. Our clinical team processes requests within 1-2 business days.","We accept most major insurance plans including Aetna, Blue Cross Blue Shield, Cigna, UnitedHealthcare, Humana, and Medicare. Please call to verify your specific plan.","An in-lab polysomnography (PSG) takes place overnight. You will arrive at 8:30 PM, be set up with monitoring equipment by 9 PM, and typically leave by 6 AM. The study is completely painless.","CPAP pressure adjustments require a provider review. Please call to schedule a CPAP follow-up appointment with Dr. Agrawal. Bring your CPAP device or your myAir/DreamMapper data if available.","We require 24 hours notice for cancellations. Same-day cancellations or no-shows for sleep studies may incur a $50 fee. Please call as soon as possible if you need to reschedule.","Prescription refill requests are reviewed by Dr. Agrawal. Please call or send a request through the patient portal. Allow 2-3 business days. We cannot refill controlled substances by phone.","Yes, home sleep tests (HST) are available for patients with a low-to-moderate risk of sleep apnea. Dr. Agrawal will determine which type is most appropriate.","We are located at 125 King Avenue, Suite 200, Athens, Georgia 30606. Free parking is in the adjacent lot. We are off the Loop 10 bypass.","Sleep study results typically take 7-10 business days. You will receive a call or letter when results are ready. You can also check through the patient portal or call our office.","With insurance, your cost depends on your plan. We recommend calling your insurance to confirm sleep study coverage. Out-of-pocket costs range from $200-$600 depending on your deductible.","Yes, Dr. Agrawal offers telehealth appointments for follow-up consultations, CPAP management, and results reviews. Telehealth visits are covered by most major insurances."];
+
+function selKB(el,i){
+  document.querySelectorAll(".kb-item").forEach(k=>k.classList.remove("kb-sel"));
+  el.classList.add("kb-sel");
+  document.getElementById("kbQ").value=KB_Q[i];
+  document.getElementById("kbA").value=KB_A[i];
+}
+function saveKB(){alert("Knowledge base entry saved and approved! Aria will use this updated answer immediately.");}
+function deleteKB(){if(confirm("Delete this KB entry? Aria will no longer use it.")) alert("Entry deleted.");}
+function newKBItem(){document.getElementById("kbQ").value="";document.getElementById("kbA").value="";document.querySelectorAll(".kb-item").forEach(k=>k.classList.remove("kb-sel"));}
+function rateCall(r){alert("Rating submitted: "+r+" stars. Thank you for helping improve Aria!");}
+
+// ── INIT ──
+renderCalls();
+selCall(0);
+</script>
+</body>
+</html>
