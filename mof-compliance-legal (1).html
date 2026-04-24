@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedFlow AI — Compliance & Legal Documents</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1B6B4A;--g2:#059669;--gl:#ECFDF5;--gd:#14533A;
+  --amber:#D97706;--a2:#F59E0B;--al:#FEF3C7;--ad:#92400E;
+  --blue:#1D4ED8;--b2:#3B82F6;--bl:#EFF6FF;
+  --red:#DC2626;--rl:#FEF2F2;
+  --purple:#7C3AED;--pl:#F5F3FF;
+  --teal:#0D9488;--tl:#F0FDFA;
+  --navy:#0F2A4A;--navy2:#1A3A5C;
+  --gray:#6B7280;--grl:#F9FAFB;--bdr:#E5E7EB;--bdr2:#D1D5DB;
+  --tx:#111827;--tx2:#374151;--tx3:#6B7280;
+  --bg:#F1F5F9;--sur:#FFFFFF;
+  --r:10px;--rs:6px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.05);
+}
+html,body{height:100%;font-family:"Outfit",system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;overflow:hidden;}
+.shell{display:grid;grid-template-rows:52px 48px 1fr;height:100vh;overflow:hidden;}
+
+/* TOP */
+.topbar{background:var(--navy);display:flex;align-items:center;padding:0 20px;}
+.tmark{width:28px;height:28px;background:linear-gradient(135deg,#4ADE80,#1B6B4A);border-radius:7px;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0;}
+.tmark svg{width:15px;height:15px;}
+.tname{font-size:14px;font-weight:700;color:#fff;margin-right:14px;}
+.tsep{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 12px;}
+.tbread{font-size:12px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:4px;}
+.tbread span{color:rgba(255,255,255,.85);font-weight:600;}
+.tsp{flex:1;}
+.tright{display:flex;align-items:center;gap:8px;}
+.tchip{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;}
+.tcg{background:rgba(74,222,128,.15);color:#86EFAC;}
+.tca{background:rgba(251,191,36,.2);color:#FCD34D;}
+.ldot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tbtn{padding:5px 14px;border-radius:var(--rs);border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;}
+.tbtnp{border:none;background:linear-gradient(135deg,#4ADE80,#1B6B4A);}
+
+/* TABS */
+.tabs{background:var(--sur);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 20px;overflow-x:auto;}
+.tab{padding:12px 15px;font-size:12.5px;font-weight:500;color:var(--tx3);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.tab:hover{color:var(--tx2);}
+.tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600;}
+.tbadge{padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;}
+.tbg{background:var(--gl);color:var(--green);}
+.tba{background:var(--al);color:var(--amber);}
+.tbb{background:var(--bl);color:var(--blue);}
+.tabs-sp{flex:1;}
+.hipaa-chip{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--rs);background:var(--gl);border:1px solid #A7F3D0;font-size:11px;font-weight:700;color:var(--green);}
+
+/* PANELS */
+.panel{display:none;height:calc(100vh - 100px);overflow:hidden;}
+.panel.active{display:flex;}
+.scr{overflow-y:auto;}
+.pad{padding:20px 22px;}
+.twoc{display:grid;grid-template-columns:1fr 300px;height:100%;overflow:hidden;}
+.threec{display:grid;grid-template-columns:260px 1fr;height:100%;overflow:hidden;}
+
+/* CARDS */
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.chead{padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px;}
+.cicon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.icg{background:var(--gl);}
+.icb{background:var(--bl);}
+.ica{background:var(--al);}
+.icp{background:var(--pl);}
+.ict{background:var(--tl);}
+.icn{background:rgba(15,42,74,.07);}
+.icr{background:var(--rl);}
+.ctitle{font-size:13px;font-weight:700;color:var(--tx);}
+.csub{font-size:11px;color:var(--tx3);margin-top:1px;}
+.chr{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.cbody{padding:14px 16px;}
+
+/* BAA DOCUMENT CARDS */
+.doc-card{background:var(--sur);border:1.5px solid var(--bdr);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:all .15s;}
+.doc-card:hover{border-color:var(--bdr2);box-shadow:var(--sh);}
+.doc-card.dc-signed{border-left:4px solid var(--g2);}
+.doc-card.dc-pending{border-left:4px solid var(--amber);}
+.doc-card.dc-expired{border-left:4px solid var(--red);}
+.doc-card.dc-renew{border-left:4px solid var(--blue);}
+.doc-icon{width:42px;height:50px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:1px solid var(--bdr);}
+.di-green{background:var(--gl);}
+.di-amber{background:var(--al);}
+.di-red{background:var(--rl);}
+.di-blue{background:var(--bl);}
+.doc-content{flex:1;}
+.doc-title{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:2px;}
+.doc-meta{font-size:11px;color:var(--tx3);line-height:1.6;}
+.doc-tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.doc-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.doc-status{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;}
+.ds-signed{background:var(--gl);color:var(--green);}
+.ds-pending{background:var(--al);color:var(--amber);}
+.ds-expired{background:var(--rl);color:var(--red);}
+.ds-renew{background:var(--bl);color:var(--blue);}
+
+/* AUDIT LOG */
+.audit-line{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--bdr);}
+.audit-line:last-child{border-bottom:none;}
+.audit-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.ad-green{background:var(--g2);}
+.ad-amber{background:var(--a2);}
+.ad-red{background:var(--red);}
+.ad-blue{background:var(--b2);}
+.ad-gray{background:var(--bdr2);}
+.audit-time{font-size:10px;font-family:"JetBrains Mono",monospace;color:var(--tx3);width:58px;flex-shrink:0;padding-top:1px;}
+.audit-content{flex:1;}
+.audit-action{font-size:12px;font-weight:600;color:var(--tx2);}
+.audit-detail{font-size:10px;color:var(--tx3);margin-top:2px;line-height:1.5;}
+.audit-actor{font-size:10px;color:var(--tx3);display:flex;align-items:center;gap:4px;margin-top:2px;}
+.audit-risk{padding:1px 6px;border-radius:5px;font-size:9px;font-weight:700;}
+.ar-low{background:var(--gl);color:var(--green);}
+.ar-med{background:var(--al);color:var(--amber);}
+.ar-high{background:var(--rl);color:var(--red);}
+
+/* BREACH */
+.breach-card{background:var(--sur);border:1.5px solid var(--bdr);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;}
+.bc-crit{border-left:4px solid var(--red);background:rgba(254,242,242,.4);}
+.bc-investigate{border-left:4px solid var(--amber);}
+.bc-closed{border-left:4px solid var(--g2);}
+.breach-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.breach-title{font-size:13px;font-weight:700;color:var(--tx);}
+.breach-timeline{display:flex;align-items:center;gap:0;margin-top:10px;}
+.bt-step{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;}
+.bt-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--sur);}
+.btd-done{background:var(--g2);box-shadow:0 0 0 2px var(--g2);}
+.btd-active{background:var(--amber);box-shadow:0 0 0 2px var(--amber);}
+.btd-todo{background:var(--bdr);box-shadow:0 0 0 2px var(--bdr);}
+.bt-line{flex:1;height:2px;background:var(--bdr);margin-top:7px;}
+.btl-done{background:var(--g2);}
+.bt-label{font-size:9px;font-weight:600;color:var(--tx3);text-align:center;margin-top:2px;}
+.bt-date{font-size:9px;color:var(--tx3);text-align:center;}
+
+/* VENDOR BAA */
+.vendor-row{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--bdr);}
+.vendor-row:last-child{border-bottom:none;}
+.vendor-logo{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:1px solid var(--bdr);background:var(--grl);}
+.vendor-name{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:1px;}
+.vendor-role{font-size:10px;color:var(--tx3);}
+.vendor-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.vendor-date{font-size:10px;font-family:"JetBrains Mono",monospace;color:var(--tx3);}
+
+/* ATTESTATION */
+.attest-step{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:var(--rs);border:1.5px solid var(--bdr);background:var(--sur);margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.attest-step:hover{border-color:var(--bdr2);}
+.attest-step.as-done{border-color:#A7F3D0;background:var(--gl);}
+.attest-step.as-active{border-color:var(--green);background:var(--gl);}
+.attest-step.as-todo{opacity:.65;}
+.as-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.asn-done{background:var(--g2);color:#fff;}
+.asn-active{background:var(--green);color:#fff;}
+.asn-todo{background:var(--bdr);color:var(--tx3);}
+.as-content{flex:1;}
+.as-title{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:2px;}
+.as-desc{font-size:11px;color:var(--tx3);line-height:1.5;}
+.as-date{font-size:10px;font-family:"JetBrains Mono",monospace;color:var(--tx3);margin-top:3px;}
+
+/* MISC */
+.notice{display:flex;align-items:flex-start;gap:7px;padding:9px 11px;border-radius:var(--rs);margin-bottom:10px;font-size:11px;line-height:1.5;}
+.ng{background:var(--gl);border:1px solid #A7F3D0;color:var(--green);}
+.na{background:var(--al);border:1px solid #FDE68A;color:var(--ad);}
+.nb{background:var(--bl);border:1px solid #BFDBFE;color:var(--blue);}
+.nr{background:var(--rl);border:1px solid #FECACA;color:var(--red);}
+.notice svg{width:12px;height:12px;flex-shrink:0;margin-top:1px;}
+.notice strong{font-weight:700;}
+.btn{padding:7px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:5px;}
+.bg{background:var(--green);color:#fff;}
+.bg:hover{background:var(--gd);}
+.bo{background:var(--sur);border:1.5px solid var(--bdr);color:var(--tx2);}
+.bo:hover{border-color:var(--bdr2);}
+.bn{background:var(--navy);color:#fff;}
+.ba{background:var(--al);color:var(--amber);border:1px solid #FDE68A;}
+.br{background:var(--rl);color:var(--red);border:1px solid #FECACA;}
+.bp{background:var(--pl);color:var(--purple);border:1px solid #DDD6FE;}
+.tag{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;}
+.tg{background:var(--gl);color:var(--green);}
+.ta{background:var(--al);color:var(--amber);}
+.tb{background:var(--bl);color:var(--blue);}
+.tr{background:var(--rl);color:var(--red);}
+.tp{background:var(--pl);color:var(--purple);}
+.tt{background:var(--grl);color:var(--tx3);}
+.slabel{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;}
+.sp{background:var(--sur);border-left:1px solid var(--bdr);overflow-y:auto;padding:14px;}
+.spsec{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin:12px 0 8px;}
+.spsec:first-child{margin-top:0;}
+.fg{margin-bottom:11px;}
+.fl{font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:3px;display:block;}
+.fi{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;transition:border .15s;}
+.fi:focus{border-color:var(--green);}
+.fs{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;background:var(--sur);}
+.fta{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;resize:vertical;line-height:1.6;}
+.fta:focus{border-color:var(--green);}
+.mono{font-family:"JetBrains Mono",monospace;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px;}
+.trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.tgg{width:34px;height:19px;border-radius:10px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.tgg.on{background:var(--green);}
+.tgg.off{background:var(--bdr2);}
+.tggk{width:15px;height:15px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tgg.on .tggk{left:17px;}
+.tgg.off .tggk{left:2px;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tmark"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5L13 4.5V10.5L7.5 13.5L2 10.5V4.5L7.5 1.5Z" fill="white" opacity=".9"/><circle cx="7.5" cy="7.5" r="2" fill="white"/></svg></div>
+  <span class="tname">MedFlow AI</span>
+  <div class="tsep"></div>
+  <div class="tbread">Platform <span style="opacity:.35;margin:0 3px">›</span> <span>Compliance & Legal</span></div>
+  <div class="tsp"></div>
+  <div class="tright">
+    <div class="tchip tcg"><div class="ldot"></div>0 Violations</div>
+    <div class="tchip tca">⚠ 1 Renewal Due</div>
+    <button class="tbtn">⬇ Export Audit Log</button>
+    <button class="tbtn tbtnp">📋 Compliance Report</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" id="tab-baa" onclick="ST('baa')">📋 MOF Admin — All BAAs <span class="tbadge tbg">6 signed</span></div>
+  <div class="tab" id="tab-practice" onclick="ST('practice')">🏥 Practice Legal Documents</div>
+  <div class="tab" id="tab-audit" onclick="ST('audit')">🔒 HIPAA Audit Trail</div>
+  <div class="tab" id="tab-attest" onclick="ST('attest')">✅ Annual Re-Attestation <span class="tbadge tba">Due Jun 2026</span></div>
+  <div class="tab" id="tab-breach" onclick="ST('breach')">🚨 Breach Notifications</div>
+  <div class="tab" id="tab-vendor" onclick="ST('vendor')">🏢 Vendor BAA Registry</div>
+  <div class="tabs-sp"></div>
+  <div class="hipaa-chip">🔒 HIPAA Compliant · 0 Violations · Last audit Apr 2026</div>
+</div>
+
+<!-- ═══ PANEL 1: MOF ADMIN — ALL BAAs ═══ -->
+<div class="panel active" id="panel-baa">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div><div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px">MOF Admin — Practice BAA Vault</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">Business Associate Agreements with all 6 practices · HIPAA-required · James Kim (Super Admin)</div></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn bo" style="font-size:11px" onclick="alert('Generating consolidated BAA report for all 6 practices...')">📊 BAA Report</button>
+      <button class="btn bg" style="font-size:11px" onclick="alert('Sending new BAA to practice email for countersignature via DocuSign...')">+ Send New BAA</button>
+    </div>
+  </div>
+
+  <div class="notice ng">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span><strong>5 of 6 BAAs fully executed.</strong> Valley Ridge Family Medicine BAA is pending countersignature from Dr. Williams — sent Apr 18, 2026. All other BAAs are current and valid. Next renewal: Athens Sleep BAA (expires Jun 30, 2026).</span>
+  </div>
+
+  <div class="slabel">All Practice BAAs — Sorted by Status</div>
+
+  <!-- Pending -->
+  <div class="doc-card dc-pending" onclick="openDoc('vr-baa')">
+    <div class="doc-icon di-amber">⏳</div>
+    <div class="doc-content">
+      <div class="doc-title">Business Associate Agreement — Valley Ridge Family Medicine</div>
+      <div class="doc-meta">
+        Sent for countersignature: Apr 18, 2026 · DocuSign envelope ID: ds_vr_0418<br>
+        Waiting on: Dr. Michael Williams (Practice Admin) · Reminder sent: Apr 20
+      </div>
+      <div class="doc-tags">
+        <span class="tag ta">Pending Countersignature</span>
+        <span class="tag tb">Enterprise Plan</span>
+        <span class="tag tt">acc_vr001</span>
+      </div>
+    </div>
+    <div class="doc-right">
+      <span class="doc-status ds-pending">⏳ Pending</span>
+      <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="event.stopPropagation();alert('Resending BAA reminder to dr.williams@valleyridgefm.com...')">Resend Reminder</button>
+    </div>
+  </div>
+
+  <!-- Renewal due -->
+  <div class="doc-card dc-renew" onclick="openDoc('athens-baa')">
+    <div class="doc-icon di-blue">🔄</div>
+    <div class="doc-content">
+      <div class="doc-title">Business Associate Agreement — Athens Sleep and Wellness Center</div>
+      <div class="doc-meta">
+        Signed: Jun 30, 2025 · Expires: Jun 30, 2026 (73 days remaining)<br>
+        Both parties: Dr. Subodh Agrawal + James Kim (MOF) · DocuSign ID: ds_as_0630
+      </div>
+      <div class="doc-tags">
+        <span class="tag tb">Renewal Due Jun 30</span>
+        <span class="tag tg">Currently Valid</span>
+        <span class="tag tt">Professional Plan</span>
+      </div>
+    </div>
+    <div class="doc-right">
+      <span class="doc-status ds-renew">🔄 Renew Soon</span>
+      <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="event.stopPropagation();alert('Generating renewal BAA for Athens Sleep. Will be sent to subodh@athenssleepcenter.com 30 days before expiry (Jun 1, 2026).')">Schedule Renewal</button>
+    </div>
+  </div>
+
+  <!-- Signed & current -->
+  <div class="doc-card dc-signed" onclick="openDoc('buchanan-baa')">
+    <div class="doc-icon di-green">✅</div>
+    <div class="doc-content">
+      <div class="doc-title">Business Associate Agreement — Buchanan Rural Clinic</div>
+      <div class="doc-meta">
+        Signed: Mar 15, 2026 · Expires: Mar 15, 2027 · Both parties fully executed<br>
+        Dr. Sarah Patel + James Kim (MOF) · DocuSign ID: ds_bc_0315
+      </div>
+      <div class="doc-tags">
+        <span class="tag tg">Fully Executed</span>
+        <span class="tag tt">Professional Plan</span>
+        <span class="tag tt">364 days remaining</span>
+      </div>
+    </div>
+    <div class="doc-right">
+      <span class="doc-status ds-signed">✓ Signed</span>
+      <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="event.stopPropagation();alert('Downloading BAA-Buchanan-2026.pdf...')">⬇ Download</button>
+    </div>
+  </div>
+
+  <div class="doc-card dc-signed" onclick="openDoc('coweta-baa')">
+    <div class="doc-icon di-green">✅</div>
+    <div class="doc-content">
+      <div class="doc-title">Business Associate Agreement — Coweta Family Medicine</div>
+      <div class="doc-meta">
+        Signed: Apr 1, 2026 · Expires: Apr 1, 2027 · Both parties fully executed<br>
+        Dr. Rachel Torres + James Kim (MOF) · DocuSign ID: ds_cf_0401
+      </div>
+      <div class="doc-tags"><span class="tag tg">Fully Executed</span><span class="tag tt">Professional Plan</span></div>
+    </div>
+    <div class="doc-right">
+      <span class="doc-status ds-signed">✓ Signed</span>
+      <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="event.stopPropagation();alert('Downloading BAA-Coweta-2026.pdf...')">⬇ Download</button>
+    </div>
+  </div>
+
+  <div class="doc-card dc-signed" onclick="openDoc('haralson-baa')">
+    <div class="doc-icon di-green">✅</div>
+    <div class="doc-content">
+      <div class="doc-title">Business Associate Agreement — Haralson County Pediatrics</div>
+      <div class="doc-meta">
+        Signed: Mar 28, 2026 · Expires: Mar 28, 2027 · Both parties fully executed<br>
+        Dr. James Lee + James Kim (MOF) · DocuSign ID: ds_hc_0328
+      </div>
+      <div class="doc-tags"><span class="tag tg">Fully Executed</span><span class="tag tt">Lite Plan</span></div>
+    </div>
+    <div class="doc-right">
+      <span class="doc-status ds-signed">✓ Signed</span>
+      <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="event.stopPropagation();alert('Downloading BAA-Haralson-2026.pdf...')">⬇ Download</button>
+    </div>
+  </div>
+
+  <div class="doc-card dc-signed" onclick="openDoc('wp-baa')">
+    <div class="doc-icon di-green">✅</div>
+    <div class="doc-content">
+      <div class="doc-title">Business Associate Agreement — West Point Urgent Care</div>
+      <div class="doc-meta">
+        Signed: Apr 5, 2026 · Expires: Apr 5, 2027 · Both parties fully executed<br>
+        Dr. Amanda Anderson + James Kim (MOF) · DocuSign ID: ds_wp_0405
+      </div>
+      <div class="doc-tags"><span class="tag tg">Fully Executed</span><span class="tag tt">Professional Plan</span></div>
+    </div>
+    <div class="doc-right">
+      <span class="doc-status ds-signed">✓ Signed</span>
+      <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="event.stopPropagation();alert('Downloading BAA-WestPoint-2026.pdf...')">⬇ Download</button>
+    </div>
+  </div>
+
+  <!-- BAA Content Preview -->
+  <div class="slabel" style="margin-top:4px">BAA Key Terms — Athens Sleep & Wellness (Current Selected)</div>
+  <div class="card">
+    <div class="cbody" style="padding:0">
+      <div style="padding:14px 16px;background:var(--grl);border-bottom:1px solid var(--bdr);font-size:12px;color:var(--tx3);font-style:italic">Business Associate Agreement · HIPAA 45 CFR §164.504(e) · Effective Jun 30, 2025</div>
+      <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px;font-size:12px">
+        <div style="display:flex;gap:10px"><div style="font-weight:700;color:var(--tx);width:180px;flex-shrink:0">Covered Entity</div><div style="color:var(--tx2)">Athens Sleep and Wellness Center (Dr. Subodh Agrawal, NPI 1689977761)</div></div>
+        <div style="display:flex;gap:10px"><div style="font-weight:700;color:var(--tx);width:180px;flex-shrink:0">Business Associate</div><div style="color:var(--tx2)">Medical Office Force LLC (MedFlow AI platform)</div></div>
+        <div style="display:flex;gap:10px"><div style="font-weight:700;color:var(--tx);width:180px;flex-shrink:0">PHI Handled</div><div style="color:var(--tx2)">Patient names, DOB, phone numbers, appointment details, insurance IDs — collected via AI receptionist calls</div></div>
+        <div style="display:flex;gap:10px"><div style="font-weight:700;color:var(--tx);width:180px;flex-shrink:0">Permitted Uses</div><div style="color:var(--tx2)">Appointment scheduling, patient verification, call transcription, message taking — on behalf of Covered Entity</div></div>
+        <div style="display:flex;gap:10px"><div style="font-weight:700;color:var(--tx);width:180px;flex-shrink:0">Sub-processors</div><div style="color:var(--tx2)">AWS (HIPAA BAA), Twilio (HIPAA BAA), Deepgram (BAA), Anthropic via Bedrock (HIPAA-eligible), ElevenLabs (BAA)</div></div>
+        <div style="display:flex;gap:10px"><div style="font-weight:700;color:var(--tx);width:180px;flex-shrink:0">Breach Notification</div><div style="color:var(--tx2)">Within 60 days of discovery to Covered Entity; within 60 days of CE's determination to HHS</div></div>
+        <div style="display:flex;gap:10px"><div style="font-weight:700;color:var(--tx);width:180px;flex-shrink:0">Retention Period</div><div style="color:var(--tx2)">6 years from date of creation or last effective date, whichever is later</div></div>
+        <div style="display:flex;gap:10px"><div style="font-weight:700;color:var(--tx);width:180px;flex-shrink:0">Termination</div><div style="color:var(--tx2)">Either party may terminate with 30 days written notice; PHI returned or destroyed within 60 days</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sp">
+  <div class="spsec">BAA Summary</div>
+  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span style="color:var(--green)">Fully executed</span><span style="font-weight:700;color:var(--green)">5 BAAs</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--al);border-radius:5px;border:1px solid #FDE68A"><span style="color:var(--amber)">Pending signature</span><span style="font-weight:700;color:var(--amber)">1 BAA</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--bl);border-radius:5px;border:1px solid #BFDBFE"><span style="color:var(--blue)">Renewal due (73d)</span><span style="font-weight:700;color:var(--blue)">1 BAA</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Total practices</span><span style="font-weight:700">6</span></div>
+  </div>
+  <div class="spsec">Compliance Score</div>
+  <div style="padding:12px;background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r);margin-bottom:12px;text-align:center">
+    <div style="font-size:36px;font-weight:800;color:#86EFAC;letter-spacing:-2px">96%</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:3px">HIPAA Compliance Score</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:2px">-4 pts: 1 pending BAA</div>
+  </div>
+  <div class="spsec">Upcoming Renewals</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:12px">
+    <div style="padding:6px 9px;background:var(--al);border-radius:5px;border:1px solid #FDE68A">
+      <div style="font-weight:700;color:var(--amber)">Athens Sleep — Jun 30, 2026</div>
+      <div style="color:var(--tx3)">73 days · Auto-renewal queued</div>
+    </div>
+    <div style="padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)">
+      <div style="font-weight:600;color:var(--tx2)">Buchanan Rural — Mar 15, 2027</div>
+      <div style="color:var(--tx3)">364 days · No action needed</div>
+    </div>
+  </div>
+  <div class="spsec">BAA Policy</div>
+  <div style="font-size:11px;color:var(--tx2);line-height:1.7">
+    ✓ Required before any PHI access<br>
+    ✓ 1-year term, auto-renewal<br>
+    ✓ Signed via DocuSign eSignature<br>
+    ✓ Stored encrypted in S3<br>
+    ✓ 6-year retention minimum<br>
+    ✓ Covers all sub-processors
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 2: PRACTICE LEGAL DOCUMENTS ═══ -->
+<div class="panel" id="panel-practice">
+<div class="twoc">
+<div class="scr pad">
+  <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:4px">Practice Legal Documents — Athens Sleep & Wellness</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">Documents signed by Dr. Subodh Agrawal during onboarding and service · All stored encrypted · HIPAA-compliant</div>
+
+  <div class="notice ng">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span><strong>All 4 required legal documents signed.</strong> Athens Sleep is fully onboarded from a legal standpoint. Next required action: BAA renewal on Jun 30, 2026 (auto-reminder set for Jun 1).</span>
+  </div>
+
+  <div class="slabel">Signed Legal Documents</div>
+
+  <div class="doc-card dc-signed" onclick="viewDoc('tos')">
+    <div class="doc-icon di-green">📜</div>
+    <div class="doc-content">
+      <div class="doc-title">Terms of Service — MedFlow AI Platform</div>
+      <div class="doc-meta">
+        Signed: Apr 11, 2026 at 2:14 PM ET · IP: 192.168.1.42 · Browser: Chrome 123<br>
+        Version: TOS-v2.3 · Acceptance method: Checkbox + timestamp in onboarding wizard<br>
+        Signatory: Dr. Subodh Agrawal (subodh@athenssleepcenter.com)
+      </div>
+      <div class="doc-tags"><span class="tag tg">Accepted ✓</span><span class="tag tt">TOS-v2.3</span><span class="tag tt">Step 5 — Onboarding</span></div>
+    </div>
+    <div class="doc-right">
+      <span class="doc-status ds-signed">✓ Accepted</span>
+      <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="event.stopPropagation();alert('Opening Terms of Service v2.3...')">View TOS</button>
+    </div>
+  </div>
+
+  <div class="doc-card dc-signed" onclick="viewDoc('baa')">
+    <div class="doc-icon di-green">🏥</div>
+    <div class="doc-content">
+      <div class="doc-title">HIPAA Business Associate Agreement (BAA)</div>
+      <div class="doc-meta">
+        Signed: Jun 30, 2025 · Countersigned: Jun 30, 2025 · DocuSign Envelope ID: ds_as_0630<br>
+        Effective: Jun 30, 2025 · Expires: Jun 30, 2026 (73 days remaining)<br>
+        Parties: Dr. Subodh Agrawal + James Kim (CEO, Medical Office Force LLC)
+      </div>
+      <div class="doc-tags"><span class="tag tg">Executed ✓</span><span class="tag tb">🔄 Renewal Jun 30</span><span class="tag tt">HIPAA 45 CFR §164.504(e)</span></div>
+    </div>
+    <div class="doc-right">
+      <span class="doc-status ds-renew">🔄 Renew Soon</span>
+      <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="event.stopPropagation();alert('Downloading BAA-AthensSlep-2025.pdf...')">⬇ PDF</button>
+    </div>
+  </div>
+
+  <div class="doc-card dc-signed" onclick="viewDoc('privacy')">
+    <div class="doc-icon di-green">🔒</div>
+    <div class="doc-content">
+      <div class="doc-title">Privacy Policy & Data Processing Agreement</div>
+      <div class="doc-meta">
+        Accepted: Apr 11, 2026 · Version: PP-v1.8 · Governs data handling, retention, and patient PHI processing<br>
+        Covers: Call recordings, transcripts, patient identifiers, appointment data · AWS S3 storage (AES-256)
+      </div>
+      <div class="doc-tags"><span class="tag tg">Accepted ✓</span><span class="tag tt">PP-v1.8</span><span class="tag tt">GDPR-compatible</span></div>
+    </div>
+    <div class="doc-right">
+      <span class="doc-status ds-signed">✓ Accepted</span>
+      <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="event.stopPropagation();alert('Opening Privacy Policy v1.8...')">View</button>
+    </div>
+  </div>
+
+  <div class="doc-card dc-signed" onclick="viewDoc('tcpa')">
+    <div class="doc-icon di-green">📱</div>
+    <div class="doc-content">
+      <div class="doc-title">TCPA Outbound Communications Consent</div>
+      <div class="doc-meta">
+        Signed: Apr 11, 2026 · Authorizes: Outbound AI calls and SMS to patients for appointment reminders,<br>
+        no-show follow-ups, and recall campaigns · 10DLC registered · Quiet hours enforced (8 AM–8 PM)
+      </div>
+      <div class="doc-tags"><span class="tag tg">Authorized ✓</span><span class="tag tt">TCPA Compliant</span><span class="tag tt">10DLC: C-4729821</span></div>
+    </div>
+    <div class="doc-right">
+      <span class="doc-status ds-signed">✓ Authorized</span>
+      <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="event.stopPropagation();alert('Viewing TCPA consent document...')">View</button>
+    </div>
+  </div>
+
+  <!-- Document viewer panel -->
+  <div class="slabel" style="margin-top:4px">Document Detail — HIPAA BAA (Selected)</div>
+  <div class="card">
+    <div class="chead"><div class="cicon icg">🏥</div><div><div class="ctitle">HIPAA BAA — Certificate of Execution</div><div class="csub">DocuSign audit trail · Cryptographic signature verification · Apr 11, 2026</div></div><div class="chr"><button class="btn bo" style="font-size:11px" onclick="alert('Downloading certificate of completion from DocuSign...')">⬇ Certificate</button><button class="btn bg" style="font-size:11px" onclick="alert('Opening full BAA document...')">View Full BAA</button></div></div>
+    <div class="cbody">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div style="padding:10px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)">
+          <div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:6px">Signature 1 — Practice</div>
+          <div style="font-size:12px;font-weight:700;color:var(--tx)">Dr. Subodh Agrawal</div>
+          <div style="font-size:10px;color:var(--tx3);margin-top:2px">subodh@athenssleepcenter.com<br>Jun 30, 2025 at 9:14 AM ET<br>IP: 98.167.xx.xx · DocuSign verified</div>
+          <div style="margin-top:6px"><span class="tag tg">✓ Signed</span></div>
+        </div>
+        <div style="padding:10px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr)">
+          <div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:6px">Signature 2 — MOF</div>
+          <div style="font-size:12px;font-weight:700;color:var(--tx)">James Kim</div>
+          <div style="font-size:10px;color:var(--tx3);margin-top:2px">james@medicalofficeforce.com<br>Jun 30, 2025 at 10:02 AM ET<br>IP: 74.125.xx.xx · DocuSign verified</div>
+          <div style="margin-top:6px"><span class="tag tg">✓ Countersigned</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">DocuSign Envelope ID</span><span class="mono" style="font-weight:700">ds_as_0630_2025</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">Certificate hash (SHA-256)</span><span class="mono" style="font-weight:700;font-size:10px">a7f2c1d8e3b9...</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">S3 storage path</span><span class="mono" style="font-size:10px;color:var(--green)">s3://mof-legal/acc_aswc/baa-2025.pdf</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">Encryption</span><span style="font-weight:700;color:var(--green)">AES-256 at rest ✓</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--al);border-radius:4px;border:1px solid #FDE68A"><span style="color:var(--amber)">Expiry / renewal date</span><span style="font-weight:700;color:var(--amber)">Jun 30, 2026 (73 days)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sp">
+  <div class="spsec">Document Status</div>
+  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>Terms of Service</span><span style="font-weight:700;color:var(--green)">✓ Signed</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--bl);border-radius:5px;border:1px solid #BFDBFE"><span>HIPAA BAA</span><span style="font-weight:700;color:var(--blue)">🔄 Renew Jun 30</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>Privacy Policy</span><span style="font-weight:700;color:var(--green)">✓ Accepted</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>TCPA Consent</span><span style="font-weight:700;color:var(--green)">✓ Authorized</span></div>
+  </div>
+  <div class="spsec">Data Retention</div>
+  <div style="font-size:11px;color:var(--tx2);line-height:1.8;margin-bottom:10px">
+    📄 BAA documents: 6 years<br>
+    📞 Call recordings: 7 years<br>
+    📝 Transcripts: 6 years<br>
+    📋 Audit logs: 6 years<br>
+    💳 Billing records: 7 years<br>
+    🗑 Patient data on termination: destroy within 60 days
+  </div>
+  <div class="spsec">Legal Contact</div>
+  <div style="font-size:11px;color:var(--tx2);line-height:1.7">
+    Questions about your legal documents? Contact:<br>
+    <strong>legal@medicalofficeforce.com</strong><br>
+    Medical Office Force LLC<br>
+    Atlanta, GA 30301
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 3: HIPAA AUDIT TRAIL ═══ -->
+<div class="panel" id="panel-audit">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div><div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px">HIPAA Audit Trail — Immutable Log</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">Every PHI access logged · Append-only · Cannot be deleted or modified · 6-year retention · AES-256 encrypted</div></div>
+    <div style="display:flex;gap:6px">
+      <select class="fs" style="width:160px;font-size:11px;padding:5px 8px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-family:'Outfit',sans-serif;outline:none;background:var(--sur)"><option>All practices</option><option>Athens Sleep only</option><option>Valley Ridge only</option></select>
+      <button class="btn bo" style="font-size:11px">⬇ Export Log</button>
+    </div>
+  </div>
+
+  <div class="notice nb">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span><strong>Immutable audit log.</strong> Every entry is append-only — no admin or developer can delete or modify any audit record. Log is stored in a separate DynamoDB table with write-once policy and CloudTrail protection. All PHI access is logged automatically via middleware.</span>
+  </div>
+
+  <!-- Risk filter -->
+  <div style="display:flex;gap:6px;margin-bottom:12px">
+    <button class="btn" style="font-size:11px;background:var(--navy);color:#fff;padding:5px 12px" onclick="filterAudit('all',this)">All Events</button>
+    <button class="btn bo" style="font-size:11px;padding:5px 12px" onclick="filterAudit('phi',this)">PHI Access</button>
+    <button class="btn bo" style="font-size:11px;padding:5px 12px" onclick="filterAudit('high',this)">High Risk</button>
+    <button class="btn bo" style="font-size:11px;padding:5px 12px" onclick="filterAudit('admin',this)">Admin Actions</button>
+    <input type="text" style="margin-left:auto;padding:5px 10px;border:1.5px solid var(--bdr);border-radius:20px;font-size:11px;font-family:'Outfit',sans-serif;outline:none;width:200px" placeholder="Search events...">
+  </div>
+
+  <div class="card">
+    <div class="chead" style="background:var(--grl)"><div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px">Today · April 18, 2026 · 53 events logged</div><div class="chr"><span class="tag tg">0 violations</span><span class="tag tg">0 unauthorized</span></div></div>
+    <div class="cbody" style="padding:10px 14px">
+      <div class="audit-line">
+        <div class="audit-dot ad-blue"></div>
+        <div class="audit-time">10:43 AM</div>
+        <div class="audit-content">
+          <div class="audit-action">PHI Access — Call transcript viewed</div>
+          <div class="audit-detail">Transcript for call call_0418_1042 (Sarah Johnson) read by Dr. Subodh Agrawal · Resource: transcript_0042917</div>
+          <div class="audit-actor"><span class="audit-risk ar-low">low risk</span><span>Dr. Subodh Agrawal · 98.167.xx.xx · Athens Sleep practice dashboard</span></div>
+        </div>
+      </div>
+      <div class="audit-line">
+        <div class="audit-dot ad-amber"></div>
+        <div class="audit-time">10:38 AM</div>
+        <div class="audit-content">
+          <div class="audit-action">Admin PHI Access — Impersonation session opened</div>
+          <div class="audit-detail">Mike Torres (Technical Admin) accessed Valley Ridge FM account · Reason: Webhook failure repair · Session ID: ses_vr_0418_1038</div>
+          <div class="audit-actor"><span class="audit-risk ar-med">medium risk</span><span>Mike Torres · 74.125.xx.xx · MOF Admin Console</span></div>
+        </div>
+      </div>
+      <div class="audit-line">
+        <div class="audit-dot ad-green"></div>
+        <div class="audit-time">10:31 AM</div>
+        <div class="audit-content">
+          <div class="audit-action">Appointment booked — PHI written</div>
+          <div class="audit-detail">Aria AI created appointment for Sarah Johnson (DOB 1978-03-15) · appt_id: appt_0042918 · Written to athenahealth FHIR</div>
+          <div class="audit-actor"><span class="audit-risk ar-low">low risk</span><span>Aria AI System · Internal · Athens Sleep agent pipeline</span></div>
+        </div>
+      </div>
+      <div class="audit-line">
+        <div class="audit-dot ad-green"></div>
+        <div class="audit-time">10:18 AM</div>
+        <div class="audit-content">
+          <div class="audit-action">Call transcript generated — PHI written</div>
+          <div class="audit-detail">Auto-generated transcript + AI summary for call_0418_1018 (Marcus Williams) · Stored encrypted S3: s3://mof-transcripts/acc_aswc/</div>
+          <div class="audit-actor"><span class="audit-risk ar-low">low risk</span><span>MedFlow AI System · Internal · Post-call processor</span></div>
+        </div>
+      </div>
+      <div class="audit-line">
+        <div class="audit-dot ad-green"></div>
+        <div class="audit-time">10:05 AM</div>
+        <div class="audit-content">
+          <div class="audit-action">PHI Access — Call log viewed (paginated)</div>
+          <div class="audit-detail">Practice admin viewed call log page 1 · 10 records fetched · Athens Sleep · No individual PHI record expanded</div>
+          <div class="audit-actor"><span class="audit-risk ar-low">low risk</span><span>Dr. Subodh Agrawal · 98.167.xx.xx · Practice Dashboard</span></div>
+        </div>
+      </div>
+      <div class="audit-line">
+        <div class="audit-dot ad-amber"></div>
+        <div class="audit-time">09:15 AM</div>
+        <div class="audit-content">
+          <div class="audit-action">Admin — Prompt engine modified</div>
+          <div class="audit-detail">James Kim updated system prompt for Athens Sleep agent · Prompt v2.0 → v2.1 · SHA: a4f2c1d · No PHI in prompt</div>
+          <div class="audit-actor"><span class="audit-risk ar-med">medium risk</span><span>James Kim · 142.250.xx.xx · MOF Admin Console</span></div>
+        </div>
+      </div>
+      <div class="audit-line">
+        <div class="audit-dot ad-blue"></div>
+        <div class="audit-time">08:47 AM</div>
+        <div class="audit-content">
+          <div class="audit-action">PHI Access — Invoice downloaded</div>
+          <div class="audit-detail">Dr. Agrawal downloaded INV-2026-001 PDF · File: INV-2026-001.pdf · Contains: billing data only, no clinical PHI</div>
+          <div class="audit-actor"><span class="audit-risk ar-low">low risk</span><span>Dr. Subodh Agrawal · 98.167.xx.xx · Billing Dashboard</span></div>
+        </div>
+      </div>
+      <div class="audit-line">
+        <div class="audit-dot ad-green"></div>
+        <div class="audit-time">08:30 AM</div>
+        <div class="audit-content">
+          <div class="audit-action">FHIR Push — Appointment confirmed in EHR</div>
+          <div class="audit-detail">Communication resource + Appointment pushed to athenahealth for David Kim (PAT-0031204) · FHIR R4 · Encrypted in transit (TLS 1.3)</div>
+          <div class="audit-actor"><span class="audit-risk ar-low">low risk</span><span>MedFlow AI System · Internal · FHIR Integration Service</span></div>
+        </div>
+      </div>
+      <div class="audit-line">
+        <div class="audit-dot ad-red"></div>
+        <div class="audit-time">08:14 AM</div>
+        <div class="audit-content">
+          <div class="audit-action">Failed login attempt — Possible unauthorized access</div>
+          <div class="audit-detail">3 failed login attempts for staff@athenssleepcenter.com from IP 203.0.xx.xx (flagged: unusual geolocation) · Account locked for 30 min</div>
+          <div class="audit-actor"><span class="audit-risk ar-high">high risk</span><span>Unknown · 203.0.xx.xx · Login Portal · Account locked automatically</span></div>
+        </div>
+      </div>
+      <div class="audit-line">
+        <div class="audit-dot ad-green"></div>
+        <div class="audit-time">08:01 AM</div>
+        <div class="audit-content">
+          <div class="audit-action">System — Audit log integrity check passed</div>
+          <div class="audit-detail">Daily log integrity verification · No gaps, deletions, or modifications detected · Hash chain verified · 47,291 total entries</div>
+          <div class="audit-actor"><span class="audit-risk ar-low">low risk</span><span>MedFlow Compliance Engine · Internal · Scheduled 8:00 AM daily</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sp">
+  <div class="spsec">Audit Summary — Today</div>
+  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Total events</span><span style="font-weight:700">53</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>PHI access events</span><span style="font-weight:700;color:var(--blue)">18</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Admin actions</span><span style="font-weight:700">7</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--al);border-radius:4px"><span style="color:var(--amber)">High risk events</span><span style="font-weight:700;color:var(--red)">1 ⚠ (login fail)</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gl);border-radius:4px"><span style="color:var(--green)">Violations</span><span style="font-weight:700;color:var(--green)">0</span></div>
+  </div>
+  <div class="spsec">Log Integrity</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:4px"><span style="color:var(--green)">✓</span><span>Append-only write policy</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:4px"><span style="color:var(--green)">✓</span><span>Hash chain verified today</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:4px"><span style="color:var(--green)">✓</span><span>CloudTrail protection active</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:4px"><span style="color:var(--green)">✓</span><span>No gaps detected (47,291 entries)</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:4px"><span style="color:var(--green)">✓</span><span>6-year retention policy active</span></div>
+  </div>
+  <div class="spsec">Monthly Audit Review</div>
+  <div style="font-size:11px;color:var(--tx2);line-height:1.7">Required by HIPAA:<br>Monthly review by Compliance Officer (James Kim)<br><br>Last review: Apr 1, 2026 ✓<br>Next review: May 1, 2026<br>Findings: 0 violations<br>Anomalies flagged: 2 (both resolved)</div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 4: ANNUAL RE-ATTESTATION ═══ -->
+<div class="panel" id="panel-attest">
+<div class="twoc">
+<div class="scr pad">
+  <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:4px">Annual HIPAA Re-Attestation Workflow</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">Required annually under HIPAA administrative safeguards · Due June 30, 2026 · All 6 practices must complete</div>
+
+  <div class="notice na">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+    <span><strong>2026 re-attestation due June 30, 2026.</strong> Athens Sleep must re-attest that all staff have completed HIPAA training, the practice's risk assessment has been reviewed, and the BAA is renewed. Automated reminder emails start May 30.</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+    <!-- MOF side -->
+    <div>
+      <div class="slabel">MOF Internal — 2026 Annual Compliance</div>
+      <div class="attest-step as-done">
+        <div class="as-num asn-done">✓</div>
+        <div class="as-content">
+          <div class="as-title">Annual HIPAA Risk Assessment</div>
+          <div class="as-desc">NIST SP 800-66 framework · All systems, vendors, and data flows reviewed · No critical gaps found</div>
+          <div class="as-date">Completed: Mar 15, 2026 · James Kim (CEO)</div>
+        </div>
+      </div>
+      <div class="attest-step as-done">
+        <div class="as-num asn-done">✓</div>
+        <div class="as-content">
+          <div class="as-title">Workforce HIPAA Training</div>
+          <div class="as-desc">All 8 MOF employees completed annual HIPAA training · Certificates on file · KnowBe4 platform</div>
+          <div class="as-date">Completed: Apr 1, 2026 · 100% completion rate</div>
+        </div>
+      </div>
+      <div class="attest-step as-done">
+        <div class="as-num asn-done">✓</div>
+        <div class="as-content">
+          <div class="as-title">Vendor BAA Review</div>
+          <div class="as-desc">All 7 vendor BAAs reviewed · AWS, Twilio, Deepgram, Anthropic/Bedrock, ElevenLabs, Pinecone, DocuSign</div>
+          <div class="as-date">Completed: Apr 5, 2026 · 7/7 current</div>
+        </div>
+      </div>
+      <div class="attest-step as-active">
+        <div class="as-num asn-active">4</div>
+        <div class="as-content">
+          <div class="as-title">Penetration Test — Annual</div>
+          <div class="as-desc">Third-party pen test by CrowdStrike · Scope: all APIs, admin portals, data stores · Results awaited</div>
+          <div class="as-date">Scheduled: May 15, 2026 · In progress</div>
+        </div>
+      </div>
+      <div class="attest-step as-todo">
+        <div class="as-num asn-todo">5</div>
+        <div class="as-content">
+          <div class="as-title">SOC 2 Type II Audit</div>
+          <div class="as-desc">Annual SOC 2 Type II audit · Covers security, availability, confidentiality · Required for Enterprise clients</div>
+          <div class="as-date">Scheduled: Jun 1, 2026 · Auditor: Deloitte</div>
+        </div>
+      </div>
+      <div class="attest-step as-todo">
+        <div class="as-num asn-todo">6</div>
+        <div class="as-content">
+          <div class="as-title">Board Sign-Off — Compliance Statement</div>
+          <div class="as-desc">Annual compliance attestation signed by CEO for all regulatory bodies</div>
+          <div class="as-date">Due: Jun 30, 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Practice side -->
+    <div>
+      <div class="slabel">Practice Side — Athens Sleep & Wellness</div>
+      <div class="attest-step as-done">
+        <div class="as-num asn-done">✓</div>
+        <div class="as-content">
+          <div class="as-title">HIPAA Workforce Training Attestation</div>
+          <div class="as-desc">Dr. Agrawal attested that all staff handling patient PHI completed annual HIPAA training</div>
+          <div class="as-date">Completed: Apr 11, 2026 · Checkbox acceptance in onboarding</div>
+        </div>
+      </div>
+      <div class="attest-step as-done">
+        <div class="as-num asn-done">✓</div>
+        <div class="as-content">
+          <div class="as-title">Technology Safeguards Acceptance</div>
+          <div class="as-desc">Practice confirmed understanding of MedFlow AI technical safeguards (AES-256, TLS, RBAC, auto-logout)</div>
+          <div class="as-date">Completed: Apr 11, 2026 · Privacy Policy acceptance</div>
+        </div>
+      </div>
+      <div class="attest-step as-done">
+        <div class="as-num asn-done">✓</div>
+        <div class="as-content">
+          <div class="as-title">Terms of Service + Privacy Policy</div>
+          <div class="as-desc">All 4 legal documents signed/accepted during onboarding · Stored with DocuSign timestamps</div>
+          <div class="as-date">Completed: Apr 11, 2026 · TOS-v2.3 + PP-v1.8</div>
+        </div>
+      </div>
+      <div class="attest-step as-active">
+        <div class="as-num asn-active">4</div>
+        <div class="as-content">
+          <div class="as-title">BAA Annual Renewal</div>
+          <div class="as-desc">Athens Sleep BAA expires Jun 30, 2026. Renewal document will be sent Jun 1 for countersignature</div>
+          <div class="as-date">Due: Jun 30, 2026 · Auto-reminder: Jun 1</div>
+        </div>
+      </div>
+      <div class="attest-step as-todo">
+        <div class="as-num asn-todo">5</div>
+        <div class="as-content">
+          <div class="as-title">Annual Re-Attestation Signature</div>
+          <div class="as-desc">Dr. Agrawal must e-sign the 2026 annual attestation form confirming continued HIPAA compliance commitment</div>
+          <div class="as-date">Due: Jun 30, 2026 · Will be emailed Jun 1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All practices status -->
+  <div class="slabel">2026 Re-Attestation Status — All Practices</div>
+  <div class="card">
+    <div class="cbody" style="padding:0">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead><tr style="background:var(--grl)"><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Practice</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Training</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">BAA Status</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Attestation</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Overall</th></tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:9px 14px;font-weight:600">Athens Sleep & Wellness</td><td style="padding:9px 14px"><span class="tag tg">✓ Done</span></td><td style="padding:9px 14px"><span class="tag tb">🔄 Jun 30</span></td><td style="padding:9px 14px"><span class="tag tt">Pending Jun 1</span></td><td style="padding:9px 14px"><span class="tag ta">In Progress</span></td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:9px 14px;font-weight:600">Buchanan Rural Clinic</td><td style="padding:9px 14px"><span class="tag tg">✓ Done</span></td><td style="padding:9px 14px"><span class="tag tg">✓ Valid</span></td><td style="padding:9px 14px"><span class="tag tg">✓ Signed</span></td><td style="padding:9px 14px"><span class="tag tg">Complete ✓</span></td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:9px 14px;font-weight:600">Coweta Family Medicine</td><td style="padding:9px 14px"><span class="tag tg">✓ Done</span></td><td style="padding:9px 14px"><span class="tag tg">✓ Valid</span></td><td style="padding:9px 14px"><span class="tag tt">Pending Jun 1</span></td><td style="padding:9px 14px"><span class="tag ta">In Progress</span></td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:9px 14px;font-weight:600">Haralson County Peds</td><td style="padding:9px 14px"><span class="tag tg">✓ Done</span></td><td style="padding:9px 14px"><span class="tag tg">✓ Valid</span></td><td style="padding:9px 14px"><span class="tag tg">✓ Signed</span></td><td style="padding:9px 14px"><span class="tag tg">Complete ✓</span></td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:9px 14px;font-weight:600">Valley Ridge Family Med</td><td style="padding:9px 14px"><span class="tag ta">⚠ Pending</span></td><td style="padding:9px 14px"><span class="tag ta">⚠ Unsigned</span></td><td style="padding:9px 14px"><span class="tag tr">Not started</span></td><td style="padding:9px 14px"><span class="tag tr">Action needed</span></td></tr>
+          <tr><td style="padding:9px 14px;font-weight:600">West Point Urgent Care</td><td style="padding:9px 14px"><span class="tag tg">✓ Done</span></td><td style="padding:9px 14px"><span class="tag tg">✓ Valid</span></td><td style="padding:9px 14px"><span class="tag tg">✓ Signed</span></td><td style="padding:9px 14px"><span class="tag tg">Complete ✓</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="sp">
+  <div class="spsec">2026 Attestation Status</div>
+  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span style="color:var(--green)">Complete</span><span style="font-weight:700;color:var(--green)">3 practices</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--al);border-radius:5px;border:1px solid #FDE68A"><span style="color:var(--amber)">In progress</span><span style="font-weight:700;color:var(--amber)">2 practices</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--rl);border-radius:5px;border:1px solid #FECACA"><span style="color:var(--red)">Action needed</span><span style="font-weight:700;color:var(--red)">1 practice</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Due date</span><span style="font-weight:700">Jun 30, 2026</span></div>
+  </div>
+  <div class="spsec">MOF Internal Status</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:4px"><span style="color:var(--green)">✓</span><span>Risk assessment done</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:4px"><span style="color:var(--green)">✓</span><span>Staff training 100%</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--gl);border-radius:4px"><span style="color:var(--green)">✓</span><span>Vendor BAAs reviewed</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--al);border-radius:4px;border:1px solid #FDE68A"><span style="color:var(--amber)">⏳</span><span>Pen test in progress</span></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">○</span><span>SOC 2 audit pending</span></div>
+  </div>
+  <button class="btn bg" style="width:100%;justify-content:center;font-size:11px" onclick="alert('Sending re-attestation reminders to all 3 pending practices (Athens Sleep, Coweta, Valley Ridge)...')">Send Attestation Reminders</button>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 5: BREACH NOTIFICATIONS ═══ -->
+<div class="panel" id="panel-breach">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div><div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px">Breach Notification Tracker</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">HIPAA requires notification within 60 days of discovery · 0 reportable breaches to date · All incidents investigated</div></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn bo" style="font-size:11px" onclick="alert('Generating HIPAA breach log report for compliance officer review...')">📊 Breach Report</button>
+      <button class="btn br" style="font-size:11px" onclick="alert('Logging a new potential breach incident...\n\nStep 1: Describe the incident\nStep 2: Assess PHI involved\nStep 3: Determine notification requirements\nStep 4: Notify affected parties if required')">+ Log New Incident</button>
+    </div>
+  </div>
+
+  <div class="notice ng">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span><strong>0 reportable breaches to date.</strong> All 3 security incidents investigated and determined to be non-reportable events under HIPAA's breach assessment framework (45 CFR §164.402). Full documentation maintained.</span>
+  </div>
+
+  <div class="slabel">Security Incidents — All Investigations</div>
+
+  <!-- Investigated - no breach -->
+  <div class="breach-card bc-closed">
+    <div class="breach-header">
+      <div>
+        <div class="breach-title">Failed Login Attempt — Staff Portal</div>
+        <div style="font-size:11px;color:var(--tx3);margin-top:2px">Incident ID: INC-2026-003 · Athens Sleep & Wellness · Apr 18, 2026 8:14 AM</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <span class="tag tg">✓ Non-Reportable</span>
+        <span style="font-size:10px;color:var(--tx3)">Closed Apr 18, 2026</span>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--tx2);line-height:1.6;margin-bottom:10px">3 failed login attempts on staff@athenssleepcenter.com from unusual IP (203.0.xx.xx — Eastern Europe). Account auto-locked for 30 minutes. No PHI accessed. Investigation: likely credential stuffing bot. No breach — account locked before any access.</div>
+    <div class="breach-timeline">
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Detected</div><div class="bt-date">8:14 AM</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Assessed</div><div class="bt-date">8:30 AM</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Contained</div><div class="bt-date">8:14 AM</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Determined</div><div class="bt-date">8:45 AM</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Closed</div><div class="bt-date">9:00 AM</div></div>
+    </div>
+  </div>
+
+  <!-- Investigated - no breach -->
+  <div class="breach-card bc-closed">
+    <div class="breach-header">
+      <div>
+        <div class="breach-title">AWS ECS Maintenance Outage — Webhook Down</div>
+        <div style="font-size:11px;color:var(--tx3);margin-top:2px">Incident ID: INC-2026-002 · All Practices · Apr 5, 2026 2:15 AM</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <span class="tag tg">✓ Non-Reportable</span>
+        <span style="font-size:10px;color:var(--tx3)">Closed Apr 5, 2026</span>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--tx2);line-height:1.6;margin-bottom:10px">AWS ECS maintenance caused voice webhook to go offline for 1h 57m (2:15 AM – 4:12 AM). 14 calls failed to connect during window. No PHI accessed, leaked, or compromised — webhook failure means calls didn't connect, not that data was exposed. Auto-healed.</div>
+    <div class="breach-timeline">
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Detected</div><div class="bt-date">2:16 AM</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Assessed</div><div class="bt-date">2:20 AM</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Contained</div><div class="bt-date">4:12 AM</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Determined</div><div class="bt-date">9:00 AM</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Closed</div><div class="bt-date">Apr 5</div></div>
+    </div>
+  </div>
+
+  <!-- Historical - all clear -->
+  <div class="breach-card bc-closed">
+    <div class="breach-header">
+      <div>
+        <div class="breach-title">Misdirected Email — Patient Appointment Confirmation</div>
+        <div style="font-size:11px;color:var(--tx3);margin-top:2px">Incident ID: INC-2026-001 · Athens Sleep & Wellness · Mar 20, 2026</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <span class="tag tg">✓ Non-Reportable (Low Risk)</span>
+        <span style="font-size:10px;color:var(--tx3)">Closed Mar 22, 2026</span>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--tx2);line-height:1.6;margin-bottom:10px">Appointment confirmation SMS sent to incorrect phone number due to data entry error by staff (not Aria). PHI involved: patient name + appointment date/time (no clinical details). HHS "Low Probability of Compromise" assessment completed — misdirected SMS to unknown number does not meet breach reporting threshold. Patient notified directly.</div>
+    <div class="breach-timeline">
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Detected</div><div class="bt-date">Mar 20</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Assessed</div><div class="bt-date">Mar 20</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Contained</div><div class="bt-date">Mar 20</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Determined</div><div class="bt-date">Mar 21</div></div>
+      <div class="bt-line btl-done"></div>
+      <div class="bt-step"><div class="bt-dot btd-done"></div><div class="bt-label">Closed</div><div class="bt-date">Mar 22</div></div>
+    </div>
+  </div>
+
+  <!-- HIPAA notification requirements -->
+  <div class="slabel" style="margin-top:4px">HIPAA Breach Notification Requirements</div>
+  <div class="card">
+    <div class="cbody">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:11px">
+        <div style="padding:10px;border-radius:var(--rs);border:1px solid var(--bdr);background:var(--grl)"><div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:5px">Individuals Affected</div><div style="font-weight:700;color:var(--tx)">Within 60 days of discovery</div><div style="color:var(--tx3);margin-top:3px">Written notice to each affected individual (or next of kin)</div></div>
+        <div style="padding:10px;border-radius:var(--rs);border:1px solid var(--bdr);background:var(--grl)"><div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:5px">HHS Secretary</div><div style="font-weight:700;color:var(--tx)">&lt;500: Annually · &gt;500: Within 60 days</div><div style="color:var(--tx3);margin-top:3px">Submit via HHS Breach Reporting Portal</div></div>
+        <div style="padding:10px;border-radius:var(--rs);border:1px solid var(--bdr);background:var(--grl)"><div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:5px">Media Notice</div><div style="font-weight:700;color:var(--tx)">Only if &gt;500 in single state</div><div style="color:var(--tx3);margin-top:3px">Prominent media outlet in affected state</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sp">
+  <div class="spsec">Breach Summary</div>
+  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span style="color:var(--green)">Reportable breaches</span><span style="font-weight:700;color:var(--green)">0</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Incidents investigated</span><span style="font-weight:700">3</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>All non-reportable</span><span style="font-weight:700;color:var(--green)">✓</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>HHS submissions</span><span style="font-weight:700">0 required</span></div>
+  </div>
+  <div class="spsec">Breach Response Plan</div>
+  <div style="font-size:11px;color:var(--tx2);line-height:1.8;margin-bottom:10px">
+    1. Detect &amp; log incident<br>
+    2. Contain (within hours)<br>
+    3. Assess PHI involved<br>
+    4. "Low probability of compromise" test<br>
+    5. Notify individuals if reportable (60d)<br>
+    6. Notify HHS if required<br>
+    7. Document &amp; close
+  </div>
+  <div class="spsec">Key Contacts</div>
+  <div style="font-size:11px;color:var(--tx2);line-height:1.7">
+    <strong>Privacy Officer:</strong> James Kim<br>
+    james@medicalofficeforce.com<br><br>
+    <strong>Legal Counsel:</strong> Baker McKenzie LLP<br>
+    hipaa-counsel@bakermckenzie.com<br><br>
+    <strong>HHS Breach Portal:</strong><br>
+    ocrportal.hhs.gov
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 6: VENDOR BAA REGISTRY ═══ -->
+<div class="panel" id="panel-vendor">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div><div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px">Vendor BAA Registry</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">All sub-processors handling PHI on behalf of MOF · HIPAA requires BAA with each vendor · 7 vendors · All current</div></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn bo" style="font-size:11px" onclick="alert('Exporting vendor BAA registry as PDF...')">⬇ Export Registry</button>
+      <button class="btn bg" style="font-size:11px" onclick="alert('Add new vendor to BAA registry...')">+ Add Vendor</button>
+    </div>
+  </div>
+
+  <div class="notice ng">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span><strong>All 7 vendor BAAs current.</strong> Every third-party service that touches patient PHI has a signed Business Associate Agreement on file. Annual review completed Apr 5, 2026. No gaps or expired BAAs.</span>
+  </div>
+
+  <div class="card">
+    <div class="chead"><div class="cicon icg">🏢</div><div><div class="ctitle">Sub-Processor BAA Registry — MedFlow AI</div><div class="csub">All vendors handling PHI on behalf of MOF practices · HIPAA 45 CFR §164.308(b)</div></div><div class="chr"><span class="tag tg">7/7 Current ✓</span></div></div>
+    <div class="cbody" style="padding:0">
+      <div class="vendor-row">
+        <div class="vendor-logo">☁️</div>
+        <div>
+          <div class="vendor-name">Amazon Web Services (AWS)</div>
+          <div class="vendor-role">Cloud infrastructure · RDS (PostgreSQL) · S3 · ECS · Secrets Manager · HIPAA-eligible services</div>
+        </div>
+        <div class="vendor-right">
+          <span class="tag tg">BAA Active ✓</span>
+          <div class="vendor-date">Signed: Jan 1, 2025 · No expiry (AWS standard)</div>
+          <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="alert('AWS BAA: aws.amazon.com/compliance/hipaa-eligible-services-reference\nBAA is standard for all HIPAA-eligible AWS services, no specific expiry, governed by AWS Customer Agreement')">View</button>
+        </div>
+      </div>
+      <div class="vendor-row">
+        <div class="vendor-logo">📞</div>
+        <div>
+          <div class="vendor-name">Twilio Inc.</div>
+          <div class="vendor-role">Telephony (voice + SMS) · Call recording · Lookup v2 · Handles caller phone numbers and call data</div>
+        </div>
+        <div class="vendor-right">
+          <span class="tag tg">BAA Active ✓</span>
+          <div class="vendor-date">Signed: Dec 15, 2024 · Annual renewal: Dec 15, 2025</div>
+          <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="alert('Downloading Twilio BAA-2024.pdf...')">⬇ PDF</button>
+        </div>
+      </div>
+      <div class="vendor-row">
+        <div class="vendor-logo">🎙️</div>
+        <div>
+          <div class="vendor-name">Deepgram Inc.</div>
+          <div class="vendor-role">Speech-to-Text (STT) · Nova-2 model · Real-time transcription of patient calls · HIPAA BAA available</div>
+        </div>
+        <div class="vendor-right">
+          <span class="tag tg">BAA Active ✓</span>
+          <div class="vendor-date">Signed: Jan 10, 2025 · Annual: Jan 10, 2026</div>
+          <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="alert('Downloading Deepgram BAA-2025.pdf...')">⬇ PDF</button>
+        </div>
+      </div>
+      <div class="vendor-row">
+        <div class="vendor-logo">🤖</div>
+        <div>
+          <div class="vendor-name">Anthropic / AWS Bedrock (Claude)</div>
+          <div class="vendor-role">LLM inference · Claude Sonnet via AWS Bedrock · HIPAA-eligible through AWS · Processes patient intent data</div>
+        </div>
+        <div class="vendor-right">
+          <span class="tag tg">HIPAA-eligible ✓</span>
+          <div class="vendor-date">Covered under AWS BAA · Bedrock HIPAA-eligible</div>
+          <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="alert('Anthropic Claude via AWS Bedrock is covered under the existing AWS BAA. Bedrock is listed as a HIPAA-eligible service. No separate Anthropic BAA required when using Bedrock.')">Details</button>
+        </div>
+      </div>
+      <div class="vendor-row">
+        <div class="vendor-logo">🔊</div>
+        <div>
+          <div class="vendor-name">ElevenLabs</div>
+          <div class="vendor-role">Text-to-Speech (TTS) · Natural voice synthesis · Aria's voice · Enterprise BAA available</div>
+        </div>
+        <div class="vendor-right">
+          <span class="tag tg">BAA Active ✓</span>
+          <div class="vendor-date">Signed: Feb 1, 2025 · Enterprise contract</div>
+          <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="alert('Downloading ElevenLabs Enterprise BAA-2025.pdf...')">⬇ PDF</button>
+        </div>
+      </div>
+      <div class="vendor-row">
+        <div class="vendor-logo">🔍</div>
+        <div>
+          <div class="vendor-name">Pinecone</div>
+          <div class="vendor-role">Vector database · Knowledge base embeddings · Per-practice namespaces · Processes de-identified KB content only</div>
+        </div>
+        <div class="vendor-right">
+          <span class="tag tg">BAA Active ✓</span>
+          <div class="vendor-date">Signed: Jan 15, 2025 · Annual renewal</div>
+          <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="alert('Downloading Pinecone BAA-2025.pdf...')">⬇ PDF</button>
+        </div>
+      </div>
+      <div class="vendor-row">
+        <div class="vendor-logo">✍️</div>
+        <div>
+          <div class="vendor-name">DocuSign</div>
+          <div class="vendor-role">Electronic signatures · BAA countersignature · Stores signed legal documents · SOC 2 Type II certified</div>
+        </div>
+        <div class="vendor-right">
+          <span class="tag tg">BAA Active ✓</span>
+          <div class="vendor-date">Signed: Jan 5, 2025 · Covered by DocuSign BAA</div>
+          <button class="btn bo" style="font-size:10px;padding:3px 8px" onclick="alert('Downloading DocuSign BAA-2025.pdf...')">⬇ PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHI exposure matrix -->
+  <div class="slabel">PHI Exposure Matrix — What Each Vendor Sees</div>
+  <div class="card">
+    <div class="cbody" style="padding:0">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead><tr style="background:var(--grl)">
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Vendor</th>
+          <th style="padding:8px 12px;text-align:center;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Patient Names</th>
+          <th style="padding:8px 12px;text-align:center;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Phone Numbers</th>
+          <th style="padding:8px 12px;text-align:center;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Clinical Data</th>
+          <th style="padding:8px 12px;text-align:center;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Audio / Voice</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Mitigation</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px 12px;font-weight:600">AWS</td><td style="padding:8px 12px;text-align:center"><span class="tag ta">Encrypted</span></td><td style="padding:8px 12px;text-align:center"><span class="tag ta">Encrypted</span></td><td style="padding:8px 12px;text-align:center"><span class="tag ta">Encrypted</span></td><td style="padding:8px 12px;text-align:center"><span class="tag ta">Encrypted</span></td><td style="padding:8px 12px;font-size:10px;color:var(--tx3)">AES-256 at rest · Cannot read without keys</td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px 12px;font-weight:600">Twilio</td><td style="padding:8px 12px;text-align:center"><span class="tag tr">Yes (limited)</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tr">Yes</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tr">Yes (recording)</span></td><td style="padding:8px 12px;font-size:10px;color:var(--tx3)">BAA signed · Recordings deleted after 90d</td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px 12px;font-weight:600">Deepgram</td><td style="padding:8px 12px;text-align:center"><span class="tag tr">Yes (in audio)</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tr">Limited</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tr">Yes (real-time)</span></td><td style="padding:8px 12px;font-size:10px;color:var(--tx3)">BAA signed · No model training on PHI</td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px 12px;font-weight:600">Claude (Bedrock)</td><td style="padding:8px 12px;text-align:center"><span class="tag ta">Minimal</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;text-align:center"><span class="tag ta">Minimal</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;font-size:10px;color:var(--tx3)">Minimum necessary standard · Only intent/context sent</td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px 12px;font-weight:600">ElevenLabs</td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;font-size:10px;color:var(--tx3)">Receives text only (Aria's response) · No PHI in TTS text</td></tr>
+          <tr><td style="padding:8px 12px;font-weight:600">Pinecone</td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;text-align:center"><span class="tag tg">No</span></td><td style="padding:8px 12px;font-size:10px;color:var(--tx3)">KB content only (FAQ answers) · No patient PHI stored</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="sp">
+  <div class="spsec">Vendor Summary</div>
+  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>Total vendors</span><span style="font-weight:700">7</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><span>BAAs current</span><span style="font-weight:700;color:var(--green)">7/7 ✓</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Expired</span><span style="font-weight:700;color:var(--green)">0</span></div>
+    <div style="display:flex;justify-content:space-between;padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><span>Last reviewed</span><span style="font-weight:700">Apr 5, 2026</span></div>
+  </div>
+  <div class="spsec">Renewal Calendar</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:12px">
+    <div style="padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><div style="font-weight:600">Twilio</div><div style="color:var(--tx3)">Dec 15, 2025 (past — renewed)</div></div>
+    <div style="padding:6px 9px;background:var(--grl);border-radius:5px;border:1px solid var(--bdr)"><div style="font-weight:600">Deepgram</div><div style="color:var(--tx3)">Jan 10, 2026 (past — renewed)</div></div>
+    <div style="padding:6px 9px;background:var(--al);border-radius:5px;border:1px solid #FDE68A"><div style="font-weight:700;color:var(--amber)">Pinecone · Jan 15, 2026</div><div style="color:var(--tx3)">⚠ May need renewal confirmation</div></div>
+  </div>
+  <button class="btn bg" style="width:100%;justify-content:center;font-size:11px;margin-bottom:6px" onclick="alert('Generating annual vendor BAA review report...\n\nAll 7 vendors reviewed Apr 5, 2026.\nAll BAAs current. Pinecone renewal confirmation needed.\nFull report emailed to james@medicalofficeforce.com.')">📊 Generate Review Report</button>
+  <button class="btn bo" style="width:100%;justify-content:center;font-size:11px" onclick="alert('Downloading all 7 vendor BAA PDFs as ZIP archive...')">⬇ Download All BAAs</button>
+</div>
+</div>
+</div>
+
+</div><!-- shell -->
+
+<script>
+function ST(t){
+  document.querySelectorAll(".tab").forEach(e=>e.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(e=>e.classList.remove("active"));
+  document.getElementById("tab-"+t).classList.add("active");
+  document.getElementById("panel-"+t).classList.add("active");
+}
+function openDoc(id){alert("Opening full document: "+id+"\n\nIn production: opens DocuSign document viewer or downloads encrypted PDF from S3 (presigned URL with 1-hour expiry).");}
+function viewDoc(id){const titles={tos:"Terms of Service v2.3",baa:"HIPAA Business Associate Agreement",privacy:"Privacy Policy v1.8",tcpa:"TCPA Outbound Communications Consent"};alert("Opening: "+(titles[id]||id)+"\n\nIn production: renders full document text in modal with scrollable reader, checksum verification, and download option.");}
+function filterAudit(type,btn){document.querySelectorAll(".btn").forEach(b=>b.classList.remove("bg","bn"));btn.classList.add("bn");alert("Filtering audit log by: "+type);}
+</script>
+</body>
+</html>
