@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedFlow AI — Prompt Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1B6B4A;--g2:#059669;--gl:#ECFDF5;--gd:#14533A;
+  --amber:#D97706;--a2:#F59E0B;--al:#FEF3C7;--ad:#92400E;
+  --blue:#1D4ED8;--b2:#3B82F6;--bl:#EFF6FF;
+  --red:#DC2626;--rl:#FEF2F2;
+  --purple:#7C3AED;--pl:#F5F3FF;
+  --teal:#0D9488;--tl:#F0FDFA;
+  --orange:#EA580C;--ol:#FFF7ED;
+  --navy:#0F2A4A;--navy2:#1A3A5C;
+  --gray:#6B7280;--grl:#F9FAFB;--bdr:#E5E7EB;--bdr2:#D1D5DB;
+  --tx:#111827;--tx2:#374151;--tx3:#6B7280;
+  --bg:#F1F5F9;--sur:#FFFFFF;
+  --r:10px;--rs:6px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.05);
+}
+html,body{height:100%;font-family:"Outfit",system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;overflow:hidden;}
+.shell{display:grid;grid-template-rows:52px 48px 1fr;height:100vh;overflow:hidden;}
+
+/* TOPBAR */
+.topbar{background:var(--navy);display:flex;align-items:center;padding:0 16px;}
+.tmark{width:28px;height:28px;background:linear-gradient(135deg,#4ADE80,#1B6B4A);border-radius:7px;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0;}
+.tmark svg{width:15px;height:15px;}
+.tname{font-size:14px;font-weight:700;color:#fff;margin-right:12px;white-space:nowrap;}
+.tsep{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 10px;flex-shrink:0;}
+.tbread{font-size:11px;color:rgba(255,255,255,.45);white-space:nowrap;}
+.tsp{flex:1;}
+
+/* PRACTICE CHOOSER (shared pattern across all dashboards) */
+.pc-wrap{display:flex;align-items:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:8px;overflow:hidden;height:32px;margin-right:8px;}
+.pc-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.38);padding:0 8px;text-transform:uppercase;letter-spacing:.6px;border-right:1px solid rgba(255,255,255,.1);height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;}
+.pc-select{background:transparent;border:none;color:#fff;font-size:11.5px;font-weight:600;font-family:"Outfit",sans-serif;padding:0 8px;cursor:pointer;outline:none;height:100%;min-width:210px;appearance:none;-webkit-appearance:none;}
+.pc-select option{background:#1A3A5C;color:#fff;}
+.pc-arrow{padding:0 8px;color:rgba(255,255,255,.38);font-size:9px;flex-shrink:0;pointer-events:none;}
+
+.tchip{padding:3px 9px;border-radius:10px;font-size:10.5px;font-weight:600;display:flex;align-items:center;gap:4px;margin-right:6px;white-space:nowrap;}
+.tcg{background:rgba(74,222,128,.15);color:#86EFAC;}
+.tca{background:rgba(251,191,36,.18);color:#FCD34D;}
+.ldot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tbtn{padding:4px 12px;border-radius:var(--rs);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;margin-right:5px;}
+.tbtnp{border:none;background:linear-gradient(135deg,#4ADE80,#1B6B4A);margin-right:0;}
+
+/* TABS */
+.tabs{background:var(--sur);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 20px;overflow-x:auto;}
+.tab{padding:12px 15px;font-size:12.5px;font-weight:500;color:var(--tx3);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.tab:hover{color:var(--tx2);}
+.tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600;}
+.tbadge{padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;}
+.tbg{background:var(--gl);color:var(--green);}
+.tba{background:var(--al);color:var(--amber);}
+.tbb{background:var(--bl);color:var(--blue);}
+.tabs-sp{flex:1;}
+.ver-chip{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--rs);background:var(--navy);color:#86EFAC;font-size:11px;font-weight:700;border:1px solid rgba(74,222,128,.2);white-space:nowrap;}
+
+/* PANELS */
+.panel{display:none;height:calc(100vh - 100px);overflow:hidden;}
+.panel.active{display:flex;}
+.scr{overflow-y:auto;}
+.pad{padding:20px 22px;}
+.twoc{display:grid;grid-template-columns:1fr 300px;height:100%;overflow:hidden;}
+
+/* SIZE CARDS */
+.size-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.scard{border:2px solid var(--bdr);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.scard:hover{border-color:var(--bdr2);box-shadow:var(--sh);}
+.scard.sel{border-color:var(--green);box-shadow:0 0 0 1px var(--green);}
+.scard-check{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;background:var(--green);display:none;align-items:center;justify-content:center;}
+.scard-check svg{width:10px;height:10px;}
+.scard.sel .scard-check{display:flex;}
+.scard-icon{font-size:26px;margin-bottom:8px;}
+.scard-name{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:3px;}
+.scard-desc{font-size:11px;color:var(--tx3);line-height:1.5;margin-bottom:8px;}
+.scard-stat{font-size:10px;color:var(--tx3);display:flex;justify-content:space-between;margin-bottom:2px;}
+.scard-stat span{font-weight:600;color:var(--tx2);}
+
+/* PROMPT EDITOR */
+.prompt-editor{background:var(--navy);border-radius:var(--r);overflow:hidden;margin-bottom:12px;}
+.pe-header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.07);}
+.pe-dots{display:flex;gap:5px;}
+.pe-dot{width:10px;height:10px;border-radius:50%;}
+.pe-r{background:#FF5F57;}.pe-y{background:#FEBC2E;}.pe-g{background:#28C840;}
+.pe-title{font-size:11px;color:rgba(255,255,255,.4);font-weight:600;flex:1;text-align:center;}
+.pe-badge{padding:2px 8px;border-radius:7px;font-size:10px;font-weight:700;background:rgba(74,222,128,.15);color:#86EFAC;white-space:nowrap;}
+.pe-body{padding:14px 16px;font-family:"JetBrains Mono",monospace;font-size:11.5px;line-height:1.8;color:rgba(255,255,255,.75);max-height:300px;overflow-y:auto;}
+.pe-body::-webkit-scrollbar{width:3px;}
+.pe-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px;}
+.pvar{color:#86EFAC;font-weight:600;}
+.psec{color:#93C5FD;font-weight:700;}
+.pcom{color:rgba(255,255,255,.35);font-style:italic;}
+.pkw{color:#FCD34D;}
+.pstr{color:#FDA4AF;}
+
+/* SPEC CARDS */
+.spec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.speccard{border:1.5px solid var(--bdr);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .18s;}
+.speccard:hover{border-color:var(--bdr2);}
+.speccard.spec-sel{border-color:var(--green);background:var(--gl);}
+.spec-icon{font-size:20px;margin-bottom:5px;}
+.spec-name{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:2px;}
+.spec-inject{font-size:10px;color:var(--tx3);line-height:1.4;}
+
+/* ROUTING TREE */
+.routing-viz{background:var(--grl);border-radius:var(--r);border:1px solid var(--bdr);padding:16px;overflow-x:auto;}
+.rtree{display:flex;flex-direction:column;align-items:center;gap:0;min-width:540px;}
+.rnode{padding:7px 14px;border-radius:var(--rs);font-size:11px;font-weight:600;border:1.5px solid;text-align:center;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.rnode:hover{box-shadow:var(--sh);}
+.rn-root{background:var(--navy);color:#fff;border-color:var(--navy);font-size:13px;padding:9px 20px;}
+.rn-intent{background:var(--bl);color:var(--blue);border-color:#BFDBFE;}
+.rn-action{background:var(--gl);color:var(--green);border-color:#A7F3D0;}
+.rn-transfer{background:var(--al);color:var(--amber);border-color:#FDE68A;}
+.rn-emerg{background:var(--rl);color:var(--red);border-color:#FECACA;}
+.rline{width:2px;height:16px;background:var(--bdr2);margin:0 auto;}
+.cs-scale{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px;}
+.cs-btn{padding:5px 8px;border-radius:var(--rs);font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--bdr);background:var(--sur);color:var(--tx2);font-family:"Outfit",sans-serif;text-align:center;transition:all .15s;}
+.cs-btn:hover{border-color:var(--bdr2);}
+.cs-btn.cs-sel{background:var(--green);color:#fff;border-color:var(--green);}
+
+/* EMERGENCY */
+.emerg-rule{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:var(--rs);border:1.5px solid var(--bdr);background:var(--sur);margin-bottom:8px;}
+.emerg-rule.er-crit{border-left:3px solid var(--red);}
+.emerg-rule.er-high{border-left:3px solid var(--amber);}
+.er-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.ern-red{background:var(--rl);color:var(--red);}
+.ern-amber{background:var(--al);color:var(--amber);}
+.er-title{font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:2px;}
+.er-phrases{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+.er-phrase{padding:1px 6px;border-radius:5px;font-size:10px;background:var(--grl);border:1px solid var(--bdr);color:var(--tx3);}
+.er-action{font-size:11px;color:var(--tx3);margin-top:3px;}
+.er-lock{font-size:12px;flex-shrink:0;opacity:.5;}
+
+/* VERSIONING */
+.ver-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr);}
+.ver-item:last-child{border-bottom:none;}
+.ver-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.vd-green{background:var(--g2);box-shadow:0 0 0 2px var(--g2);}
+.vd-blue{background:var(--b2);box-shadow:0 0 0 2px var(--b2);}
+.vd-gray{background:var(--bdr2);box-shadow:0 0 0 2px var(--bdr2);}
+.ver-content{flex:1;}
+.ver-num{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:2px;display:flex;align-items:center;gap:6px;}
+.ver-meta{font-size:10px;color:var(--tx3);margin-bottom:4px;font-family:"JetBrains Mono",monospace;}
+.ver-desc{font-size:11px;color:var(--tx2);line-height:1.5;}
+.ver-stats{display:flex;gap:8px;margin-top:5px;flex-wrap:wrap;}
+.vs-chip{padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600;}
+.vsc-green{background:var(--gl);color:var(--green);}
+.vsc-blue{background:var(--bl);color:var(--blue);}
+.vsc-gray{background:var(--grl);color:var(--tx3);}
+.vsc-amber{background:var(--al);color:var(--amber);}
+
+/* AB TESTING */
+.ab-layout{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.ab-variant{border:2px solid var(--bdr);border-radius:var(--r);overflow:hidden;}
+.ab-variant.ab-a{border-color:var(--blue);}
+.ab-variant.ab-b{border-color:var(--purple);}
+.ab-header{padding:10px 14px;display:flex;align-items:center;gap:8px;}
+.ah-a{background:var(--bl);}
+.ah-b{background:var(--pl);}
+.ab-label{font-size:13px;font-weight:700;}
+.al-a{color:var(--blue);}
+.al-b{color:var(--purple);}
+.ab-traffic{padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700;margin-left:auto;}
+.at-a{background:var(--bl);color:var(--blue);}
+.at-b{background:var(--pl);color:var(--purple);}
+.ab-body{padding:12px 14px;}
+.ab-metrics{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px;}
+.abm{padding:7px 9px;background:var(--grl);border-radius:var(--rs);border:1px solid var(--bdr);}
+.abm-label{font-size:10px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.3px;}
+.abm-val{font-size:14px;font-weight:800;margin-top:2px;}
+.abm-delta{font-size:10px;margin-top:1px;}
+
+/* MISC */
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.chead{padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px;}
+.cicon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.icg{background:var(--gl);}
+.icb{background:var(--bl);}
+.ica{background:var(--al);}
+.icp{background:var(--pl);}
+.ctitle{font-size:13px;font-weight:700;color:var(--tx);}
+.csub{font-size:11px;color:var(--tx3);margin-top:1px;}
+.chr{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.cbody{padding:14px 16px;}
+.notice{display:flex;align-items:flex-start;gap:7px;padding:9px 11px;border-radius:var(--rs);margin-bottom:10px;font-size:11px;line-height:1.5;}
+.ng{background:var(--gl);border:1px solid #A7F3D0;color:var(--green);}
+.na{background:var(--al);border:1px solid #FDE68A;color:var(--ad);}
+.nb{background:var(--bl);border:1px solid #BFDBFE;color:var(--blue);}
+.notice svg{width:12px;height:12px;flex-shrink:0;margin-top:1px;}
+.notice strong{font-weight:700;}
+.btn{padding:7px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;font-family:"Outfit",sans-serif;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:5px;}
+.bg{background:var(--green);color:#fff;}
+.bg:hover{background:var(--gd);}
+.bo{background:var(--sur);border:1.5px solid var(--bdr);color:var(--tx2);}
+.bo:hover{border-color:var(--bdr2);}
+.ba{background:var(--al);color:var(--amber);border:1px solid #FDE68A;}
+.tag{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;}
+.tg{background:var(--gl);color:var(--green);}
+.ta{background:var(--al);color:var(--amber);}
+.tb{background:var(--bl);color:var(--blue);}
+.tr{background:var(--rl);color:var(--red);}
+.tp{background:var(--pl);color:var(--purple);}
+.tn{background:var(--grl);color:var(--tx3);}
+.fg{margin-bottom:11px;}
+.fl{font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:3px;display:block;}
+.fi{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;transition:border .15s;}
+.fi:focus{border-color:var(--green);}
+.fs{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"Outfit",sans-serif;color:var(--tx);outline:none;width:100%;background:var(--sur);}
+.fta{padding:7px 10px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:12px;font-family:"JetBrains Mono",monospace;color:var(--tx);outline:none;width:100%;resize:vertical;line-height:1.7;}
+.fta:focus{border-color:var(--green);}
+.slabel{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;}
+.sp{background:var(--sur);border-left:1px solid var(--bdr);overflow-y:auto;padding:14px;}
+.spsec{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tx3);margin:12px 0 8px;}
+.spsec:first-child{margin-top:0;}
+.trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.tgg{width:34px;height:19px;border-radius:10px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.tgg.on{background:var(--green);}
+.tgg.off{background:var(--bdr2);}
+.tggk{width:15px;height:15px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tgg.on .tggk{left:17px;}
+.tgg.off .tggk{left:2px;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- TOPBAR WITH PRACTICE CHOOSER -->
+<div class="topbar">
+  <div class="tmark"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5L13 4.5V10.5L7.5 13.5L2 10.5V4.5L7.5 1.5Z" fill="white" opacity=".9"/><circle cx="7.5" cy="7.5" r="2" fill="white"/></svg></div>
+  <span class="tname">MedFlow AI</span>
+  <div class="tsep"></div>
+  <span class="tbread">Agent Studio › Prompt Engine</span>
+  <div class="tsep"></div>
+  <!-- PRACTICE CHOOSER — writes/reads localStorage key: mof_selected_practice -->
+  <div class="pc-wrap">
+    <div class="pc-label">Practice</div>
+    <select class="pc-select" id="practiceSelect" onchange="switchPractice(this.value)">
+      <option value="athens">🌙 Athens Sleep &amp; Wellness · Sleep Med</option>
+      <option value="valley">🏥 Valley Ridge Family Medicine · Fam Med</option>
+      <option value="buchanan">🌿 Buchanan Rural Clinic · Primary Care</option>
+      <option value="haralson">👶 Haralson County Pediatrics · Peds</option>
+      <option value="westpoint">🚨 West Point Urgent Care · Urgent Care</option>
+      <option value="coweta">⚠️ Coweta Family Medicine · Fam Med</option>
+    </select>
+    <div class="pc-arrow">▾</div>
+  </div>
+  <div class="tsp"></div>
+  <div class="tchip tcg" id="ariaChip"><div class="ldot"></div>Aria Live · v2.1</div>
+  <div class="tchip tcg" id="tokenChip">1,840 tokens/call</div>
+  <button class="tbtn">💾 Save Draft</button>
+  <button class="tbtn tbtnp">🚀 Deploy Prompt</button>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" id="tab-size" onclick="ST('size')">📊 Practice Size Assessment</div>
+  <div class="tab" id="tab-spec" onclick="ST('spec')">⚕️ Specialty Injection</div>
+  <div class="tab" id="tab-routing" onclick="ST('routing')">🔀 Routing Complexity</div>
+  <div class="tab" id="tab-emerg" onclick="ST('emerg')">🚨 Emergency Escalation</div>
+  <div class="tab" id="tab-ver" onclick="ST('ver')">📓 Prompt Versioning <span class="tbadge tbg" id="verBadge">v2.1 Live</span></div>
+  <div class="tab" id="tab-ab" onclick="ST('ab')">⛵ A/B Testing <span class="tbadge tba">Active</span></div>
+  <div class="tabs-sp"></div>
+  <div class="ver-chip" id="contextChip">📓 Prompt v2.1 · Athens Sleep · Solo · Sleep Medicine</div>
+</div>
+
+<!-- ═══ PANEL 1: PRACTICE SIZE ═══ -->
+<div class="panel active" id="panel-size">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div>
+      <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px">Practice Size Assessment</div>
+      <div style="font-size:11px;color:var(--tx3);margin-top:2px" id="size-sub">Prompt complexity and routing tree depth auto-scale based on size · Athens Sleep & Wellness</div>
+    </div>
+    <button class="btn bg" style="font-size:11px" onclick="alert('Regenerating prompt for selected size...')">Regenerate Prompt</button>
+  </div>
+
+  <div class="notice ng" id="size-notice">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span id="size-notice-txt"><strong>Athens Sleep is a Solo practice.</strong> Using Solo template: 1 provider, 4 routing branches, lean token footprint (~1,840/call).</span>
+  </div>
+
+  <div class="slabel">Select Practice Size</div>
+  <div class="size-grid" id="sizeGrid">
+    <div class="scard sel" onclick="selSize(this,'solo')">
+      <div class="scard-check"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div class="scard-icon">👤</div>
+      <div class="scard-name">Solo Practice</div>
+      <div class="scard-desc">1 provider, 1–2 locations. No disambiguation needed.</div>
+      <div class="scard-stat">Routing branches <span>4–6</span></div>
+      <div class="scard-stat">Avg tokens/call <span>~1,800</span></div>
+      <div class="scard-stat">Transfer rules <span>3–5</span></div>
+    </div>
+    <div class="scard" onclick="selSize(this,'small')">
+      <div class="scard-check"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div class="scard-icon">👥</div>
+      <div class="scard-name">Small Group</div>
+      <div class="scard-desc">2–5 providers, 1–3 locations. Provider routing added.</div>
+      <div class="scard-stat">Routing branches <span>6–10</span></div>
+      <div class="scard-stat">Avg tokens/call <span>~2,100</span></div>
+      <div class="scard-stat">Transfer rules <span>6–10</span></div>
+    </div>
+    <div class="scard" onclick="selSize(this,'large')">
+      <div class="scard-check"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div class="scard-icon">🏗️</div>
+      <div class="scard-name">Large Group</div>
+      <div class="scard-desc">6–15 providers, multi-location. Department routing, triage.</div>
+      <div class="scard-stat">Routing branches <span>10–20</span></div>
+      <div class="scard-stat">Avg tokens/call <span>~2,600</span></div>
+      <div class="scard-stat">Transfer rules <span>15–25</span></div>
+    </div>
+    <div class="scard" onclick="selSize(this,'enterprise')">
+      <div class="scard-check"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div class="scard-icon">🏢</div>
+      <div class="scard-name">Enterprise / Health System</div>
+      <div class="scard-desc">16+ providers, 4+ locations. Full hierarchy, insurance pre-auth.</div>
+      <div class="scard-stat">Routing branches <span>20–40</span></div>
+      <div class="scard-stat">Avg tokens/call <span>~3,000</span></div>
+      <div class="scard-stat">Transfer rules <span>25–50</span></div>
+    </div>
+  </div>
+
+  <div class="slabel">Live Prompt Preview</div>
+  <div class="prompt-editor">
+    <div class="pe-header">
+      <div class="pe-dots"><div class="pe-dot pe-r"></div><div class="pe-dot pe-y"></div><div class="pe-dot pe-g"></div></div>
+      <div class="pe-title" id="promptTitle">system_prompt.txt — Athens Sleep — Solo — v2.1</div>
+      <div class="pe-badge" id="tokenBadge">1,840 tokens</div>
+    </div>
+    <div class="pe-body" id="promptPreview">Loading...</div>
+  </div>
+
+  <div style="display:flex;gap:8px">
+    <button class="btn bg" onclick="alert('Prompt saved as draft — not yet deployed')">💾 Save as Draft</button>
+    <button class="btn bo" onclick="ST('ver')">📓 Version History</button>
+    <button class="btn bo" onclick="countTokens()">📊 Count Tokens</button>
+  </div>
+</div>
+
+<div class="sp" id="sizeSidebar"><!-- filled by JS --></div>
+</div>
+</div>
+
+<!-- ═══ PANEL 2: SPECIALTY INJECTION ═══ -->
+<div class="panel" id="panel-spec">
+<div class="twoc">
+<div class="scr pad">
+  <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:4px">Specialty-Specific Prompt Injection</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px" id="spec-sub">Domain vocabulary, intents, workflows, and NEVER rules injected per specialty · Athens Sleep uses Sleep Medicine</div>
+
+  <div class="notice nb" id="spec-notice">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span id="spec-notice-txt"><strong>Active: Sleep Medicine.</strong> 48 keywords injected, 3 specialty intents, 4 NEVER rules. +340 tokens.</span>
+  </div>
+
+  <div class="slabel">Specialty Modules</div>
+  <div class="spec-grid" id="specGrid">
+    <div class="speccard spec-sel" onclick="selSpec(this)"><div class="spec-icon">❤️</div><div class="spec-name">Sleep Medicine</div><div class="spec-inject">CPAP/BiPAP, PSG, HST, sleep study scheduling, AHI, hypopnea, titration, resupply</div></div>
+    <div class="speccard" onclick="selSpec(this)"><div class="spec-icon">👨‍👩‍👧</div><div class="spec-name">Family Medicine</div><div class="spec-inject">Well-child visits, physicals, immunizations, chronic condition mgmt, referrals</div></div>
+    <div class="speccard" onclick="selSpec(this)"><div class="spec-icon">🫀</div><div class="spec-name">Cardiology</div><div class="spec-inject">EKG, stress test, echo, cardiac cath, arrhythmia, pacemaker, TAVR</div></div>
+    <div class="speccard" onclick="selSpec(this)"><div class="spec-icon">🦴</div><div class="spec-name">Orthopedics</div><div class="spec-inject">Fracture, joint replacement, PT, MRI, arthroscopy, spine surgery</div></div>
+    <div class="speccard" onclick="selSpec(this)"><div class="spec-icon">🌞</div><div class="spec-name">Dermatology</div><div class="spec-inject">Skin biopsy, MOHS, acne, eczema, psoriasis, melanoma screening</div></div>
+    <div class="speccard" onclick="selSpec(this)"><div class="spec-icon">👶</div><div class="spec-name">Pediatrics</div><div class="spec-inject">Well-child, ADHD, developmental screening, vaccines, sick visits</div></div>
+    <div class="speccard" onclick="selSpec(this)"><div class="spec-icon">🤰</div><div class="spec-name">OB/GYN</div><div class="spec-inject">Prenatal, ultrasound, labor & delivery, postpartum, annual exam</div></div>
+    <div class="speccard" onclick="selSpec(this)"><div class="spec-icon">🚨</div><div class="spec-name">Urgent Care</div><div class="spec-inject">Walk-in, wait times, X-ray, laceration, flu, COVID, DOT physicals</div></div>
+    <div class="speccard" onclick="selSpec(this)"><div class="spec-icon">🧠</div><div class="spec-name">Psychiatry / Mental Health</div><div class="spec-inject">New patient eval, medication management, crisis protocols, suicide risk</div></div>
+  </div>
+
+  <div class="card">
+    <div class="chead"><div class="cicon icg">❤️</div><div><div class="ctitle" id="spec-card-title">Sleep Medicine — Specialty Block</div><div class="csub" id="spec-card-sub">+340 tokens · Athens Sleep & Wellness</div></div><div class="chr"><span class="tag tg">Active ✓</span></div></div>
+    <div class="cbody">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div>
+          <div class="slabel">Intents Added</div>
+          <div style="display:flex;flex-direction:column;gap:5px;font-size:11px" id="spec-intents">
+            <div style="padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><div style="font-weight:700;color:var(--green)">CPAP Resupply</div><div style="color:var(--tx3)">Trigger: "CPAP supplies", "mask", "filters", "ResMed"</div></div>
+            <div style="padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><div style="font-weight:700;color:var(--green)">Sleep Study Scheduling</div><div style="color:var(--tx3)">Trigger: "sleep study", "PSG", "home sleep test"</div></div>
+            <div style="padding:6px 9px;background:var(--gl);border-radius:5px;border:1px solid #A7F3D0"><div style="font-weight:700;color:var(--green)">Results / Follow-up</div><div style="color:var(--tx3)">Trigger: "results", "AHI", "pressure adjustment"</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="slabel">Keywords Injected</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px" id="spec-keywords">
+            <span class="er-phrase">CPAP</span><span class="er-phrase">BiPAP</span><span class="er-phrase">APAP</span><span class="er-phrase">AHI</span><span class="er-phrase">hypopnea</span><span class="er-phrase">apnea</span><span class="er-phrase">PSG</span><span class="er-phrase">polysomnography</span><span class="er-phrase">HST</span><span class="er-phrase">titration</span><span class="er-phrase">ResMed</span><span class="er-phrase">Philips</span><span class="er-phrase">sleep study</span><span class="er-phrase">mask</span><span class="er-phrase">filters</span><span class="er-phrase">resupply</span>
+          </div>
+        </div>
+      </div>
+      <div class="slabel">Specialty NEVER Rules</div>
+      <div style="display:flex;flex-direction:column;gap:5px;font-size:11px" id="spec-never">
+        <div style="display:flex;gap:7px;padding:6px 9px;background:var(--rl);border-radius:5px;border:1px solid #FECACA"><span style="color:var(--red)">✕</span><span>Never diagnose sleep apnea or recommend CPAP pressure over the phone</span></div>
+        <div style="display:flex;gap:7px;padding:6px 9px;background:var(--rl);border-radius:5px;border:1px solid #FECACA"><span style="color:var(--red)">✕</span><span>Never confirm sleep study results — schedule a results review appointment</span></div>
+        <div style="display:flex;gap:7px;padding:6px 9px;background:var(--rl);border-radius:5px;border:1px solid #FECACA"><span style="color:var(--red)">✕</span><span>Never process sleep medication refills — direct to patient portal</span></div>
+        <div style="display:flex;gap:7px;padding:6px 9px;background:var(--rl);border-radius:5px;border:1px solid #FECACA"><span style="color:var(--red)">✕</span><span>Never schedule a sleep study without confirming a referral is on file</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="sp">
+  <div class="spsec">Token Budget</div>
+  <div style="margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Base prompt (Solo)</span><span style="font-weight:700">1,500 tok</span></div>
+    <div style="height:5px;background:var(--bdr);border-radius:3px;overflow:hidden;margin-bottom:6px"><div style="width:81.5%;height:100%;background:var(--g2);border-radius:3px"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Specialty injection</span><span style="font-weight:700;color:var(--amber)">+340 tok</span></div>
+    <div style="height:5px;background:var(--bdr);border-radius:3px;overflow:hidden;margin-bottom:6px"><div style="width:18.5%;height:100%;background:var(--a2);border-radius:3px"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;padding-top:6px;border-top:1px solid var(--bdr)"><span>Total</span><span style="color:var(--g2)">1,840 tok</span></div>
+    <div style="font-size:10px;color:var(--tx3);margin-top:3px">Warning threshold: 3,000 tokens</div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 3: ROUTING COMPLEXITY ═══ -->
+<div class="panel" id="panel-routing">
+<div class="twoc">
+<div class="scr pad">
+  <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:4px">Routing Tree Complexity</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px" id="routing-sub">Auto-scales with practice size · Solo = 4 branches · Enterprise = 40+ branches</div>
+
+  <div class="slabel">Complexity Level</div>
+  <div class="cs-scale">
+    <div class="cs-btn cs-sel" id="csSolo" onclick="setComplexity('solo',this)">👤 Solo<br><span style="font-size:9px;font-weight:400">4–6 branches</span></div>
+    <div class="cs-btn" id="csSmall" onclick="setComplexity('small',this)">👥 Small<br><span style="font-size:9px;font-weight:400">6–10 branches</span></div>
+    <div class="cs-btn" id="csLarge" onclick="setComplexity('large',this)">🏗️ Large<br><span style="font-size:9px;font-weight:400">10–20 branches</span></div>
+    <div class="cs-btn" id="csEnt" onclick="setComplexity('enterprise',this)">🏢 Enterprise<br><span style="font-size:9px;font-weight:400">20–40 branches</span></div>
+  </div>
+
+  <div class="routing-viz" id="routingViz">
+    <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:12px;text-align:center" id="routingLabel">Solo Practice — 4 Branches · Athens Sleep & Wellness</div>
+    <div class="rtree">
+      <div class="rnode rn-root">📞 Incoming Call → Aria Greeting</div>
+      <div class="rline"></div>
+      <div class="rnode rn-intent">🧠 Intent Detection (Deepgram + Claude)</div>
+      <div class="rline"></div>
+      <div style="display:flex;gap:14px;justify-content:center">
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div class="rline"></div>
+          <div class="rnode rn-action">📅 Scheduling<br><span style="font-size:9px;font-weight:400">Book / Reschedule / Cancel</span></div>
+          <div class="rline"></div>
+          <div class="rnode rn-action" style="font-size:10px">✓ EHR Book + SMS</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div class="rline"></div>
+          <div class="rnode rn-action" id="routingSpecBranch">🤤 FAQ/CPAP<br><span style="font-size:9px;font-weight:400">KB / Specialty</span></div>
+          <div class="rline"></div>
+          <div class="rnode rn-action" style="font-size:10px">✓ RAG Answer</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div class="rline"></div>
+          <div class="rnode rn-transfer">👮 Transfer<br><span style="font-size:9px;font-weight:400">Human request</span></div>
+          <div class="rline"></div>
+          <div class="rnode rn-transfer" style="font-size:10px" id="routingTransferNum">→ (706) 549-1720</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div class="rline"></div>
+          <div class="rnode rn-emerg">🚨 Emergency<br><span style="font-size:9px;font-weight:400">Always active</span></div>
+          <div class="rline"></div>
+          <div class="rnode rn-emerg" style="font-size:10px">911 Protocol</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px" class="card">
+    <div class="chead"><div class="cicon icb">⛵</div><div><div class="ctitle">Transfer Rules — Active</div><div class="csub" id="transfer-sub">5 rules · Solo · Athens Sleep & Wellness</div></div><div class="chr"><button class="btn bo" style="font-size:11px">+ Add Rule</button></div></div>
+    <div class="cbody" style="padding:0">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead><tr style="background:var(--grl)"><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Intent</th><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Condition</th><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Transfer To</th><th style="padding:7px 12px;text-align:center;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">On</th></tr></thead>
+        <tbody id="transferTableBody"><!-- filled by JS --></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="sp">
+  <div class="spsec">Complexity vs Size</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:12px" id="complexitySidebar"><!-- filled by JS --></div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 4: EMERGENCY ═══ -->
+<div class="panel" id="panel-emerg">
+<div class="twoc">
+<div class="scr pad">
+  <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:4px">Emergency Escalation Rules</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">Hardcoded rules fire before any other routing · Cannot be disabled · Specialty triggers auto-injected</div>
+
+  <div class="notice nr" style="background:var(--rl);border:1px solid #FECACA;color:var(--red)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span><strong>Emergency rules execute in under 0.7 seconds</strong> — before intent classification completes. Rules 1–3 cannot be disabled by any practice.</span>
+  </div>
+
+  <div class="slabel">Hardcoded Rules (Cannot Be Disabled)</div>
+  <div class="emerg-rule er-crit">
+    <div class="er-num ern-red">1</div>
+    <div style="flex:1">
+      <div class="er-title">🚨 Life-Threatening Emergency — 911 Immediate</div>
+      <div class="er-phrases"><span class="er-phrase">chest pain</span><span class="er-phrase">can't breathe</span><span class="er-phrase">heart attack</span><span class="er-phrase">stroke</span><span class="er-phrase">unconscious</span><span class="er-phrase">anaphylaxis</span><span class="er-phrase">not breathing</span></div>
+      <div class="er-action">→ 911 instruction immediately · Stay on line · Log emergency flag</div>
+    </div>
+    <div class="er-lock">🔒</div>
+  </div>
+  <div class="emerg-rule er-crit">
+    <div class="er-num ern-red">2</div>
+    <div style="flex:1">
+      <div class="er-title">🚨 Mental Health Crisis — 988 + Stay on Line</div>
+      <div class="er-phrases"><span class="er-phrase">hurt myself</span><span class="er-phrase">end my life</span><span class="er-phrase">suicidal</span><span class="er-phrase">self-harm</span><span class="er-phrase">overdose</span></div>
+      <div class="er-action">→ 988 Suicide & Crisis Lifeline · Empathy + calm · Never end call</div>
+    </div>
+    <div class="er-lock">🔒</div>
+  </div>
+  <div class="emerg-rule er-crit" id="emergRule3">
+    <div class="er-num ern-red">3</div>
+    <div style="flex:1">
+      <div class="er-title" id="emergRule3Title">🌙 Sleep Medicine: Severe Respiratory Emergency</div>
+      <div class="er-phrases" id="emergRule3Phrases"><span class="er-phrase">can't breathe with CPAP</span><span class="er-phrase">CPAP stopped working</span><span class="er-phrase">severe apnea episode</span><span class="er-phrase">blue lips</span></div>
+      <div class="er-action" id="emergRule3Action">→ Specialty injection · If acute: 911 · If non-acute: transfer clinical nurse immediately</div>
+    </div>
+    <div class="er-lock">🔒</div>
+  </div>
+
+  <div class="slabel" style="margin-top:4px">Practice-Configurable Rules</div>
+  <div class="emerg-rule er-high">
+    <div class="er-num ern-amber">4</div>
+    <div style="flex:1">
+      <div class="er-title">🚨 Urgent Clinical Transfer</div>
+      <div class="er-phrases"><span class="er-phrase">urgent</span><span class="er-phrase">it's an emergency</span><span class="er-phrase">need the doctor now</span><span class="er-phrase">very sick</span></div>
+      <div class="er-action" id="emergRule4Action">→ Transfer to clinical nurse · Aria announces destination</div>
+    </div>
+    <button class="btn bo" style="font-size:10px;padding:3px 8px;flex-shrink:0" onclick="alert('Edit urgent clinical transfer rule...')">Edit</button>
+  </div>
+  <div class="emerg-rule er-high">
+    <div class="er-num ern-amber">5</div>
+    <div style="flex:1">
+      <div class="er-title">🌙 After-Hours Urgent — Message + On-Call</div>
+      <div class="er-phrases"><span class="er-phrase">can't wait until tomorrow</span><span class="er-phrase">need the doctor tonight</span></div>
+      <div class="er-action" id="emergRule5Action">→ After 5 PM: collect name + callback + symptom · Notify on-call provider via SMS</div>
+    </div>
+    <button class="btn bo" style="font-size:10px;padding:3px 8px;flex-shrink:0" onclick="alert('Edit after-hours urgent rule...')">Edit</button>
+  </div>
+  <div class="emerg-rule" style="border-style:dashed;cursor:pointer" onclick="alert('Add custom emergency rule...')">
+    <div style="width:100%;text-align:center;font-size:12px;font-weight:600;color:var(--tx3);padding:4px">+ Add Custom Emergency Rule</div>
+  </div>
+</div>
+<div class="sp">
+  <div class="spsec">Emergency Stats — This Month</div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;margin-bottom:12px" id="emergStatsSidebar"><!-- filled by JS --></div>
+  <div class="spsec">Response Times</div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Avg trigger time</span><span style="font-weight:700;color:var(--g2)">0.68s</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span>Target</span><span style="font-weight:600">&lt;1.0s</span></div>
+    <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--gl);border-radius:4px"><span>Fired correctly</span><span style="font-weight:700;color:var(--g2)">100%</span></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PANEL 5: VERSIONING ═══ -->
+<div class="panel" id="panel-ver">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div>
+      <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px">Prompt Version History</div>
+      <div style="font-size:11px;color:var(--tx3);margin-top:2px" id="ver-sub">Every prompt change versioned, diffed, and revertible · Athens Sleep & Wellness</div>
+    </div>
+    <button class="btn bg" style="font-size:11px" onclick="alert('Creating new draft version...')">+ New Version</button>
+  </div>
+
+  <div class="notice ng" id="ver-notice">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span id="ver-notice-txt"><strong>v2.1 is live.</strong> Containment improved from 82% → 87.3% (+5.3pts). Main changes: warmer greeting, billing FAQ expansion, sleep study rephrase improvement.</span>
+  </div>
+
+  <div id="verTimeline"><!-- filled by JS --></div>
+</div>
+<div class="sp" id="verSidebar"><!-- filled by JS --></div>
+</div>
+</div>
+
+<!-- ═══ PANEL 6: A/B TESTING ═══ -->
+<div class="panel" id="panel-ab">
+<div class="twoc">
+<div class="scr pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div>
+      <div style="font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.3px">A/B Testing Interface</div>
+      <div style="font-size:11px;color:var(--tx3);margin-top:2px" id="ab-sub">Split traffic between two prompt variants · Athens Sleep & Wellness</div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn bo" style="font-size:11px" onclick="alert('Pausing test — all traffic to Variant A...')">⏸ Pause Test</button>
+      <button class="btn bg" style="font-size:11px" onclick="alert('Promoting Variant B to production. New version v2.2 created.')">🚀 Promote Winner</button>
+    </div>
+  </div>
+
+  <div class="notice nb">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span id="ab-notice-txt"><strong>Active: Greeting Tone Experiment.</strong> 60% → Variant A (warm), 40% → Variant B (direct). 127 + 84 calls so far. Started Apr 16, 2026. Needs ~50 more calls per variant for 95% confidence.</span>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="chead"><div class="cicon icb">⛵</div><div><div class="ctitle">Traffic Split</div><div class="csub" id="ab-split-sub">Active test · Athens Sleep & Wellness</div></div><div class="chr"><span class="tag ta">Active</span></div></div>
+    <div class="cbody">
+      <div class="fg">
+        <label class="fl">Traffic split — Variant A / Variant B</label>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:12px;font-weight:700;color:var(--blue);min-width:30px">60%</span>
+          <input type="range" min="10" max="90" value="60" style="flex:1" id="abSlider" oninput="updateSplit(this.value)">
+          <span style="font-size:12px;font-weight:700;color:var(--purple);min-width:30px" id="abBPct">40%</span>
+        </div>
+        <div style="display:flex;height:6px;border-radius:3px;overflow:hidden;margin-top:5px">
+          <div id="abBarA" style="background:var(--b2);flex:60"></div>
+          <div id="abBarB" style="background:var(--purple);flex:40"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ab-layout">
+    <div class="ab-variant ab-a">
+      <div class="ab-header ah-a"><div class="ab-label al-a">🔴 Variant A — Warm Greeting</div><div class="ab-traffic at-a">60%</div></div>
+      <div class="ab-body">
+        <div style="padding:9px 11px;background:var(--navy);border-radius:var(--rs);font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.8);line-height:1.7;margin-bottom:10px">"Thank you for calling <span style="color:#86EFAC" id="abPracticeA">Athens Sleep</span>. This is Aria — <span style="color:#86EFAC">how are you doing today?</span> How can I help?"</div>
+        <div class="ab-metrics">
+          <div class="abm"><div class="abm-label">Containment</div><div class="abm-val" style="color:var(--g2)">88.2%</div><div class="abm-delta" style="color:var(--g2)">↑ +4.2pts</div></div>
+          <div class="abm"><div class="abm-label">Sentiment</div><div class="abm-val" style="color:var(--g2)">4.5/5</div><div class="abm-delta" style="color:var(--g2)">↑ +0.3</div></div>
+          <div class="abm"><div class="abm-label">Transfer rate</div><div class="abm-val">11.4%</div><div class="abm-delta" style="color:var(--g2)">↓ −1.6pts</div></div>
+          <div class="abm"><div class="abm-label">Calls tested</div><div class="abm-val">127</div><div class="abm-delta" style="color:var(--tx3)">needs 23 more</div></div>
+        </div>
+        <div style="padding:8px 12px;border-radius:var(--rs);text-align:center;font-size:12px;font-weight:700;background:var(--bl);color:var(--blue)">🏆 Currently Leading — +4.2%</div>
+      </div>
+    </div>
+    <div class="ab-variant ab-b">
+      <div class="ab-header ah-b"><div class="ab-label al-b">🟣 Variant B — Direct &amp; Professional</div><div class="ab-traffic at-b">40%</div></div>
+      <div class="ab-body">
+        <div style="padding:9px 11px;background:var(--navy);border-radius:var(--rs);font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.8);line-height:1.7;margin-bottom:10px">"<span id="abPracticeB">Athens Sleep</span>, this is Aria. <span style="color:#C4B5FD">What can I help you with today?</span>"</div>
+        <div class="ab-metrics">
+          <div class="abm"><div class="abm-label">Containment</div><div class="abm-val" style="color:var(--amber)">84.1%</div><div class="abm-delta" style="color:var(--tx3)">baseline</div></div>
+          <div class="abm"><div class="abm-label">Sentiment</div><div class="abm-val" style="color:var(--amber)">4.2/5</div><div class="abm-delta" style="color:var(--tx3)">no change</div></div>
+          <div class="abm"><div class="abm-label">Transfer rate</div><div class="abm-val">12.9%</div><div class="abm-delta" style="color:var(--red)">↓ −0.1 only</div></div>
+          <div class="abm"><div class="abm-label">Calls tested</div><div class="abm-val">84</div><div class="abm-delta" style="color:var(--tx3)">needs 66 more</div></div>
+        </div>
+        <div style="padding:8px 12px;border-radius:var(--rs);text-align:center;font-size:12px;font-weight:600;background:var(--grl);color:var(--tx3)">… Trailing — 4.1% behind A</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slabel">Past A/B Tests</div>
+  <div class="card">
+    <div class="cbody" style="padding:0">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead><tr style="background:var(--grl)"><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bdr)">Test</th><th style="padding:7px 12px;border-bottom:1px solid var(--bdr);font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase">Winner</th><th style="padding:7px 12px;border-bottom:1px solid var(--bdr);font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase">Lift</th><th style="padding:7px 12px;border-bottom:1px solid var(--bdr);font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase">Confidence</th><th style="padding:7px 12px;border-bottom:1px solid var(--bdr);font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase">Promoted</th></tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px 12px;font-weight:600">Billing rephrase</td><td style="padding:8px 12px"><span class="tag tb">Variant B</span></td><td style="padding:8px 12px;font-weight:700;color:var(--g2)">+3.8%</td><td style="padding:8px 12px">96.4%</td><td style="padding:8px 12px"><span class="tag tg">Yes → v2.1</span></td></tr>
+          <tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px 12px;font-weight:600">After-hours tone</td><td style="padding:8px 12px"><span class="tag tg">Variant A</span></td><td style="padding:8px 12px;font-weight:700;color:var(--g2)">+2.1%</td><td style="padding:8px 12px">91.2%</td><td style="padding:8px 12px"><span class="tag tg">Yes → v2.0</span></td></tr>
+          <tr><td style="padding:8px 12px;font-weight:600">CPAP rephrase L1</td><td style="padding:8px 12px"><span class="tag tn">No winner</span></td><td style="padding:8px 12px;color:var(--tx3)">&lt;1% diff</td><td style="padding:8px 12px">62%</td><td style="padding:8px 12px"><span class="tag tn">No change</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="sp">
+  <div class="spsec">Test Progress</div>
+  <div style="margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>A: 127 calls</span><span style="font-weight:700">84.7%</span></div>
+    <div style="height:5px;background:var(--bdr);border-radius:3px;overflow:hidden;margin-bottom:6px"><div style="width:84.7%;height:100%;background:var(--b2);border-radius:3px"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>B: 84 calls</span><span style="font-weight:700">56.0%</span></div>
+    <div style="height:5px;background:var(--bdr);border-radius:3px;overflow:hidden;margin-bottom:6px"><div style="width:56%;height:100%;background:var(--purple);border-radius:3px"></div></div>
+    <div style="font-size:10px;color:var(--tx3)">Target: 150 calls each for 95% confidence</div>
+  </div>
+  <div style="padding:10px;background:var(--al);border-radius:var(--r);border:1px solid #FDE68A;text-align:center;margin-bottom:12px">
+    <div style="font-size:20px;font-weight:800;color:var(--amber)">78%</div>
+    <div style="font-size:10px;color:var(--ad);font-weight:600">Current confidence</div>
+    <div style="font-size:10px;color:var(--tx3);margin-top:3px">Need 95% to call a winner</div>
+  </div>
+  <div class="spsec">A/B Rules</div>
+  <div style="font-size:11px;color:var(--tx2);line-height:1.8">⚠️ 1 variable changed per test<br>📊 Min 150 calls / variant<br>🏆 95% confidence to promote<br>⏰ Auto-pause after 14 days<br>🛡 Emergency rules identical in both</div>
+</div>
+</div>
+</div>
+
+</div><!-- shell -->
+
+<script>
+// ─── PRACTICE DATA ─────────────────────────────────────────────────────────
+var PRACTICES = {
+  athens:{
+    name:"Athens Sleep and Wellness Center", short:"Athens Sleep",
+    specialty:"Sleep Medicine", icon:"🌙",
+    size:"solo", sizeLabel:"Solo",
+    providers:1, phone:"(706) 549-1720", ext:"ext. 0",
+    promptVersion:"v2.1", promptTokens:"1,840",
+    containment:"87.3%", sentiment:"4.4/5", transfer:"13%",
+    emergStats:[{l:"Life-threatening (Rule 1)",v:"2 calls",c:"var(--rl)",bc:"#FECACA",tc:"var(--red)"},{l:"Mental health (Rule 2)",v:"0 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"},{l:"Sleep respiratory (Rule 3)",v:"1 call",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"},{l:"Urgent clinical (Rule 4)",v:"8 calls",c:"var(--al)",bc:"#FDE68A",tc:"var(--amber)"},{l:"After-hours (Rule 5)",v:"3 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"}],
+    emergRule3Title:"🌙 Sleep Medicine: Severe Respiratory Emergency",
+    emergRule3Phrases:["can't breathe with CPAP","CPAP stopped working","severe apnea episode","blue lips"],
+    emergRule3Action:"→ Specialty injection · If acute: 911 · If non-acute: transfer clinical nurse (706) 549-1720 ext. 3",
+    emergRule4Action:"→ Transfer to clinical nurse (706) 549-1720 ext. 3 · Aria announces destination before transfer",
+    emergRule5Action:"→ After 5 PM: collect name + callback + symptom · Notify on-call provider via SMS",
+    transferRules:[
+      {intent:"Human request",cond:'"speak to a person", "real human", "staff"',to:"(706) 549-1720 ext. 0"},
+      {intent:"Billing dispute",cond:"Complex billing, balance question",to:"(706) 549-1720 ext. 4"},
+      {intent:"Prescription refill",cond:"Controlled substance, urgent refill",to:"(706) 549-1720 ext. 3"},
+      {intent:"3rd SMS fallback",cond:"3+ SMS fallbacks in one call",to:"(706) 549-1720 ext. 0"},
+      {intent:"Angry / frustrated",cond:"Hostile escalation, sentiment < 2.0",to:"(706) 549-1720 ext. 0"}
+    ],
+    versions:[
+      {num:"v2.1",status:"live",dotClass:"vd-green",deployed:"Apr 15, 2026",by:"Mike Torres",sha:"a4f2c1d",desc:"Warmer greeting, billing FAQ expanded 3→8, SMS timeout 45s→60s, CPAP rephrase L1 updated.",containment:"87.3%",sentiment:"4.4/5",transfer:"13%",tokens:"1,840 tok",calls:"312"},
+      {num:"v2.0",status:"",dotClass:"vd-blue",deployed:"Apr 10, 2026",by:"James Kim",sha:"7b9e3f1",desc:"Sleep Medicine specialty module injected first time. Emergency rule 3 added. Billing KB expanded.",containment:"82.1%",sentiment:"4.1/5",transfer:"18%",tokens:"1,760 tok",calls:"248"},
+      {num:"v1.9",status:"",dotClass:"vd-gray",deployed:"Apr 5, 2026",by:"Sarah Lee",sha:"3c7a9e2",desc:"Auto-optimization: token usage was 2,240 (above warning). Prompt pruned, 400 tokens saved.",containment:"81.4%",sentiment:"3.9/5",transfer:"19%",tokens:"1,840 tok",calls:"201"},
+      {num:"v1.8",status:"",dotClass:"vd-gray",deployed:"Mar 28, 2026",by:"Initial deploy",sha:"1a2b3c4",desc:"Initial go-live. Base Solo template, no specialty injection, 8 Q&As, 3 transfer rules only.",containment:"71.2%",sentiment:"3.7/5",transfer:"29%",tokens:"1,520 tok",calls:"142"}
+    ]
+  },
+  valley:{
+    name:"Valley Ridge Family Medicine", short:"Valley Ridge",
+    specialty:"Family Medicine", icon:"🏥",
+    size:"large", sizeLabel:"Large Group",
+    providers:8, phone:"(770) 555-0200", ext:"ext. 0",
+    promptVersion:"v1.2", promptTokens:"2,650",
+    containment:"83.1%", sentiment:"4.1/5", transfer:"17%",
+    emergStats:[{l:"Life-threatening (Rule 1)",v:"4 calls",c:"var(--rl)",bc:"#FECACA",tc:"var(--red)"},{l:"Mental health (Rule 2)",v:"1 call",c:"var(--rl)",bc:"#FECACA",tc:"var(--red)"},{l:"Specialty (Rule 3)",v:"3 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"},{l:"Urgent clinical (Rule 4)",v:"12 calls",c:"var(--al)",bc:"#FDE68A",tc:"var(--amber)"},{l:"After-hours (Rule 5)",v:"7 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"}],
+    emergRule3Title:"🏥 Family Medicine: Acute Symptom Triage",
+    emergRule3Phrases:["can't walk","sudden weakness","severe abdominal pain","high fever infant"],
+    emergRule3Action:"→ Assess severity via symptom checklist · If acute: 911 · If urgent: transfer nurse triage (770) 555-0199",
+    emergRule4Action:"→ Transfer to nurse triage (770) 555-0199 · Aria collects chief complaint before transfer",
+    emergRule5Action:"→ After 6 PM: collect name + callback + symptoms · Notify on-call provider by department",
+    transferRules:[
+      {intent:"Human request",cond:'"speak to a person", "real staff"',to:"(770) 555-0200 ext. 0"},
+      {intent:"Provider by name",cond:"Caller requests specific provider",to:"Matching provider schedule"},
+      {intent:"Billing dispute",cond:"Insurance, copay, billing question",to:"(770) 555-0200 ext. 5"},
+      {intent:"Urgent symptom",cond:"Pain, fever, acute complaint",to:"(770) 555-0199 nurse triage"},
+      {intent:"3rd SMS fallback",cond:"3+ SMS fallbacks triggered",to:"(770) 555-0200 ext. 0"},
+      {intent:"Angry caller",cond:"Hostile, sentiment < 2.0",to:"(770) 555-0200 ext. 0"}
+    ],
+    versions:[
+      {num:"v1.2",status:"live",dotClass:"vd-green",deployed:"Apr 10, 2026",by:"Sarah Lee",sha:"d3e4f5g",desc:"Added 8-provider disambiguation, department routing for pediatrics, women's health, and family med.",containment:"83.1%",sentiment:"4.1/5",transfer:"17%",tokens:"2,650 tok",calls:"201"},
+      {num:"v1.1",status:"",dotClass:"vd-blue",deployed:"Apr 3, 2026",by:"James Kim",sha:"b2c3d4e",desc:"Initial onboarding prompt. Base Large Group template with basic provider routing.",containment:"74.8%",sentiment:"3.8/5",transfer:"26%",tokens:"2,480 tok",calls:"142"},
+      {num:"v1.0",status:"",dotClass:"vd-gray",deployed:"Apr 1, 2026",by:"Initial deploy",sha:"a1b2c3d",desc:"Go-live. Minimal config. High transfer rate expected in first week.",containment:"61.2%",sentiment:"3.5/5",transfer:"39%",tokens:"2,100 tok",calls:"89"}
+    ]
+  },
+  buchanan:{
+    name:"Buchanan Rural Clinic", short:"Buchanan Rural",
+    specialty:"Primary Care", icon:"🌿",
+    size:"solo", sizeLabel:"Solo",
+    providers:1, phone:"(770) 555-0311", ext:"ext. 0",
+    promptVersion:"v1.3", promptTokens:"1,720",
+    containment:"88.5%", sentiment:"4.5/5", transfer:"12%",
+    emergStats:[{l:"Life-threatening (Rule 1)",v:"1 call",c:"var(--rl)",bc:"#FECACA",tc:"var(--red)"},{l:"Mental health (Rule 2)",v:"0 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"},{l:"Specialty (Rule 3)",v:"0 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"},{l:"Urgent clinical (Rule 4)",v:"4 calls",c:"var(--al)",bc:"#FDE68A",tc:"var(--amber)"},{l:"After-hours (Rule 5)",v:"2 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"}],
+    emergRule3Title:"🌿 Primary Care: Acute Symptom Alert",
+    emergRule3Phrases:["can't breathe","chest tightness","severe pain","child won't stop crying"],
+    emergRule3Action:"→ 911 if life-threatening · Transfer to nurse line (770) 555-0311 ext. 2 for urgent assessment",
+    emergRule4Action:"→ Transfer to nurse line (770) 555-0311 ext. 2 immediately",
+    emergRule5Action:"→ After 5 PM: take message + callback · On-call provider notified by SMS",
+    transferRules:[
+      {intent:"Human request",cond:'"speak to someone", "real person"',to:"(770) 555-0311 ext. 0"},
+      {intent:"Rx refill",cond:"Medication refill request",to:"(770) 555-0311 ext. 3"},
+      {intent:"Lab results",cond:"Asking about test results",to:"(770) 555-0311 ext. 2"},
+      {intent:"3rd SMS fallback",cond:"3+ SMS fallbacks triggered",to:"(770) 555-0311 ext. 0"},
+      {intent:"Angry caller",cond:"Hostile, sentiment < 2.0",to:"(770) 555-0311 ext. 0"}
+    ],
+    versions:[
+      {num:"v1.3",status:"live",dotClass:"vd-green",deployed:"Apr 12, 2026",by:"Mike Torres",sha:"e5f6g7h",desc:"Added rural clinic FAQ (limited specialist availability, telehealth options). Billing FAQ improved.",containment:"88.5%",sentiment:"4.5/5",transfer:"12%",tokens:"1,720 tok",calls:"88"},
+      {num:"v1.0",status:"",dotClass:"vd-gray",deployed:"Mar 15, 2026",by:"Initial deploy",sha:"a1b2c3d",desc:"Go-live on Solo template. Clean first deployment, high containment from day 1.",containment:"82.0%",sentiment:"4.2/5",transfer:"18%",tokens:"1,500 tok",calls:"64"}
+    ]
+  },
+  haralson:{
+    name:"Haralson County Pediatrics", short:"Haralson Peds",
+    specialty:"Pediatrics", icon:"👶",
+    size:"solo", sizeLabel:"Solo",
+    providers:1, phone:"(770) 555-0422", ext:"ext. 0",
+    promptVersion:"v1.1", promptTokens:"1,680",
+    containment:"91.2%", sentiment:"4.6/5", transfer:"9%",
+    emergStats:[{l:"Life-threatening (Rule 1)",v:"0 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"},{l:"Mental health (Rule 2)",v:"0 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"},{l:"Specialty (Rule 3)",v:"0 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"},{l:"Urgent clinical (Rule 4)",v:"3 calls",c:"var(--al)",bc:"#FDE68A",tc:"var(--amber)"},{l:"After-hours (Rule 5)",v:"4 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"}],
+    emergRule3Title:"👶 Pediatrics: Child Acute Emergency",
+    emergRule3Phrases:["child can't breathe","infant not breathing","child unresponsive","baby blue lips","seizure"],
+    emergRule3Action:"→ 911 immediately · Stay on line · Flag for pediatric emergency follow-up",
+    emergRule4Action:"→ Transfer to nurse triage (770) 555-0422 ext. 2 immediately · Collect age + chief symptom",
+    emergRule5Action:"→ After 5 PM: collect name + child's age + callback + symptoms · Notify on-call pediatrician",
+    transferRules:[
+      {intent:"Human request",cond:'"speak to someone", "real person"',to:"(770) 555-0422 ext. 0"},
+      {intent:"Vaccine question",cond:"Immunization schedule, side effects",to:"(770) 555-0422 ext. 2 nurse"},
+      {intent:"Sick child urgent",cond:"High fever, rash, won't eat",to:"(770) 555-0422 ext. 2 triage"},
+      {intent:"3rd SMS fallback",cond:"3+ SMS fallbacks triggered",to:"(770) 555-0422 ext. 0"},
+      {intent:"Angry parent",cond:"Hostile, sentiment < 2.0",to:"(770) 555-0422 ext. 0"}
+    ],
+    versions:[
+      {num:"v1.1",status:"live",dotClass:"vd-green",deployed:"Apr 5, 2026",by:"Sarah Lee",sha:"f6g7h8i",desc:"Added pediatric-specific vocabulary, well-child schedule FAQ, vaccine side effect protocols.",containment:"91.2%",sentiment:"4.6/5",transfer:"9%",tokens:"1,680 tok",calls:"68"},
+      {num:"v1.0",status:"",dotClass:"vd-gray",deployed:"Mar 28, 2026",by:"Initial deploy",sha:"a1b2c3d",desc:"Go-live. Solo template with basic peds adaptations.",containment:"85.0%",sentiment:"4.3/5",transfer:"15%",tokens:"1,520 tok",calls:"41"}
+    ]
+  },
+  westpoint:{
+    name:"West Point Urgent Care", short:"West Point Urgent",
+    specialty:"Urgent Care", icon:"🚨",
+    size:"small", sizeLabel:"Small Group",
+    providers:3, phone:"(706) 555-0533", ext:"ext. 0",
+    promptVersion:"v1.4", promptTokens:"2,120",
+    containment:"79.8%", sentiment:"3.9/5", transfer:"21%",
+    emergStats:[{l:"Life-threatening (Rule 1)",v:"6 calls",c:"var(--rl)",bc:"#FECACA",tc:"var(--red)"},{l:"Mental health (Rule 2)",v:"1 call",c:"var(--rl)",bc:"#FECACA",tc:"var(--red)"},{l:"Specialty (Rule 3)",v:"5 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"},{l:"Urgent clinical (Rule 4)",v:"18 calls",c:"var(--al)",bc:"#FDE68A",tc:"var(--amber)"},{l:"After-hours (Rule 5)",v:"11 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"}],
+    emergRule3Title:"🚨 Urgent Care: High-Acuity Triage",
+    emergRule3Phrases:["can't walk","profuse bleeding","head injury","loss of consciousness","severe burn"],
+    emergRule3Action:"→ If life-threatening: direct to ER (not urgent care) · Explain: 'Please go to the nearest emergency room or call 911'",
+    emergRule4Action:"→ Transfer to front desk (706) 555-0533 for same-day urgent scheduling · Collect chief complaint",
+    emergRule5Action:"→ Provide next-day walk-in hours · If truly urgent: direct to ER",
+    transferRules:[
+      {intent:"Human request",cond:'"speak to staff", "real person"',to:"(706) 555-0533 ext. 0"},
+      {intent:"Wait time",cond:"Current wait time inquiry",to:"Front desk live update"},
+      {intent:"Work excuse",cond:"Employer documentation, DOT physical",to:"(706) 555-0533 ext. 3"},
+      {intent:"Insurance",cond:"Coverage, copay, billing",to:"(706) 555-0533 ext. 4"},
+      {intent:"3rd SMS fallback",cond:"3+ SMS fallbacks triggered",to:"(706) 555-0533 ext. 0"},
+      {intent:"Misdirected ER case",cond:"Life-threatening symptoms",to:"Direct to ER · Do not schedule"}
+    ],
+    versions:[
+      {num:"v1.4",status:"live",dotClass:"vd-green",deployed:"Apr 8, 2026",by:"Mike Torres",sha:"g7h8i9j",desc:"Added walk-in wait time FAQ, work/school excuse workflow, DOT physical scheduling.",containment:"79.8%",sentiment:"3.9/5",transfer:"21%",tokens:"2,120 tok",calls:"134"},
+      {num:"v1.0",status:"",dotClass:"vd-gray",deployed:"Apr 5, 2026",by:"Initial deploy",sha:"a1b2c3d",desc:"Go-live. Small Group template. High transfer expected — urgent care patients often want direct staff contact.",containment:"68.0%",sentiment:"3.6/5",transfer:"32%",tokens:"1,900 tok",calls:"67"}
+    ]
+  },
+  coweta:{
+    name:"Coweta Family Medicine", short:"Coweta Family Med",
+    specialty:"Family Medicine", icon:"⚠️",
+    size:"small", sizeLabel:"Small Group",
+    providers:4, phone:"(770) 555-0644", ext:"ext. 0",
+    promptVersion:"v1.3", promptTokens:"2,080",
+    containment:"85.4%", sentiment:"4.2/5", transfer:"15%",
+    emergStats:[{l:"Life-threatening (Rule 1)",v:"2 calls",c:"var(--rl)",bc:"#FECACA",tc:"var(--red)"},{l:"Mental health (Rule 2)",v:"1 call",c:"var(--rl)",bc:"#FECACA",tc:"var(--red)"},{l:"Specialty (Rule 3)",v:"1 call",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"},{l:"Urgent clinical (Rule 4)",v:"9 calls",c:"var(--al)",bc:"#FDE68A",tc:"var(--amber)"},{l:"After-hours (Rule 5)",v:"5 calls",c:"var(--grl)",bc:"var(--bdr)",tc:"var(--tx2)"}],
+    emergRule3Title:"🏥 Family Medicine: Acute Symptom Alert",
+    emergRule3Phrases:["severe chest pain","difficulty breathing","sudden severe headache","can't move arm"],
+    emergRule3Action:"→ 911 if life-threatening · Transfer to nurse line (770) 555-0644 ext. 2 for urgent triage",
+    emergRule4Action:"→ Transfer to nurse triage (770) 555-0644 ext. 2 · Collect chief complaint first",
+    emergRule5Action:"→ After 5:30 PM: take detailed message + callback · On-call provider alerted by department",
+    transferRules:[
+      {intent:"Human request",cond:'"speak to someone", "real person"',to:"(770) 555-0644 ext. 0"},
+      {intent:"Provider by name",cond:"Requests specific provider",to:"Matching provider schedule"},
+      {intent:"Rx refill",cond:"Medication refill request",to:"(770) 555-0644 ext. 3"},
+      {intent:"Billing",cond:"Insurance, copay, statement",to:"(770) 555-0644 ext. 4"},
+      {intent:"Urgent symptom",cond:"Acute complaint, pain, fever",to:"(770) 555-0644 ext. 2 nurse"},
+      {intent:"3rd SMS fallback",cond:"3+ SMS fallbacks triggered",to:"(770) 555-0644 ext. 0"}
+    ],
+    versions:[
+      {num:"v1.3",status:"live",dotClass:"vd-green",deployed:"Apr 14, 2026",by:"James Kim",sha:"h8i9j0k",desc:"Provider disambiguation improved for all 4 providers. Added Dr. Martinez bilingual (EN/ES) flag.",containment:"85.4%",sentiment:"4.2/5",transfer:"15%",tokens:"2,080 tok",calls:"156"},
+      {num:"v1.0",status:"",dotClass:"vd-gray",deployed:"Apr 1, 2026",by:"Initial deploy",sha:"a1b2c3d",desc:"Go-live on Small Group template. 4-provider disambiguation active from day 1.",containment:"76.0%",sentiment:"3.9/5",transfer:"24%",tokens:"1,950 tok",calls:"98"}
+    ]
+  }
+};
+
+var currentKey = "athens";
+
+// ─── PROMPT PREVIEWS ───────────────────────────────────────────────────────
+function getPromptContent(key, sizeOverride) {
+  var p = PRACTICES[key];
+  var size = sizeOverride || p.size;
+  var previews = {
+    solo: "<span class='psec'>\u2550\u2550\u2550 CORE IDENTITY \u2550\u2550\u2550</span>\n\nYou are the AI receptionist for <span class='pvar'>{{practice_name}}</span>, a <span class='pvar'>{{specialty}}</span> practice.\nYour name is <span class='pvar'>{{agent_name}}</span>. You answer 24/7.\n\n<span class='pcom'>[SOLO PRACTICE \u2014 1 provider, no disambiguation needed]</span>\n<span class='pkw'>provider_count:</span> <span class='pstr'>1</span>\n<span class='pkw'>routing_complexity:</span> <span class='pstr'>simple</span>\n\n<span class='psec'>\u2550\u2550\u2550 GREETING \u2550\u2550\u2550</span>\n\n\"Thank you for calling <span class='pvar'>{{practice_name}}</span>. This is <span class='pvar'>{{agent_name}}</span> \u2014 how may I help you today?\"\n\n<span class='psec'>\u2550\u2550\u2550 ROUTING (4 branches) \u2550\u2550\u2550</span>\n\nIntent \u2192 SCHEDULING: Collect name, DOB, insurance \u2192 Book directly\nIntent \u2192 FAQ: RAG lookup \u2192 Answer\nIntent \u2192 <span class='pvar'>{{specialty_workflow}}</span>: Specialty-specific \u2192 Route\nIntent \u2192 EMERGENCY: 911 protocol \u2014 always active\n\n<span class='psec'>\u2550\u2550\u2550 NEVER-LOOP GUARANTEE \u2550\u2550\u2550</span>\n\nMax voice attempts: <span class='pstr'>2</span>\nAfter 2 failures: SMS fallback (mobile) \u2192 graceful skip (landline)\nNEVER repeat exact same question \u2014 mandatory rephrase",
+    small: "<span class='psec'>\u2550\u2550\u2550 CORE IDENTITY \u2550\u2550\u2550</span>\n\nYou are the AI receptionist for <span class='pvar'>{{practice_name}}</span>.\nYour name is <span class='pvar'>{{agent_name}}</span>. You answer 24/7.\n\n<span class='pcom'>[SMALL GROUP \u2014 2-5 providers, disambiguation required]</span>\n<span class='pkw'>provider_count:</span> <span class='pstr'>2-5</span>\n<span class='pkw'>routing_complexity:</span> <span class='pstr'>provider_routing</span>\n\n<span class='psec'>\u2550\u2550\u2550 PROVIDER DISAMBIGUATION \u2550\u2550\u2550</span>\n\n<span class='pcom'>[Injected from practice profile]</span>\nWhen caller names a provider: match to <span class='pvar'>{{providers}}</span> list\nIf ambiguous: \"Which of our providers are you seeing \u2014 <span class='pvar'>{{provider_list}}</span>?\"\n\n<span class='psec'>\u2550\u2550\u2550 ROUTING (6-10 branches) \u2550\u2550\u2550</span>\n\nIntent \u2192 SCHEDULING + Provider Selection \u2192 Book with specific provider\nIntent \u2192 FAQ \u2192 RAG lookup\nIntent \u2192 Specialty intents \u2192 Route per specialty\nIntent \u2192 BILLING \u2192 Billing extension\nIntent \u2192 TRANSFER (by dept) \u2192 <span class='pvar'>{{transfer_rules}}</span>\nIntent \u2192 EMERGENCY \u2192 911 + specialty protocols",
+    large: "<span class='psec'>\u2550\u2550\u2550 CORE IDENTITY \u2550\u2550\u2550</span>\n\nYou are the AI receptionist for <span class='pvar'>{{practice_name}}</span>.\n\n<span class='pcom'>[LARGE GROUP \u2014 6-15 providers, multi-location, dept routing]</span>\n<span class='pkw'>provider_count:</span> <span class='pstr'>6-15</span>\n<span class='pkw'>routing_complexity:</span> <span class='pstr'>department_routing</span>\n\n<span class='psec'>\u2550\u2550\u2550 DEPARTMENT ROUTING (10-20 branches) \u2550\u2550\u2550</span>\n\nDepartments: <span class='pvar'>{{departments}}</span>\nLocations: <span class='pvar'>{{locations}}</span>\nInsurance pre-auth: enabled for high-cost procedures\n\n\u2192 Detect department from caller language\n\u2192 Match provider to department + calendar\n\u2192 Insurance verify \u2192 Pre-auth workflow for specialty visits\n\u2192 Triage nurse \u2192 <span class='pvar'>{{triage_number}}</span>\n\u2192 Emergency (complex multi-route)\n\n<span class='pkw'>token_usage:</span> <span class='pstr'>~2,600</span> <span class='pcom'>(within threshold)</span>",
+    enterprise: "<span class='psec'>\u2550\u2550\u2550 ENTERPRISE PROMPT (20-40 branches) \u2550\u2550\u2550</span>\n\n<span class='pcom'>[ENTERPRISE \u2014 16+ providers, 4+ locations, full hierarchy]</span>\n<span class='pkw'>provider_count:</span> <span class='pstr'>16+</span>\n<span class='pkw'>locations:</span> <span class='pvar'>{{all_locations}}</span>\n<span class='pkw'>departments:</span> <span class='pvar'>{{all_departments}}</span>\n\n<span class='psec'>\u2550\u2550\u2550 ENTERPRISE ROUTING \u2550\u2550\u2550</span>\n\n\u2192 Location selection \u2192 Dept \u2192 Provider \u2192 Calendar\n\u2192 Insurance verify \u2192 Real-time eligibility (Availity API)\n\u2192 Prior auth \u2192 Auto-detect for high-cost procedures\n\u2192 Triage nurse (full workflow)\n... [25-40 total branches]\n\n<span class='pkw'>token_usage:</span> <span class='pstr'>~3,000</span> <span class='pcom'>\u26a0 approaching 3,000 token limit</span>"
+  };
+  return previews[size] || previews.solo;
+}
+
+// ─── TAB SWITCH ─────────────────────────────────────────────────────────────
+function ST(t) {
+  document.querySelectorAll(".tab").forEach(function(e) { e.classList.remove("active"); });
+  document.querySelectorAll(".panel").forEach(function(e) { e.classList.remove("active"); });
+  document.getElementById("tab-" + t).classList.add("active");
+  document.getElementById("panel-" + t).classList.add("active");
+}
+
+// ─── SIZE CARD SELECT ────────────────────────────────────────────────────────
+function selSize(clickedEl, size) {
+  document.querySelectorAll(".scard").forEach(function(c) { c.classList.remove("sel"); });
+  clickedEl.classList.add("sel");
+  var previewEl = document.getElementById("promptPreview");
+  if (previewEl) previewEl.innerHTML = getPromptContent(currentKey, size);
+  var tokenMap = {solo:"1,840", small:"2,100", large:"2,600", enterprise:"3,000"};
+  var badge = document.getElementById("tokenBadge");
+  if (badge) badge.textContent = (tokenMap[size] || "1,840") + " tokens";
+}
+
+// ─── SPEC CARD SELECT ────────────────────────────────────────────────────────
+function selSpec(clickedEl) {
+  document.querySelectorAll(".speccard").forEach(function(c) { c.classList.remove("spec-sel"); });
+  clickedEl.classList.add("spec-sel");
+}
+
+// ─── ROUTING COMPLEXITY ─────────────────────────────────────────────────────
+function setComplexity(size, btn) {
+  document.querySelectorAll(".cs-btn").forEach(function(b) { b.classList.remove("cs-sel"); });
+  btn.classList.add("cs-sel");
+  var p = PRACTICES[currentKey];
+  var titles = {
+    solo: "Solo Practice \u2014 4 Branches",
+    small: "Small Group \u2014 7 Branches",
+    large: "Large Group \u2014 13 Branches",
+    enterprise: "Enterprise \u2014 28 Branches"
+  };
+  var lbl = document.getElementById("routingLabel");
+  if (lbl) lbl.textContent = titles[size] + " \u00B7 " + p.short;
+  var existing = document.getElementById("complexityExtra");
+  if (existing) existing.remove();
+  var extras = {
+    solo: null,
+    small: '<div id="complexityExtra" style="margin-top:12px;padding:10px;background:var(--bl);border-radius:var(--rs);border:1px solid #BFDBFE;font-size:11px;color:var(--blue)"><strong>+ Provider disambiguation added.</strong> Aria now asks which provider the caller wants to see when not specified. Provider list injected from practice profile.</div>',
+    large: '<div id="complexityExtra" style="margin-top:12px;padding:10px;background:var(--al);border-radius:var(--rs);border:1px solid #FDE68A;font-size:11px;color:var(--ad)"><strong>+ Department routing + Insurance pre-auth.</strong> 13 routing branches across 5 departments and multiple locations. Token usage: ~2,600.</div>',
+    enterprise: '<div id="complexityExtra" style="margin-top:12px;padding:10px;background:var(--rl);border-radius:var(--rs);border:1px solid #FECACA;font-size:11px;color:var(--red)"><strong>\u26A0 28 branches \u2014 approaching 3,000 token limit.</strong> Full health system routing: multiple locations, departments, 16+ providers, insurance API, prior auth. MOF Technical Admin review recommended before deployment.</div>'
+  };
+  if (extras[size]) {
+    var viz = document.getElementById("routingViz");
+    if (viz) viz.insertAdjacentHTML("afterend", extras[size]);
+  }
+}
+
+// ─── A/B SLIDER ─────────────────────────────────────────────────────────────
+function updateSplit(val) {
+  var a = parseInt(val), b = 100 - a;
+  var ba = document.getElementById("abBarA"), bb = document.getElementById("abBarB");
+  var bp = document.getElementById("abBPct");
+  if (ba) ba.style.flex = a;
+  if (bb) bb.style.flex = b;
+  if (bp) bp.textContent = b + "%";
+}
+
+// ─── COUNT TOKENS ────────────────────────────────────────────────────────────
+function countTokens() {
+  var p = PRACTICES[currentKey];
+  alert("Token count for " + p.short + " " + p.promptVersion + ":\n\nBase prompt (" + p.sizeLabel + "): ~1,500 tokens\nSpecialty injection (" + p.specialty + "): +~340 tokens\nTotal: " + p.promptTokens + " tokens\n\nWarning threshold: 3,000 tokens\nAt current usage: ~$0.009/call (Claude Sonnet via AWS Bedrock)");
+}
+
+// ─── MAIN SWITCH ─────────────────────────────────────────────────────────────
+function switchPractice(key) {
+  currentKey = key;
+  var p = PRACTICES[key];
+
+  // Save to localStorage so other dashboards pick it up
+  try { localStorage.setItem("mof_selected_practice", key); } catch(e) {}
+
+  // Topbar chips
+  var ariaChip = document.getElementById("ariaChip");
+  if (ariaChip) ariaChip.innerHTML = '<div class="ldot"></div>Aria Live \u00B7 ' + p.promptVersion;
+  var tokenChip = document.getElementById("tokenChip");
+  if (tokenChip) tokenChip.textContent = p.promptTokens + " tokens/call";
+
+  // Context chip in tab bar
+  var ctx = document.getElementById("contextChip");
+  if (ctx) ctx.textContent = "\uD83D\uDCD3 Prompt " + p.promptVersion + " \u00B7 " + p.short + " \u00B7 " + p.sizeLabel + " \u00B7 " + p.specialty;
+
+  // Version badge
+  var vb = document.getElementById("verBadge");
+  if (vb) vb.textContent = p.promptVersion + " Live";
+
+  // ── SIZE panel ──
+  var sizeSub = document.getElementById("size-sub");
+  if (sizeSub) sizeSub.textContent = "Prompt complexity auto-scales with size \u00B7 " + p.name;
+  var noticeTxt = document.getElementById("size-notice-txt");
+  if (noticeTxt) noticeTxt.innerHTML = "<strong>" + p.short + " is a " + p.sizeLabel + " practice.</strong> Using " + p.sizeLabel + " template: " + p.providers + " provider" + (p.providers > 1 ? "s" : "") + ", " + (p.size === "solo" ? "4" : p.size === "small" ? "6–10" : p.size === "large" ? "10–20" : "20–40") + " routing branches, " + p.promptTokens + " tokens avg/call.";
+
+  // Reset size cards to match practice default
+  document.querySelectorAll(".scard").forEach(function(c) { c.classList.remove("sel"); });
+  var sizeMap = {solo:0, small:1, large:2, enterprise:3};
+  var cards = document.querySelectorAll(".scard");
+  if (cards[sizeMap[p.size]]) cards[sizeMap[p.size]].classList.add("sel");
+
+  // Prompt preview
+  var preview = document.getElementById("promptPreview");
+  if (preview) preview.innerHTML = getPromptContent(key, p.size);
+  var ptitle = document.getElementById("promptTitle");
+  if (ptitle) ptitle.textContent = "system_prompt.txt \u2014 " + p.short + " \u2014 " + p.sizeLabel + " \u2014 " + p.promptVersion;
+  var tbadge = document.getElementById("tokenBadge");
+  if (tbadge) tbadge.textContent = p.promptTokens + " tokens";
+
+  // Size sidebar
+  var ss = document.getElementById("sizeSidebar");
+  if (ss) {
+    var tokenMap = {solo:"~1,840",small:"~2,100",large:"~2,600",enterprise:"~3,000"};
+    var sizeKeys = ["solo","small","large","enterprise"];
+    var sizeLabels = ["Solo","Small Group","Large Group","Enterprise"];
+    var rows = sizeKeys.map(function(s, i) {
+      var isCur = s === p.size;
+      return '<div style="display:flex;justify-content:space-between;padding:6px 9px;background:' + (isCur ? "var(--gl)" : "var(--grl)") + ';border-radius:5px;border:' + (isCur ? "1.5px solid #A7F3D0" : "1px solid var(--bdr)") + '"><span' + (isCur ? ' style="font-weight:600;color:var(--green)"' : '') + '>' + sizeLabels[i] + (isCur ? " \u2713 (current)" : "") + '</span><span style="' + (isCur ? "font-weight:700;color:var(--green)" : "") + '">' + tokenMap[s] + '</span></div>';
+    }).join("");
+    ss.innerHTML = '<div class="spsec">Size Comparison</div>' + rows +
+      '<div class="spsec" style="margin-top:12px">This Practice</div>' +
+      '<div style="display:flex;flex-direction:column;gap:4px;font-size:11px">' +
+      ['Size','Providers','Prompt version','Token avg','Live'].map(function(l, i) {
+        var vals = [p.sizeLabel, p.providers, p.promptVersion, p.promptTokens + " tok", "Yes \u2713"];
+        return '<div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--grl);border-radius:4px"><span style="color:var(--tx3)">' + l + '</span><span style="font-weight:700">' + vals[i] + '</span></div>';
+      }).join("") + '</div>';
+  }
+
+  // ── SPEC panel ──
+  var specSub = document.getElementById("spec-sub");
+  if (specSub) specSub.textContent = "Domain vocabulary, intents, workflows, and NEVER rules per specialty \u00B7 " + p.short + " uses " + p.specialty;
+  var specNotice = document.getElementById("spec-notice-txt");
+  if (specNotice) specNotice.innerHTML = "<strong>Active: " + p.specialty + ".</strong> Keywords + intents + NEVER rules injected for " + p.short + ".";
+
+  // ── ROUTING panel ──
+  var routingSub = document.getElementById("routing-sub");
+  if (routingSub) routingSub.textContent = "Auto-scales with practice size \u00B7 " + p.short + " is " + p.sizeLabel;
+  var routingLabel = document.getElementById("routingLabel");
+  if (routingLabel) routingLabel.textContent = p.sizeLabel + " \u00B7 " + (p.size === "solo" ? "4" : p.size === "small" ? "7" : p.size === "large" ? "13" : "28") + " Branches \u00B7 " + p.short;
+  var routingTransferNum = document.getElementById("routingTransferNum");
+  if (routingTransferNum) routingTransferNum.textContent = "\u2192 " + p.phone;
+
+  // Reset complexity buttons to match practice
+  document.querySelectorAll(".cs-btn").forEach(function(b) { b.classList.remove("cs-sel"); });
+  var csBtnId = {solo:"csSolo",small:"csSmall",large:"csLarge",enterprise:"csEnt"};
+  var csBtn = document.getElementById(csBtnId[p.size]);
+  if (csBtn) csBtn.classList.add("cs-sel");
+
+  // Transfer rules
+  var tsub = document.getElementById("transfer-sub");
+  if (tsub) tsub.textContent = p.transferRules.length + " rules \u00B7 " + p.sizeLabel + " \u00B7 " + p.short;
+  var tbody = document.getElementById("transferTableBody");
+  if (tbody) {
+    tbody.innerHTML = p.transferRules.map(function(r) {
+      return '<tr style="border-bottom:1px solid var(--bdr)"><td style="padding:9px 12px;font-weight:600">' + r.intent + '</td><td style="padding:9px 12px;color:var(--tx3)">' + r.cond + '</td><td style="padding:9px 12px;font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--blue)">' + r.to + '</td><td style="padding:9px 12px;text-align:center"><div class="tgg on" onclick="this.classList.toggle(\'on\');this.classList.toggle(\'off\')"><div class="tggk"></div></div></td></tr>';
+    }).join("");
+  }
+
+  // Complexity sidebar
+  var cs = document.getElementById("complexitySidebar");
+  if (cs) {
+    var sizeData = [{key:"solo",label:"Solo",branches:"4\u20136",tokens:"~1,840"},{key:"small",label:"Small Group",branches:"6\u201310",tokens:"~2,100"},{key:"large",label:"Large Group",branches:"10\u201320",tokens:"~2,600"},{key:"enterprise",label:"Enterprise",branches:"20\u201340",tokens:"~3,000"}];
+    cs.innerHTML = sizeData.map(function(s) {
+      var isCur = s.key === p.size;
+      return '<div style="padding:7px 9px;background:' + (isCur ? "var(--gl)" : "var(--grl)") + ';border-radius:5px;border:' + (isCur ? "1.5px solid #A7F3D0" : "1px solid var(--bdr)") + '"><div style="font-weight:' + (isCur ? "700" : "600") + ';color:' + (isCur ? "var(--green)" : "var(--tx2)") + ';margin-bottom:2px">' + s.label + (isCur ? " \u2713" : "") + '</div><div style="font-size:10px;color:var(--tx3)">' + s.branches + ' branches \u00B7 ' + s.tokens + ' tokens</div></div>';
+    }).join("");
+  }
+
+  // ── EMERGENCY panel ──
+  var er3title = document.getElementById("emergRule3Title");
+  if (er3title) er3title.textContent = p.emergRule3Title;
+  var er3phrases = document.getElementById("emergRule3Phrases");
+  if (er3phrases) er3phrases.innerHTML = p.emergRule3Phrases.map(function(ph) { return '<span class="er-phrase">' + ph + '</span>'; }).join("");
+  var er3action = document.getElementById("emergRule3Action");
+  if (er3action) er3action.textContent = p.emergRule3Action;
+  var er4action = document.getElementById("emergRule4Action");
+  if (er4action) er4action.textContent = p.emergRule4Action;
+  var er5action = document.getElementById("emergRule5Action");
+  if (er5action) er5action.textContent = p.emergRule5Action;
+  var esSidebar = document.getElementById("emergStatsSidebar");
+  if (esSidebar) {
+    esSidebar.innerHTML = p.emergStats.map(function(s) {
+      return '<div style="display:flex;justify-content:space-between;padding:6px 9px;background:' + s.c + ';border-radius:5px;border:1px solid ' + s.bc + '"><span style="color:' + s.tc + '">' + s.l + '</span><span style="font-weight:700;color:' + s.tc + '">' + s.v + '</span></div>';
+    }).join("");
+  }
+
+  // ── VERSIONING panel ──
+  var verSub = document.getElementById("ver-sub");
+  if (verSub) verSub.textContent = "Every prompt change versioned, diffed, and revertible \u00B7 " + p.name;
+  var verNotice = document.getElementById("ver-notice-txt");
+  if (verNotice) verNotice.innerHTML = "<strong>" + p.promptVersion + " is live.</strong> Containment: " + p.containment + " \u00B7 Sentiment: " + p.sentiment + " \u00B7 Transfer: " + p.transfer;
+  var verTimeline = document.getElementById("verTimeline");
+  if (verTimeline) {
+    verTimeline.innerHTML = p.versions.map(function(v) {
+      var isLive = v.status === "live";
+      return '<div class="ver-item"><div class="ver-dot ' + v.dotClass + '"></div><div class="ver-content"><div class="ver-num">' + v.num + ' \u2014 ' + p.short + (isLive ? ' <span class="tag tg">LIVE \u2713</span>' : '') + '</div><div class="ver-meta">Deployed ' + v.deployed + ' \u00B7 ' + v.by + ' \u00B7 SHA: ' + v.sha + '</div><div class="ver-desc">' + v.desc + '</div><div class="ver-stats"><span class="vs-chip ' + (parseFloat(v.containment) > 85 ? "vsc-green" : "vsc-amber") + '">Containment: ' + v.containment + '</span><span class="vs-chip vsc-blue">' + v.tokens + '</span><span class="vs-chip vsc-gray">' + v.calls + ' calls</span></div><div style="display:flex;gap:5px;margin-top:7px"><button class="btn bo" style="font-size:10px;padding:4px 9px" onclick="alert(\'Viewing full prompt ' + v.num + '...\')">📋 View</button>' + (!isLive ? '<button class="btn ba" style="font-size:10px;padding:4px 9px" onclick="alert(\'Rolling back to ' + v.num + '...\')">↩ Rollback</button>' : '') + '</div></div></div>';
+    }).join("");
+  }
+  var verSidebar = document.getElementById("verSidebar");
+  if (verSidebar) {
+    var sortedByContain = p.versions.slice().sort(function(a, b) { return parseFloat(a.containment) - parseFloat(b.containment); });
+    verSidebar.innerHTML = '<div class="spsec">Performance Over Time</div>' +
+      p.versions.slice().reverse().map(function(v) {
+        var pct = parseFloat(v.containment);
+        var col = pct > 85 ? "var(--gl)" : pct > 75 ? "var(--al)" : "var(--rl)";
+        var brd = pct > 85 ? "#A7F3D0" : pct > 75 ? "#FDE68A" : "#FECACA";
+        var tc = pct > 85 ? "var(--green)" : pct > 75 ? "var(--amber)" : "var(--red)";
+        return '<div style="display:flex;justify-content:space-between;padding:6px 9px;background:' + col + ';border-radius:5px;border:1px solid ' + brd + ';margin-bottom:4px"><span style="color:' + tc + '">' + v.num + (v.status === "live" ? " \u2713" : "") + '</span><span style="font-weight:700;color:' + tc + '">' + v.containment + '</span></div>';
+      }).join("") +
+      '<div class="spsec">Version Policy</div>' +
+      '<div style="font-size:11px;color:var(--tx2);line-height:1.8">\uD83D\uDD14 Rollback: 30 days<br>\uD83D\uDCCB All versions stored<br>\uD83D\uDD12 SHA hash integrity<br>\uD83C\uDF0E MOF admin deploys<br>\uD83D\uDCC8 Metrics tracked per version</div>';
+  }
+
+  // ── A/B panel ──
+  var abSub = document.getElementById("ab-sub");
+  if (abSub) abSub.textContent = "Split traffic between two prompt variants \u00B7 " + p.short;
+  var abSplitSub = document.getElementById("ab-split-sub");
+  if (abSplitSub) abSplitSub.textContent = "Active test \u00B7 " + p.short;
+  var abA = document.getElementById("abPracticeA");
+  if (abA) abA.textContent = p.short;
+  var abB = document.getElementById("abPracticeB");
+  if (abB) abB.textContent = p.short;
+  var abNotice = document.getElementById("ab-notice-txt");
+  if (abNotice) abNotice.innerHTML = "<strong>Active: Greeting Tone Experiment.</strong> 60% \u2192 Variant A (warm), 40% \u2192 Variant B (direct). 127 + 84 calls so far for " + p.short + ".";
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+(function init() {
+  // Read from localStorage (shared with other dashboards)
+  var stored = null;
+  try { stored = localStorage.getItem("mof_selected_practice"); } catch(e) {}
+  var key = (stored && PRACTICES[stored]) ? stored : "athens";
+
+  // Set the dropdown
+  var sel = document.getElementById("practiceSelect");
+  if (sel) sel.value = key;
+
+  switchPractice(key);
+})();
+</script>
+</body>
+</html>
